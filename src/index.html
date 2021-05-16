@@ -7,24 +7,32 @@
   <link rel="stylesheet" href="index.css">
   <!--<script src='https://unpkg.com/d3@6.7.0/dist/d3.min.js'></script> -->
   <script src="https://d3js.org/d3.v4.js"></script>
+  <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+  <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.24.0/d3-legend.js"></script>
+  
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.5.0/d3.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 </head>
 <body>
   <div class='wrapper'>
+    
     <header class='header'>
       <div class='title'>
         Suicide Analysis
-      </div>
-      
+      </div> 
     </header>
-    <div class='map-holder'>Map Holder</div>
-    <div class='up-right'>Up right</div>
-    <div class='pca' id='pca'></div>
-    <div class='down-left'>Down left</div>
-    <div class='down-middle'>Down middle</div>
+
+    <div class='container map-holder svg-container' id='map-holder'></div>
+    <div class='container up-right'>Up right</div>
+    <div class='container pca' id='pca'></div>
+    <div class='container sexChart' id='sexChart'>Down left</div>
+    <div class='container ageChart' id='ageChart'>Down middle</div>
     
   </div>
   <script src="./manager.js"></script>
   <script src='./components/sexChart.js'></script>
   <script src='./components/ageChart.js'></script>
+  <script src='./components/map-holder.js'></script>
 </body>
 </html>
