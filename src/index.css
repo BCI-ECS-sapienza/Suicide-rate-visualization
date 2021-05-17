@@ -17,8 +17,8 @@ html,body {
     height: 100%;
     max-width: 100%;
     display: grid;
-    grid-template-columns: 30% 30% 40%;
-    grid-template-rows: 10% 25% 20% 5% 20% 20%;
+    grid-template-columns: 30% 30% auto;
+    grid-template-rows: 10% 25% 20% 5% 20% auto;
     grid-gap: 3px;
 }
 .header{
@@ -62,7 +62,7 @@ html,body {
 }
 .pca{
     margin-right: 3px;
-    margin-bottom: 3px;*/
+    margin-bottom: 3px;
     grid-column-start: 3;
     grid-column-end: 4;
     grid-row-start: 4;
@@ -83,18 +83,32 @@ html,body {
     left: 0;
 }
 
-
 /*map*/
 #map {
     position: fixed;
-          left: 0px;
-          right: 0px;
-          top: 0px;
-          bottom: 0px;
-    }
-    .countries {
-      fill: none;
-      stroke: #fff;
-      stroke-linejoin: round;
-    }
-    
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+}
+.countries {
+    fill: none;
+    stroke: #fff;
+    stroke-linejoin: round;
+}
+.legendThreshold {
+    font-size: 12px;
+    font-family: sans-serif;
+}
+.caption {
+    fill: black;
+    text-anchor: start;
+    font-weight: bold;
+}
+.tooltip {
+    line-height: 1;
+    padding: 12px;
+    background: rgba(43,43,43, 0.8);
+    color: #fff;
+    border-radius: 2px;
+}
