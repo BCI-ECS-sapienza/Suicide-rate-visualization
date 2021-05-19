@@ -3,7 +3,7 @@ var width = document.getElementById('map-holder').offsetWidth;
 var height = document.getElementById('map-holder').offsetHeight;
 
 // Create SVG
-var svg = d3.select( '#map-holder' )
+var map = d3.select( '#map-holder' )
     .append( "svg" )
     .attr( "width", '100%' )
     .attr( "height", '100%' )
@@ -33,7 +33,7 @@ var colorScale = d3.scaleThreshold()
 
 function ready(error, topo) {
     // Draw the map
-    svg.append("g")
+    map.append("g")
       .selectAll("path")
       .data(topo.features)
       .enter()
@@ -70,17 +70,17 @@ function ready(error, topo) {
         .style('top', d3.event.pageY + 'px')
       })
       .call(d3.zoom().on("zoom", function () {
-        svg.attr("transform", d3.event.transform);
+        map.attr("transform", d3.event.transform);
      }))
     }
 
 // Legend
-var rect = svg.append('rect')
+var rect = map.append('rect')
     .attr("width", '100')
     .attr("height", '120')
     .style("fill", 'lightgrey')
     .attr("transform", "translate(15, 80)");
-var g = svg.append("g")
+var g = map.append("g")
     .attr("class", "legendThreshold")
     .attr("transform", "translate(20, 100)");
 g.append("text")
@@ -94,7 +94,7 @@ var legend = d3.legendColor()
     .labels(function (d) { return labels[d.i]; })
     .shapePadding(4)
     .scale(colorScale);
-svg.select(".legendThreshold")
+map.select(".legendThreshold")
     .call(legend);
 
 // Tooltip
