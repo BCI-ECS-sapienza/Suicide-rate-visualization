@@ -60,6 +60,14 @@ html,body {
     grid-row-start: 4;
     grid-row-end: -1;
 }
+.radarChart{
+    margin-right: 3px;
+    margin-bottom: 3px;
+    grid-column-start: 3;
+    grid-column-end: 4;
+    grid-row-start: 4;
+    grid-row-end: -1;
+}
 .pca{
     margin-right: 3px;
     margin-bottom: 3px;
@@ -111,4 +119,13 @@ html,body {
     background: rgba(43,43,43, 0.8);
     color: #fff;
     border-radius: 2px;
+}
+
+/*bar chart*/
+.line{
+    
+    
+}
+.bar-text{
+    fill: lightgray;
 }
