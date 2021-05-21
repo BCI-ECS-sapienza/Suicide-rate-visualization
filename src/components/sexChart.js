@@ -1,6 +1,7 @@
 // Width and Height of the whole visualization
 var w = document.getElementById('sexChart').offsetWidth;
 var h = document.getElementById('sexChart').offsetHeight;
+
 // set the dimensions and margins of the graph
 var margin = {top: 20, right: 81, bottom: 20, left: 40},
     width = w - margin.left - margin.right,
