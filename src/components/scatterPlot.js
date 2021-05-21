@@ -6,8 +6,9 @@ var margin = {top: 10, right: 30, bottom: 30, left: 60},
 
 //Read the data
 controller.addListener('dataReady', function (e) {
-    data = controller.getDataFiltered();
-    console.log(data)
+    data = scatter_getData();
+    console.log('Printing data:');
+    console.log(data);
 
     // append the svg object to the body of the page
     var svg = d3.select("up-right")
@@ -46,3 +47,7 @@ controller.addListener('dataReady', function (e) {
            
     
 });
+
+function scatter_getData(){
+    return controller.getDataFiltered();
+}
