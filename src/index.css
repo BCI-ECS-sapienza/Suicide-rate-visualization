@@ -14,7 +14,7 @@ html,body {
     font-size:22px;
 }
 .wrapper{
-    height: 100%;
+    height: 98%;
     max-width: 100%;
     display: grid;
     grid-template-columns: 30% 30% auto;
@@ -38,7 +38,7 @@ html,body {
     grid-row-start: 2;
     grid-row-end: 4;
 }
-.up-right{
+.pca{
     margin-right: 3px;
     grid-column-start: 3;
     grid-column-end: 4;
@@ -68,7 +68,7 @@ html,body {
     grid-row-start: 4;
     grid-row-end: -1;
 }
-.pca{
+.scatterPlot{
     margin-right: 3px;
     margin-bottom: 3px;
     grid-column-start: 3;
@@ -91,7 +91,24 @@ html,body {
     left: 0;
 }
 
-/*map*/
+
+
+/* commons */
+.axis-text{
+    fill: rgb(250, 250, 250);
+    font-size: 12px;
+    font-family: sans-serif;
+}
+
+.axis-label, .bar-value{
+    fill: rgb(250, 250, 250);
+    font-size: 20px;
+    font-family: sans-serif;
+}
+
+
+
+/* map */
 #map {
     position: fixed;
     left: 0px;
@@ -121,11 +138,18 @@ html,body {
     border-radius: 2px;
 }
 
-/*bar chart*/
-.line{
-    
-    
+
+
+/* bar chart */
+.grid-barchart {
+    fill: rgb(100, 100, 100);
 }
-.bar-text{
-    fill: lightgray;
+
+
+
+/* scatter Plot */
+.selected {
+    opacity: 1 !important;
+    stroke: black;
+    stroke-width: 1px;
 }

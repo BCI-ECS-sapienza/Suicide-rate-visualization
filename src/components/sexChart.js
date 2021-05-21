@@ -1,57 +1,157 @@
-// Width and Height of the whole visualization
-var w = document.getElementById('sexChart').offsetWidth;
-var h = document.getElementById('sexChart').offsetHeight;
+// Width and Height of the box
+const initial_width_sexChar = document.getElementById('sexChart').offsetWidth;
+const initial_height_sexChar = document.getElementById('sexChart').offsetHeight;
 
 // set the dimensions and margins of the graph
-var margin = {top: 20, right: 81, bottom: 20, left: 40},
-    width = w - margin.left - margin.right,
-    height = h - margin.top - margin.bottom;
+const margin_sexChar = {top: 40, right: 40, bottom: 40, left: 60},
+    width_sexChar = initial_width_sexChar - margin_sexChar.left - margin_sexChar.right,
+    height_sexChar = initial_height_sexChar - margin_sexChar.top - margin_sexChar.bottom;
 
 // append the svg object to the body of the page
 var svgSex = d3.select("#sexChart")
     .append("svg")
-    .attr("height", '100%')
-    .attr("width", '100%');
-    //.attr("viewBox", "0 0 " + width + " " + height);
+      .attr("width", initial_width_sexChar)
+      .attr("height", initial_height_sexChar)
+    .append("g")
+      .attr("transform", "translate(" + margin_sexChar.left + "," + margin_sexChar.top + ")");  //padding
     
 
-var myData = [{ "sex": "male", "tot": "200"},
-              { "sex": "female", "tot": "300" }];
-var max_tic = parseInt(d3.max(myData.map(function(d) { return d.tot; }))) + 100;
+function makeSexChart() {
 
-// Add Y axis
-var y = d3.scaleLinear()
-  .domain( [0, max_tic])
-  .range([ height, 0]);
-svgSex.append("g")
-  .attr("class", "line")
-  .attr("transform", "translate(" + margin.left + "," + margin.top +")")
-  .call(d3.axisLeft(y))
-  .selectAll("text")
-    .attr("class","bar-text");
+  const dataYear = [
+    { country: "Albania", sex: "male", age:"10-20", suicides_pop: "400"},
+    { country: "Albania", sex: "female", age:"10-20", suicides_pop: "250"},
+  ];
 
-// X axis
-var x = d3.scaleBand()
-  .range([ 0, width])
-  .domain(myData.map(function(d) { return d.sex; }))
-  .padding(0.1);
-svgSex.append("g")
-  .attr("class", "line")
-  .attr("transform", "translate(" + margin.left + "," + (height+margin.top) +")")
-  .call(d3.axisBottom(x))
-  .selectAll("text")
-    .attr("class","bar-text")
-    .attr("transform", "translate(15,0)rotate(0)")
-    .style("text-anchor", "end");
+  const dataFiltered = [
+    { country: "Albania", sex: "male", age:"10-20", suicides_pop: "400"},
+    { country: "Albania", sex: "female", age:"10-20", suicides_pop: "250"},
+  ];
 
-  // Bars
-  svgSex.selectAll("mybar")
-    .data(myData)
+  //const dataYear = aggregate(dataYearLoaded)
+
+  // set params
+  const xValue = d => d.sex;
+  const yValue = d => d.suicides_pop;
+  const xPadding = 0.5;
+  const barColors = ['#f1a340','#998ec3'];
+
+  // set scales
+  const xScale = d3.scaleBand()
+    .domain(dataYear.map(xValue))
+    .range([ 0, width_sexChar ])
+    .padding(xPadding);
+
+  const max_val = d3.max(dataYear, yValue) 
+  const domain_max = parseInt(max_val) + parseInt(max_val/10)
+  const yScale = d3.scaleLinear()
+    .domain([0, domain_max ])
+    .range([ height_sexChar, 0])
+    .nice();
+
+  const color = d3.scaleOrdinal()
+    .domain(dataYear.map(xValue))
+    .range(barColors);
+
+  // axis format
+  const xAxis = d3.axisBottom(xScale);
+  const yAxis = d3.axisLeft(yScale).tickFormat(AxisTickFormat);
+
+
+  // add X axis
+  svgSex.append("g")
+    .attr("transform", "translate(0," + height_sexChar + ")") //to put on bottom
+    .call(xAxis)
+    .selectAll("text")  //text color
+      .attr("class","axis-text");
+
+  // add Y axis
+  svgSex.append("g")
+   .call(yAxis)
+   .selectAll("text")
+       .attr("class","axis-text");
+
+  // add Grid 
+  svgSex.append('g')
+    .attr('class', 'grid-barchart')
+    .call(d3.axisLeft()
+      .scale(yScale)
+      .tickSize(-width_sexChar, 0, 0)
+      .tickFormat(''))
+
+
+  // add filtered bars
+  const barGroups =  svgSex.selectAll()
+    .data(dataFiltered)
     .enter()
-    .append("rect")
-      .attr("x", function(d) { return x(d.sex) + margin.right; }) // + 78; })
-      .attr("y", function(d) { return y(d.tot) + margin.top; })
-      .attr("width", '30')
-      .attr("height", function(d) { return height - y(d.tot); })
-      .attr("fill", "#ff6666");
+    .append('g')
+
+  barGroups
+    .append('rect')
+    .attr('x', (d) => xScale(d.sex))
+    .attr('y', (d) => yScale(d.suicides_pop))
+    .attr('height', (d) => height_sexChar - yScale(d.suicides_pop))
+    .attr('width', xScale.bandwidth())
+    .style("fill",  (d) => color(d.sex))
+    .style("stroke", "black")  
+    .on('mouseenter', function (actual, i) {
+      // all value on bar transparent
+      d3.selectAll('.bar-value')  
+        .attr('opacity', 0)
+
+      // enlarge bar
+      d3.select(this)
+        .transition()
+        .duration(200)
+        .attr('x', (a) => xScale(a.sex) - 5)
+        .attr('width', xScale.bandwidth() + 10)
+
+      // show value on bar
+      barGroups.append('text')
+        .attr('class', 'divergence')
+        .attr('x', (a) => xScale(a.sex) + xScale.bandwidth() / 2)
+        .attr('y', (a) => yScale(a.suicides_pop) + 30)
+        .attr('fill', 'rgb(250, 250, 250)')
+        .attr('text-anchor', 'middle')
+        .text((a, idx) => {
+          const divergence = (a.suicides_pop - actual.suicides_pop).toFixed(1)
+          
+          let text = ''
+          if (divergence > 0) text += '+'
+          text += `${divergence}`
+
+          return idx !== i ? text : '';
+        })
+
+    })
+    .on('mouseleave', function () {
+      d3.selectAll('.bar-value')
+        .attr('opacity', 1)
+
+      d3.select(this)
+        .transition()
+        .duration(200)
+        .attr('x', (a) => xScale(a.sex))
+        .attr('width', xScale.bandwidth())
+
+      svgSex.selectAll('#limit').remove()
+      svgSex.selectAll('.divergence').remove()
+    })
+
+  // add value on bar 
+  barGroups 
+    .append('text')
+    .attr('class', 'bar-value')
+    .attr('x', (a) => xScale(a.sex) + xScale.bandwidth() / 2)
+    .attr('y', (a) => yScale(a.suicides_pop) + 30)
+    .attr('text-anchor', 'middle')
+    .text((a) => `${a.suicides_pop}`)
+
+}
+
+
+// draw graph on dataloaded
+controller.addListener('dataLoaded', function (e) {
+  makeSexChart();
+});
 

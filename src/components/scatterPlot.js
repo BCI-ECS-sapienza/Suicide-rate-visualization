@@ -1,53 +1,77 @@
+// Width and Height of the box
+const initial_width_scatter = document.getElementById('scatterPlot').offsetWidth;
+const initial_height_scatter = document.getElementById('scatterPlot').offsetHeight;
+
 // set the dimensions and margins of the graph
-var margin = {top: 10, right: 30, bottom: 30, left: 60},
-    width = 460 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
+const margin_scatter = {top: 50, right: 50, bottom: 50, left: 80},
+    width_scatter = initial_width_scatter - margin_scatter.left - margin_scatter.right,
+    height_scatter = initial_height_scatter - margin_scatter.top - margin_scatter.bottom;
+
+// useful vars
+const colors = controller.getSuicideColorScale();
 
 
-//Read the data
-controller.addListener('dataReady', function (e) {
-    data = scatter_getData();
-    console.log('Printing data:');
-    console.log(data);
+// append the svg object to the body of the page
+var svgScatter = d3.select("#scatterPlot")
+    .append("svg")
+        .attr("width", initial_width_scatter)
+        .attr("height", initial_height_scatter)
+    .append("g")
+        .attr("transform", "translate(" + margin_scatter.left + "," + margin_scatter.top + ")");
 
-    // append the svg object to the body of the page
-    var svg = d3.select("up-right")
-        .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    // Add X axis
-    var x = d3.scaleLinear()
-        .domain([0, 4000])
-        .range([ 0, width ]);
-    svg.append("g")
-        .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x));
-
-    // Add Y axis
-    var y = d3.scaleLinear()
-        .domain([0, 500000])
-        .range([ height, 0]);
-    svg.append("g")
-        .call(d3.axisLeft(y));
+function makeScatterPlot() {
+    const dataYear = controller.getDataYear();  //always used for scales
+    const dataFiltered = controller.getDataFiltered();
     
-    // Add dots
-    svg.append('g')
-        .selectAll("dot")
-        .data(data)
+        
+    // add X axis
+    var x = d3.scaleLog()
+        .domain(d3.extent(dataYear, d => d.gdp_for_year)).nice()
+        .range([ 0, width_scatter ]);
+    svgScatter.append("g")
+        .attr("transform", "translate(0," + height_scatter + ")")
+        .call(d3.axisBottom(x))
+        .selectAll("text")
+            .attr("class","axis-text");
+
+    // add Y axis
+    var y = d3.scaleLinear()
+        .domain(d3.extent(dataYear, d => d.gdp_per_capita)).nice()
+        .range([ height_scatter, 0]);
+    svgScatter.append("g")
+        .call(d3.axisLeft(y))
+        .selectAll("text")
+            .attr("class","axis-text");
+
+    // color scale
+    var color = d3.scaleLinear()
+        .domain(d3.extent(dataYear, d => d.suicides_pop))
+        .range(colors);
+
+
+     
+    // if (controller.isDataFiltered) 
+    // show also all data for the year but opacity 0.2
+    
+    
+    // else show only data filtered
+    var myCircle = svgScatter.append('g')
+        .selectAll("circle")
+        .data(dataFiltered)
         .enter()
         .append("circle")
             .attr("cx", function (d) { return x(d.gdp_for_year); } )
-            .attr("cy", function (d) { return y(d.gdp_per_capite); } )
-            .attr("r", 1.5)
-            .style("fill", "#69b3a2")
-
-           
+            .attr("cy", function (d) { return y(d.gdp_per_capita); } )
+            .attr("r", 4)
+            .style("fill", function (d) { return color(d.suicides_pop) } )
+            .style("opacity", 1)
+            .style("stroke", "white");
     
-});
-
-function scatter_getData(){
-    return controller.getDataFiltered();
 }
+
+
+// draw graph on dataloaded
+controller.addListener('dataLoaded', function (e) {
+    makeScatterPlot();
+});
