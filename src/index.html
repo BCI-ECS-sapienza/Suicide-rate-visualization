@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" href="index.css">
-  <!--<script src='https://unpkg.com/d3@6.7.0/dist/d3.min.js'></script> -->
-  <script src="https://d3js.org/d3.v4.js"></script>
+
+  <script src="https://d3js.org/d3.v6.js"></script>
   <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
   <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
   <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
@@ -25,14 +25,15 @@
     </header>
 
     <div class='container map-holder svg-container' id='map-holder'></div>
-    <div class='container up-right'>Up right</div>
+    <div class='container up-right'></div>
     <div class='container pca' id='pca'></div>
     <div class='container radarChart' id='radarChart'></div>
     <div class='container sexChart' id='sexChart'></div>
     <div class='container ageChart' id='ageChart'></div>
     
   </div>
-  <script src="./manager.js"></script>
+  <script src="./controller.js"></script>
+  <script src='./components/scatterPlot.js'></script>
   <script src='./components/sexChart.js'></script>
   <script src='./components/ageChart.js'></script>
   <script src='./components/radarChart.js'></script>

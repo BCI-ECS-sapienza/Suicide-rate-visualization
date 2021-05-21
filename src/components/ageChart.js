@@ -1,6 +1,7 @@
 // Width and Height of the whole visualization
 var w = document.getElementById('ageChart').offsetWidth;
 var h = document.getElementById('ageChart').offsetHeight;
+
 // set the dimensions and margins of the graph
 var margin = {top: 20, right: 30, bottom: 40, left: 90},
     width = w - margin.left - margin.right,
