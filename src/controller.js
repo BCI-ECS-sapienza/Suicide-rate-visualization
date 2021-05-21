@@ -48,7 +48,7 @@ Controller.prototype.loadData = function () {
 // custom listener
 Controller.prototype.addListener = function (nameEvent, action) {
     if (this.dataLoaded && nameEvent == 'dataReady') action();
-    else this.listenersContainer.addEventListener(nameEvent, action());
+    else this.listenersContainer.addEventListener(nameEvent, action);
 }
 
 
@@ -58,6 +58,7 @@ Controller.prototype.getDataAll = function () {
 }
 
 Controller.prototype.getDataFiltered = function () {
+    if (this.dataFiltered == undefined) return this.data;
     return this.dataFiltered;
 }
 
