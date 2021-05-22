@@ -3,7 +3,7 @@ const initial_width_ageChart = document.getElementById('ageChart').offsetWidth;
 const initial_height_ageChart = document.getElementById('ageChart').offsetHeight;
 
 // set the dimensions and margins of the graph
-const margin_ageChart = {top: 40, right: 40, bottom: 60, left: 90},
+const margin_ageChart = {top: 40, right: 40, bottom: 60, left: 100},
     width_ageChart = initial_width_ageChart - margin_ageChart.left - margin_ageChart.right,
     height_ageChart = initial_height_ageChart - margin_ageChart.top - margin_ageChart.bottom;
 
@@ -108,7 +108,7 @@ function makeAgeChart() {
 
 
   // if filters are applied show also dataYear behind with low opacity
-  if (controller.isDataFiltered) {
+  if (controller.isDataFiltered == true) {
     svgAge.selectAll()
       .data(dataYear)
       .enter()

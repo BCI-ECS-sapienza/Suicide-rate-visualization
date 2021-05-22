@@ -35,7 +35,7 @@ function makeSexChart() {
   const yValue = d => d.suicides_pop;
   const xLabel = 'Sex';;
   const yLabel = 'Avg. #suicides/100k pop';
-  const xPadding = 0.5;
+  const xPadding = 0.6;
   const barColors = ['#af8dc3','#7fbf7b'];
   const behind_opacity = 0.3;
 
@@ -102,7 +102,7 @@ function makeSexChart() {
 
 
   // if filters are applied show also dataYear behind with low opacity
-  if (controller.isDataFiltered) {
+  if (controller.isDataFiltered == true) {
     svgSex.selectAll()
       .data(dataYear)
       .enter()

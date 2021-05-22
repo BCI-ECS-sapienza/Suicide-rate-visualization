@@ -17,7 +17,7 @@ html,body {
     height: 98%;
     max-width: 100%;
     display: grid;
-    grid-template-columns: 30% 30% auto;
+    grid-template-columns: 25% 35% auto;
     grid-template-rows: 10% 25% 20% 5% 20% auto;
     grid-gap: 3px;
 }
@@ -99,8 +99,7 @@ html,body {
     font-size: 16px;
     font-family: sans-serif;
 }
-
-.axis-label, .bar-value-sex, .bar-value-age{
+.axis-label{
     fill: white;
     font-size: 20px;
     font-family: sans-serif;
@@ -145,7 +144,12 @@ html,body {
     fill: rgb(110, 110, 110);
 }
 .divergence-age, .divergence-sex{
-    fill: white;
+    fill: black;
+}
+.bar-value-sex, .bar-value-age{
+    fill: black;
+    font-size: 16px;
+    font-family: sans-serif;
 }
 
 
