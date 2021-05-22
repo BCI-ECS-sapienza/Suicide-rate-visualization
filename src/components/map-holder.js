@@ -17,20 +17,65 @@ var projection = d3.geoMercator()
 
 
 // Load external data and boot
+/*
 d3.queue()
   .defer(d3.json, "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson")
   .defer(d3.csv, "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world_population.csv", function(d) { data.set(d.code, +d.pop); })
   //.defer(d3.csv, "../../data/data.csv", function(d) { data.set(d.country, +d.suicides_pop); })
   .await(ready);
-
+*/
 
 // Data and color scale
-var data = d3.map();
+//var data = d3.map();
 var colorScale = d3.scaleThreshold()
-  .domain([100000, 1000000, 10000000, 30000000, 100000000]) //, 500000000])
+  .domain([10000, 100000, 1000000, 3000000, 10000000]) //, 500000000])
   .range(d3.schemeReds[5]);
 
+function makeMap() {
+  var data = d3.map();
+  
+  d3.json(
+    "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson", function(json) {
 
+    // Draw the map
+      map.append("g")
+      .selectAll("path")
+      .data(json.features)
+      .enter()
+      .append("path")
+        // draw each country
+      .attr("d", d3.geoPath()
+        .projection(projection)
+      )
+      // set the color of each country
+      .attr("fill", function (d) {
+        d.total = data.get(data.code) || 0;
+        return colorScale(d.total);
+      })
+      .style("stroke", "transparent")
+      .attr("class", function(d){ return "Country" } )
+      .style("opacity", .8)
+      .on("mouseover", function (d) {
+        d3.select(this)
+            .style("fill", '#80ced6')
+            .style("cursor", "pointer");
+        d3.select('#tooltip')
+            .style("left", (d3.event.pageX + 15) + "px")
+			      .style("top", (d3.event.pageY - 28) + "px")
+			      .transition().duration(400)
+			      .style("opacity", 1)
+			      .text(d.id);
+      })
+      .on("mouseout", function(d){
+        d3.select(this)
+          .style("fill", colorScale(d.total));	
+        d3.select('#tooltip')
+          .transition().duration(300)
+          .style("opacity", 0);
+      })
+  });
+}
+/*
 function ready(error, topo) {
     // Draw the map
     map.append("g")
@@ -55,25 +100,24 @@ function ready(error, topo) {
             .style("fill", '#80ced6')
             .style("cursor", "pointer");
         d3.select('#tooltip')
-            .transition().duration(200)
-            .style('opacity', 1).text(d.id);
+            .style("left", (d3.event.pageX + 15) + "px")
+			      .style("top", (d3.event.pageY - 28) + "px")
+			      .transition().duration(400)
+			      .style("opacity", 1)
+			      .text(d.id);
       })
       .on("mouseout", function(d){
         d3.select(this)
           .style("fill", colorScale(d.total));	
         d3.select('#tooltip')
-          .style('opacity', 0);
-      })
-      .on('mousemove', function() {
-        d3.select('#tooltip')
-        .style('left', d3.event.pageX + 'px')
-        .style('top', d3.event.pageY + 'px')
+          .transition().duration(300)
+          .style("opacity", 0);
       })
       .call(d3.zoom().on("zoom", function () {
         map.attr("transform", d3.event.transform);
      }))
     }
-
+*/
 // Legend
 var rect = map.append('rect')
     .attr("width", '100')
@@ -100,5 +144,13 @@ map.select(".legendThreshold")
 // Tooltip
 var tip = d3.select('#map-holder')
     .append('tip')
-    .attr("id", "tooltip")			
-    .attr('style', 'position: absolute; opacity: 0;');
+    .attr("id", "tooltip")
+    .attr("class", "tooltip")
+    .attr('style', 'opacity: 0;');
+
+  
+// draw graph on dataloaded
+controller.addListener('dataLoaded', function (e) {
+  getDataMap(); 
+  makeMap();
+});
