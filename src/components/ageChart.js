@@ -31,7 +31,7 @@ function makeAgeChart() {
     { country: "Albania", age: "male", age:"20-30", suicides_pop: "250"},
     { country: "Italy", age: "male", age:"30-40", suicides_pop: "350"},
     { country: "Italy", age: "male", age:"40-50", suicides_pop: "300"},
-    { country: "Italy", age: "male", age:"50-60", suicides_pop: "320"},
+    { country: "Italy", age: "male", age:"50-60", suicides_pop: "200"},
   ];
 
   //const dataYear = aggregate(dataYearLoaded)
@@ -191,6 +191,25 @@ function makeAgeChart() {
     .attr('y', (a) => yScale(a.suicides_pop) + 30)
     .attr('text-anchor', 'middle')
     .text((a) => `${a.suicides_pop}`)
+
+  // add avg line
+  const avg_value = (d3.sum(dataFiltered, (d) => d.suicides_pop)) / dataFiltered.length;
+  const avg_value_scaled = Math.round(yScale(avg_value))
+  svgAge.append("line")
+    .attr('class', 'avg-line')
+    .attr("x1", 0)
+    .attr("x2", width_ageChart)
+    .attr("y1", avg_value_scaled)
+    .attr("y2", avg_value_scaled)
+  
+  // avg value print
+  svgAge.append("text")
+    .attr('class', 'avg-label')
+    .attr("text-anchor", "middle")
+    .attr("transform", `translate(${width_ageChart-20}, ${avg_value_scaled - 10})`) 
+    .text(avg_value)
+
+
 
 }
 
