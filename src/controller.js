@@ -1,7 +1,7 @@
 Controller = function () {
     // events handlers
     this.dataLoaded = false;
-    this.filtersApplied = false;    //set true when visualization filters applied
+    this.isDataFiltered = true;  //set true when visualization filters applied
     this.listenersContainer = new EventTarget();
 
     // complete data
@@ -76,14 +76,6 @@ Controller.prototype.getSuicideColorScale = function () {
 }
 
 
-// flags accessors
-Controller.prototype.isDataFiltered = function () {
-    return this.filtersApplied;
-}
-
-Controller.prototype.setDataFiltered = function (bool) {
-    return this.filtersApplied = bool;
-}
 
 
 // data rows parser
