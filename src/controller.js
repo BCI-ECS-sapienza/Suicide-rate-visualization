@@ -22,7 +22,7 @@ Controller.prototype.loadData = function () {
     const thisYear = 2000;
 
     d3.csv("../data/data.csv", parseRow, function (data) {
-        console.log("data loading...")
+        //console.log("data loading...")
         tmpData = [];
         countries = new Set();
 
@@ -38,11 +38,11 @@ Controller.prototype.loadData = function () {
         _obj.dataFiltered = tmpData;
         _obj.dataMap = tmpData;
 
-        console.log(_obj.dataAll)
-        console.log(_obj.countryNames)
-        console.log( _obj.dataFiltered)
+        //console.log(_obj.dataAll)
+        //console.log(_obj.countryNames)
+        //console.log( _obj.dataFiltered)
     
-        console.log("data loaded!")
+        //console.log("data loaded!")
         _obj.dataLoaded = true;       
         _obj.listenersContainer.dispatchEvent(new Event('dataLoaded'))   
     });
@@ -84,6 +84,18 @@ Controller.prototype.isDataFiltered = function () {
 Controller.prototype.setDataFiltered = function (bool) {
     return this.filtersApplied = bool;
 }
+
+
+// data rows parser
+const parseRow = (d) => {
+    d.year = +d.year;
+    d.suicides_no = +d.suicides_no;
+    d.population =  +d.population;
+    d.suicides_pop = +d.suicides_pop;
+    d.gdp_for_year = +d.gdp_for_year;
+    d.gdp_per_capita = +d.gdp_per_capita;
+    return d;
+};
 
 
 const controller = new Controller();
