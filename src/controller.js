@@ -24,7 +24,7 @@ Controller.prototype.loadData = function () {
     d3.csv("../data/data.csv", parseRow, function (data) {
         console.log("data loading...")
         tmpData = [];
-        countries = new Set();
+        countries = new Set;
 
         data.forEach(d => {
             if (d.year == thisYear) tmpData.push(d);  
@@ -37,10 +37,12 @@ Controller.prototype.loadData = function () {
         _obj.dataYear = tmpData;
         _obj.dataFiltered = tmpData;
         _obj.dataMap = tmpData;
-
-        console.log(_obj.dataAll)
-        console.log(_obj.countryNames)
-        console.log( _obj.dataFiltered)
+        
+        //console.log(_obj.countryNames);
+        //console.log(_obj.dataYear[0].country);
+        //console.log(_obj.dataAll)
+        //console.log(_obj.countryNames)
+        //console.log( _obj.dataFiltered)
     
         console.log("data loaded!")
         _obj.dataLoaded = true;       
@@ -75,6 +77,9 @@ Controller.prototype.getSuicideColorScale = function () {
     return this.suicideColorScale;
 }
 
+Controller.prototype.getCountryNames = function () {
+    return this.countryNames;
+}
 
 // flags accessors
 Controller.prototype.isDataFiltered = function () {
