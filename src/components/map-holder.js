@@ -151,6 +151,5 @@ var tip = d3.select('#map-holder')
   
 // draw graph on dataloaded
 controller.addListener('dataLoaded', function (e) {
-  getDataMap(); 
   makeMap();
 });
