@@ -130,15 +130,11 @@ html,body {
     font-weight: bold;
 }
 .tooltip {
-    position: absolute;
-    padding: 7px;
-    font-size: 0.8em;
-    color: rgb(73, 72, 72);
-    pointer-events: none;
-    background: #fff;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-shadow: 3px 3px 10px 0px rgba(0, 0, 0, 0.25);
+    line-height: 1;
+    padding: 12px;
+    background: rgba(43,43,43, 0.8);
+    color: #fff;
+    border-radius: 2px;
 }
 
 
@@ -154,6 +150,14 @@ html,body {
     fill: black;
     font-size: 16px;
     font-family: sans-serif;
+}
+.avg-line {
+    stroke: rgb(255, 15, 15);
+    stroke-width: 1.5;
+}
+.avg-label {
+    fill: rgb(255, 15, 15);
+    font-size: 18px;
 }
 
 

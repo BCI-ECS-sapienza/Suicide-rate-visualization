@@ -186,7 +186,27 @@ function makeSexChart() {
     .attr('text-anchor', 'middle')
     .text((a) => `${a.suicides_pop}`)
 
+  // add avg line
+  const avg_value = (d3.sum(dataFiltered, (d) => d.suicides_pop)) / dataFiltered.length;
+  const avg_value_scaled = Math.round(yScale(avg_value))
+  svgSex.append("line")
+    .attr('class', 'avg-line')
+    .attr("x1", 0)
+    .attr("x2", width_sexChart)
+    .attr("y1", avg_value_scaled)
+    .attr("y2", avg_value_scaled)
+  
+  // avg value print
+  svgSex.append("text")
+    .attr('class', 'avg-label')
+    .attr("text-anchor", "middle")
+    .attr("transform", `translate(${width_sexChart-20}, ${avg_value_scaled - 10})`) 
+    .text(avg_value)
+
 }
+
+
+
 
 
 // draw graph on dataloaded
