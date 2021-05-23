@@ -3,7 +3,7 @@ const initial_width_scatterPlot = document.getElementById('scatterPlot').offsetW
 const initial_height_scatterPlot = document.getElementById('scatterPlot').offsetHeight;
 
 // set the dimensions and margins of the graph
-const margin_scatterPlot = {top: 40, right: 40, bottom: 60, left: 90},
+const margin_scatterPlot = {top: 30, right: 130, bottom: 60, left: 80},
     width_scatterPlot = initial_width_scatterPlot - margin_scatterPlot.left - margin_scatterPlot.right,
     height_scatterPlot = initial_height_scatterPlot - margin_scatterPlot.top - margin_scatterPlot.bottom;
 
@@ -29,9 +29,9 @@ function makeScatterPlot() {
     const colorValue = d => d.value.suicides_pop;
     const xLabel = 'GDP for year';;
     const yLabel = 'GDP per capita';
-    const colorLabel = 'Avg. #suicides/100k pop'
+    const colorLabel = 'Suicide ratio'
     const colorArray = controller.suicideColorScale;
-    const circle_size = 3;
+    const circle_size = 5;
     const behind_opacity = 1;
 
     // add some padding on top xAxis (30% more than max between dataYear and dataFiltered)
@@ -40,7 +40,7 @@ function makeScatterPlot() {
     const max_val_x = (max_val_year_x >  max_val_filtered_x) ? max_val_year_x : max_val_filtered_x;
     const domain_max_x = parseInt(max_val_x) + parseInt(max_val_x/100) 
 
-     // add some padding on top yAxis (30% more than max between dataYear and dataFiltered)
+    // add some padding on top yAxis (30% more than max between dataYear and dataFiltered)
     const max_val_year_y = d3.max(dataYear, yValue) 
     const max_val_filtered_y = d3.max(dataFiltered, yValue) 
     const max_val_y = (max_val_year_y >  max_val_filtered_y) ? max_val_year_y : max_val_filtered_y;
@@ -56,14 +56,18 @@ function makeScatterPlot() {
         .range([ height_scatterPlot, 0])
         .nice();
 
-    const colorScale = d3.scaleThreshold()
-        .domain(d3.extent(dataYear, colorValue))
+    const colorScale = d3.scaleQuantize()
+        .domain([0, d3.max(dataFiltered,colorValue)])
         .range(colorArray);
 
 
-    // axis format
+    // axis setup
     const xAxis = d3.axisBottom(xScale).tickFormat(AxisTickFormat);
     const yAxis = d3.axisLeft(yScale).tickFormat(AxisTickFormat);
+
+    // legend setup
+    const legend = d3.legendColor().scale(colorScale)
+                    .labelFormat(d3.format(".0f")).title(colorLabel);
 
 
     // add X axis
@@ -113,6 +117,12 @@ function makeScatterPlot() {
         .tickSize(-width_scatterPlot, 0, 0)
         .tickFormat(''))
 
+    // add legend
+    svgScatterPlot.append("g")
+        .attr("transform", `translate(${width_scatterPlot+20},${margin_scatterPlot.top})`)
+        .call(legend)
+            .attr("class","axis-text");
+
 
     // else show only data filtered
     if (controller.isDataFiltered == true) {
@@ -128,6 +138,48 @@ function makeScatterPlot() {
                 .style("opacity", behind_opacity)
                 .style("stroke", "white");
     }
+
+
+
+
+
+
+
+    // add avg line for y
+    const avg_value_y = Math.round((d3.sum(dataFiltered, (d) => d.value.gdp_per_capita)) / dataFiltered.length);
+    const avg_value_scaled_y = yScale(avg_value_y)
+    svgScatterPlot.append("line")
+        .attr('class', 'avg-line')
+        .attr("x1", 0)
+        .attr("x2", width_scatterPlot+2)
+        .attr("y1", avg_value_scaled_y)
+        .attr("y2", avg_value_scaled_y)
+  
+    // avg value print
+    svgScatterPlot.append("text")
+        .attr('class', 'avg-label')
+        .attr("text-anchor", "middle")
+        .attr("transform", `translate(${width_scatterPlot-20}, ${avg_value_scaled_y-10})`) 
+        .text(d3.format('.2s')(avg_value_y))
+
+    // add avg line for x
+    const avg_value_x = Math.round((d3.sum(dataFiltered, (d) => d.value.gdp_for_year)) / dataFiltered.length);
+    const avg_value_scaled_x = xScale(avg_value_x)
+    svgScatterPlot.append("line")
+        .attr('class', 'avg-line')
+        .attr("x1", avg_value_scaled_x)
+        .attr("x2", avg_value_scaled_x)
+        .attr("y1", 0)
+        .attr("y2", height_scatterPlot+2)
+  
+    // avg value print
+    svgScatterPlot.append("text")
+        .attr('class', 'avg-label')
+        .attr("text-anchor", "middle")
+        .attr("transform", `translate(${avg_value_scaled_x+25}, ${20})`) 
+        .text(d3.format('.2s')(avg_value_x).replace('G', 'B'))
+
+
   
 
 

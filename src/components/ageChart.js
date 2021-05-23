@@ -3,7 +3,7 @@ const initial_width_ageChart = document.getElementById('ageChart').offsetWidth;
 const initial_height_ageChart = document.getElementById('ageChart').offsetHeight;
 
 // set the dimensions and margins of the graph
-const margin_ageChart = {top: 40, right: 40, bottom: 60, left: 100},
+const margin_ageChart = {top: 30, right: 30, bottom: 60, left: 80},
     width_ageChart = initial_width_ageChart - margin_ageChart.left - margin_ageChart.right,
     height_ageChart = initial_height_ageChart - margin_ageChart.top - margin_ageChart.bottom;
 
@@ -23,11 +23,14 @@ function makeAgeChart() {
   const dataYear = aggregateDataAge(dataYearLoaded);
   const dataFiltered = aggregateDataAge(dataFilteredLoaded);
 
+  dataYear.sort((a, b) => d3.ascending(a.key, b.key));
+  dataFiltered.sort((a, b) => d3.ascending(a.key, b.key));
+
   // set params
   const xValue = d => d.key;
   const yValue = d => d.value.suicides_pop;
   const xLabel = 'Age';;
-  const yLabel = 'Avg. #suicides/100k pop';
+  const yLabel = 'Suicide ratio';
   const xPadding = 0.5;
   const barColors = ['#8c510a','#d8b365','#f6e8c3','#c7eae5','#5ab4ac','#01665e'];
   const behindOpacity = 0.3;
@@ -54,7 +57,7 @@ function makeAgeChart() {
     .domain(dataYear.map(xValue))
     .range(barColors);
 
-  // axis format
+  // axis setup
   const xAxis = d3.axisBottom(xScale);
   const yAxis = d3.axisLeft(yScale).tickFormat(AxisTickFormat);
 

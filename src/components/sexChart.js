@@ -3,7 +3,7 @@ const initial_width_sexChart = document.getElementById('sexChart').offsetWidth;
 const initial_height_sexChart = document.getElementById('sexChart').offsetHeight;
 
 // set the dimensions and margins of the graph
-const margin_sexChart = {top: 40, right: 40, bottom: 60, left: 90},
+const margin_sexChart = {top: 30, right: 30, bottom: 60, left: 80},
     width_sexChart = initial_width_sexChart - margin_sexChart.left - margin_sexChart.right,
     height_sexChart = initial_height_sexChart - margin_sexChart.top - margin_sexChart.bottom;
 
@@ -27,7 +27,7 @@ function makeSexChart() {
   const xValue = d => d.key;
   const yValue = d => d.value.suicides_pop;
   const xLabel = 'Sex';;
-  const yLabel = 'Avg. #suicides/100k pop';
+  const yLabel = 'Suicide ratio';
   const xPadding = 0.6;
   const barColors = ['#af8dc3','#7fbf7b'];
   const behindOpacity = 0.3;
@@ -54,7 +54,7 @@ function makeSexChart() {
     .domain(dataYear.map(xValue))
     .range(barColors);
 
-  // axis format
+  // axis setup
   const xAxis = d3.axisBottom(xScale);
   const yAxis = d3.axisLeft(yScale).tickFormat(AxisTickFormat);
 
