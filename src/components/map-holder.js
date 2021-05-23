@@ -16,33 +16,36 @@ const projection = d3.geoMercator()
   .center([0, 10])
   .translate([width/2, height/2]);
 
-// Data and color scale
-//var data = d3.map();
-//var colorScale = d3.scaleThreshold()
-  //.domain([10000, 100000, 1000000, 3000000, 10000000]) //, 500000000])
-  //.range(d3.schemeReds[5]);
 
 function makeMap() {
+  // setting parameters
   const dataYearLoaded = controller.getDataYear();
   const dataFilteredLoaded = controller.getDataFiltered();
 
   const dataYear = aggregateDataMap(dataYearLoaded);
   const dataFiltered = aggregateDataMap(dataFilteredLoaded);
-  const colorLabel = 'Suicide ratio'
+  const colorLabel = 'Suicide ratio';
+  
+  const countryNames = d => d.key;
+  const suicidesValue = d => d.value.suicides_pop;
 
+  const max_val_year_x = d3.max(dataYear, suicidesValue); 
+  const max_val_filtered_x = d3.max(dataFiltered, suicidesValue); 
+
+  
   // mapping (country, #suicides) in data
   const data = d3.map();
-  for(var i = 0; i<dataFiltered.length; i++){
-    data.set(dataFiltered[i].name, +dataFiltered[i].suicides);
+  for (var i = 0; i<dataFiltered.length; i++){
+    console.log(dataFiltered[i].key);
+    console.log(dataFiltered[i].value.suicides_pop);
+    data.set(dataFiltered[i].key, +dataFiltered[i].value.suicides_pop);
   }
+  
 
   // Data and color scale
-  //var data = d3.map();
   const colorArray = controller.suicideColorScale;
-  const colorValue = d => d.value.suicides_pop;
-  const colorScale = d3.scaleThreshold()
-  //const colorScale = d3.scaleQuantize()
-        .domain(d3.extent(controller.getDataYear, colorValue))
+  const colorScale = d3.scaleQuantize()
+        .domain([0, max_val_filtered_x])
         .range(colorArray);
 
   // Legend
@@ -53,11 +56,6 @@ function makeMap() {
   const legend = d3.legendColor().scale(colorScale)
     .labelFormat(d3.format(".0f"))
     .title(colorLabel);
-/*
-  const legend = d3.legendColor()
-    .labels(function (d) { return labels[d.i]; })
-    .shapePadding(4)
-    .scale(colorScale);*/
   map.select(".legendThreshold")
     .call(legend)
       .attr("class","axis-text");
@@ -85,7 +83,7 @@ function makeMap() {
       // set the color of each country
       .attr("fill", function (d) {    
         d.total = data.get(d.properties.name) || 0;
-        console.log(d.total);
+        //console.log(d.total);
         return colorScale(d.total);
       })
       .style("stroke", "transparent")
@@ -114,21 +112,17 @@ function makeMap() {
   });
 }
 
-// Function to manage data to be represented
-const aggregateDataMap = (dataMap) => {
+// aggregate data by sex
+const aggregateDataMap = (dataIn) => {
   const data = d3.nest()
-    .key((d) => d.country)
-    //.rollup((d) => Math.round(d3.sum(d, (g) => g.suicides_pop)))
-    .rollup((d) => Math.round(d3.mean(d, (g) => g.suicides_pop)))
-    .entries(dataMap)
-    .map(function(group){
-            return{
-                name: group.key,
-                suicides: group.value
-        };
-    })
+    .key( (d) => d.country)
+    .rollup( (d) =>  ({
+      suicides_pop: Math.round(d3.mean(d, (g) => g.suicides_pop))
+    }))
+  .entries(dataIn)
   return data;
-}
+};
+
 // draw map on dataloaded
 controller.addListener('dataLoaded', function (e) {
   makeMap();
