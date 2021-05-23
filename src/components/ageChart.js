@@ -17,33 +17,27 @@ var svgAge = d3.select("#ageChart")
     
 
 function makeAgeChart() {
+  const dataYearLoaded = controller.getDataYear();
+  const dataFilteredLoaded = controller.getDataFiltered();
 
-  const dataYear = [
-    { country: "Albania", age: "male", age:"10-20", suicides_pop: "400"},
-    { country: "Albania", age: "male", age:"20-30", suicides_pop: "500"},
-    { country: "Italy", age: "male", age:"30-40", suicides_pop: "350"},
-    { country: "Italy", age: "male", age:"40-50", suicides_pop: "400"},
-    { country: "Italy", age: "male", age:"50-60", suicides_pop: "350"},
-  ];
-
-  const dataFiltered = [
-    { country: "Albania", age: "male", age:"10-20", suicides_pop: "300"},
-    { country: "Albania", age: "male", age:"20-30", suicides_pop: "250"},
-    { country: "Italy", age: "male", age:"30-40", suicides_pop: "350"},
-    { country: "Italy", age: "male", age:"40-50", suicides_pop: "300"},
-    { country: "Italy", age: "male", age:"50-60", suicides_pop: "200"},
-  ];
-
-  //const dataYear = aggregate(dataYearLoaded)
+  const dataYear = aggregateDataAge(dataYearLoaded);
+  const dataFiltered = aggregateDataAge(dataFilteredLoaded);
 
   // set params
-  const xValue = d => d.age;
-  const yValue = d => d.suicides_pop;
+  const xValue = d => d.key;
+  const yValue = d => d.value.suicides_pop;
   const xLabel = 'Age';;
   const yLabel = 'Avg. #suicides/100k pop';
   const xPadding = 0.5;
   const barColors = ['#8c510a','#d8b365','#f6e8c3','#c7eae5','#5ab4ac','#01665e'];
-  const behind_opacity = 0.3;
+  const behindOpacity = 0.3;
+  const backOffset = 5;
+
+  // add some padding on top yAxis (10% more than max between dataYear and dataFiltered)
+  const max_val_year = d3.max(dataYear, yValue) 
+  const max_val_filtered = d3.max(dataFiltered, yValue) 
+  const max_val = (max_val_year >  max_val_filtered) ? max_val_year : max_val_filtered;
+  const domain_max = parseInt(max_val) + parseInt(max_val/10) 
 
   // set scales
   const xScale = d3.scaleBand()
@@ -51,8 +45,6 @@ function makeAgeChart() {
     .range([ 0, width_ageChart ])
     .padding(xPadding);
 
-  const max_val = d3.max(dataYear, yValue) 
-  const domain_max = parseInt(max_val) + parseInt(max_val/10) //adds some padding on top
   const yScale = d3.scaleLinear()
     .domain([0, domain_max ])
     .range([ height_ageChart, 0])
@@ -114,13 +106,13 @@ function makeAgeChart() {
       .enter()
       .append('g')
       .append('rect')
-      .attr('x', (d) => xScale(d.age))
-      .attr('y', (d) => yScale(d.suicides_pop))
-      .attr('height', (d) => height_ageChart - yScale(d.suicides_pop))
-      .attr('width', xScale.bandwidth())
-      .style("fill",  (d) => color(d.age))
+      .attr('x', (d) => xScale(d.key) + backOffset)
+      .attr('y', (d) => yScale(d.value.suicides_pop))
+      .attr('height', (d) => height_ageChart - yScale(d.value.suicides_pop))
+      .attr('width', xScale.bandwidth() + backOffset)
+      .style("fill",  (d) => color(d.key))
       .style("stroke", "black") 
-      .attr('opacity', behind_opacity)
+      .attr('opacity', behindOpacity)
   } 
 
 
@@ -132,11 +124,11 @@ function makeAgeChart() {
     
   barGroups
     .append('rect')
-    .attr('x', (d) => xScale(d.age))
-    .attr('y', (d) => yScale(d.suicides_pop))
-    .attr('height', (d) => height_ageChart - yScale(d.suicides_pop))
+    .attr('x', (d) => xScale(d.key))
+    .attr('y', (d) => yScale(d.value.suicides_pop))
+    .attr('height', (d) => height_ageChart - yScale(d.value.suicides_pop))
     .attr('width', xScale.bandwidth())
-    .style("fill",  (d) => color(d.age))
+    .style("fill",  (d) => color(d.key))
     .style("stroke", "black")  
     .style("stroke-width", 1.5)
     .on('mouseenter', function (actual, i) {
@@ -148,17 +140,17 @@ function makeAgeChart() {
       d3.select(this)
         .transition()
         .duration(300)
-        .attr('x', (a) => xScale(a.age) - 5)
+        .attr('x', (d) => xScale(d.key) - 5)
         .attr('width', xScale.bandwidth() + 10)
 
       // show value on bar
       barGroups.append('text')
         .attr('class', 'divergence-age')  //needed to remove on mouseleave
-        .attr('x', (a) => xScale(a.age) + xScale.bandwidth() / 2)
-        .attr('y', (a) => yScale(a.suicides_pop) + 30)
+        .attr('x', (d) => xScale(d.key) + xScale.bandwidth() / 2)
+        .attr('y', (d) => yScale(d.value.suicides_pop) + 30)
         .attr('text-anchor', 'middle')
-        .text((a, idx) => {
-          const divergence = (a.suicides_pop - actual.suicides_pop).toFixed(1)
+        .text((d, idx) => {
+          const divergence = (d.value.suicides_pop - actual.value.suicides_pop).toFixed(1)
           
           let text = ''
           if (divergence > 0) text += '+'
@@ -176,7 +168,7 @@ function makeAgeChart() {
       d3.select(this)
         .transition()
         .duration(300)
-        .attr('x', (a) => xScale(a.age))
+        .attr('x', (d) => xScale(d.key))
         .attr('width', xScale.bandwidth())
 
       // remove divergence value
@@ -187,18 +179,18 @@ function makeAgeChart() {
   barGroups 
     .append('text')
     .attr('class', 'bar-value-age')
-    .attr('x', (a) => xScale(a.age) + xScale.bandwidth() / 2)
-    .attr('y', (a) => yScale(a.suicides_pop) + 30)
+    .attr('x', (d) => xScale(d.key) + xScale.bandwidth() / 2)
+    .attr('y', (d) => yScale(d.value.suicides_pop) + 30)
     .attr('text-anchor', 'middle')
-    .text((a) => `${a.suicides_pop}`)
+    .text((d) => `${d.value.suicides_pop}`)
 
   // add avg line
-  const avg_value = (d3.sum(dataFiltered, (d) => d.suicides_pop)) / dataFiltered.length;
-  const avg_value_scaled = Math.round(yScale(avg_value))
+  const avg_value = Math.round((d3.sum(dataFiltered, (d) => d.value.suicides_pop)) / dataFiltered.length);
+  const avg_value_scaled = yScale(avg_value)
   svgAge.append("line")
     .attr('class', 'avg-line')
     .attr("x1", 0)
-    .attr("x2", width_ageChart)
+    .attr("x2", width_ageChart+2)
     .attr("y1", avg_value_scaled)
     .attr("y2", avg_value_scaled)
   
@@ -206,12 +198,22 @@ function makeAgeChart() {
   svgAge.append("text")
     .attr('class', 'avg-label')
     .attr("text-anchor", "middle")
-    .attr("transform", `translate(${width_ageChart-20}, ${avg_value_scaled - 10})`) 
+    .attr("transform", `translate(${width_ageChart-15}, ${avg_value_scaled-10})`) 
     .text(avg_value)
 
-
-
 }
+
+
+// aggregate data by sex
+const aggregateDataAge = (dataIn) => {
+  const data = d3.nest()
+    .key( (d) => d.age)
+    .rollup( (d) =>  ({
+      suicides_pop: Math.round(d3.mean(d, (g) => g.suicides_pop)),
+    }))
+  .entries(dataIn)
+  return data;
+};
 
 
 // draw graph on dataloaded
