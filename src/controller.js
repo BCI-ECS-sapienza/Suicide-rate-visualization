@@ -14,7 +14,7 @@ Controller = function () {
     this.dataMap;
 
     // help vars
-    this.suicideColorScale = ['#fee0d2','#fc9272','#de2d26']; //all color scales from https://colorbrewer2.org/
+    this.suicideColorScale = ['#fff5f0','#fee0d2','#fcbba1','#fc9272','#fb6a4a','#ef3b2c','#cb181d','#a50f15','#67000d']; //all color scales from https://colorbrewer2.org/
 }
 
 Controller.prototype.loadData = function () {
