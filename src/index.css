@@ -156,11 +156,11 @@ html,body {
     font-family: sans-serif;
 }
 .avg-line {
-    stroke: rgb(255, 15, 15);
+    stroke: yellow;
     stroke-width: 1.5;
 }
 .avg-label {
-    fill: rgb(255, 15, 15);
+    fill: yellow;
     font-size: 18px;
 }
 

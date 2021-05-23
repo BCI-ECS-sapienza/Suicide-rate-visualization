@@ -17,32 +17,40 @@ var svgScatterPlot = d3.select("#scatterPlot")
     
 
 function makeScatterPlot() {
-
-    const dataYear = controller.getDataAll();
-    const dataFiltered = controller.getDataFiltered();
-
-    //const dataYear = aggregate(dataYearLoaded)
+    const dataYearLoaded = controller.getDataYear();
+    const dataFilteredLoaded = controller.getDataFiltered();
+    
+    const dataYear = aggregateDataScatter(dataYearLoaded);
+    const dataFiltered = aggregateDataScatter(dataFilteredLoaded);
 
     // set params
-    const xValue = d => d.gdp_for_year;
-    const yValue = d => d.gdp_per_capita;
-    const colorValue = d => d.suicides_pop;
+    const xValue = d => d.value.gdp_for_year;
+    const yValue = d => d.value.gdp_per_capita;
+    const colorValue = d => d.value.suicides_pop;
     const xLabel = 'GDP for year';;
     const yLabel = 'GDP per capita';
     const colorLabel = 'Avg. #suicides/100k pop'
-    const colorArray = ['#fbb4b9', '#f768a1', '#c51b8a', '#7a0177'];
+    const colorArray = controller.suicideColorScale;
     const circle_size = 3;
     const behind_opacity = 1;
 
+    // add some padding on top xAxis (30% more than max between dataYear and dataFiltered)
+    const max_val_year_x = d3.max(dataYear, xValue) 
+    const max_val_filtered_x = d3.max(dataFiltered, xValue) 
+    const max_val_x = (max_val_year_x >  max_val_filtered_x) ? max_val_year_x : max_val_filtered_x;
+    const domain_max_x = parseInt(max_val_x) + parseInt(max_val_x/100) 
+
+     // add some padding on top yAxis (30% more than max between dataYear and dataFiltered)
+    const max_val_year_y = d3.max(dataYear, yValue) 
+    const max_val_filtered_y = d3.max(dataFiltered, yValue) 
+    const max_val_y = (max_val_year_y >  max_val_filtered_y) ? max_val_year_y : max_val_filtered_y;
+    const domain_max_y = parseInt(max_val_y) + parseInt(max_val_y/100) 
+
     // set scales
-    const max_val_x = d3.max(dataYear, xValue) 
-    const domain_max_x = parseInt(max_val_x) + parseInt(max_val_x/10) //adds some padding on top
-    const xScale = d3.scalePow()
+    const xScale = d3.scaleLinear()
         .domain([0, domain_max_x ])
         .range([ 0, width_scatterPlot ])
 
-    const max_val_y = d3.max(dataYear, yValue) 
-    const domain_max_y = parseInt(max_val_y) + parseInt(max_val_y/10) //adds some padding on top
     const yScale = d3.scaleLinear()
         .domain([0, domain_max_y ])
         .range([ height_scatterPlot, 0])
@@ -113,18 +121,32 @@ function makeScatterPlot() {
             .data(dataYear)
             .enter()
             .append("circle")
-                .attr("cx", (d) => xScale(d.gdp_for_year) )
-                .attr("cy", (d) => yScale(d.gdp_per_capita))
+                .attr("cx", (d) => xScale(d.value.gdp_for_year) )
+                .attr("cy", (d) => yScale(d.value.gdp_per_capita))
                 .attr("r", circle_size)
-                .style("fill", (d) => colorScale(d.suicides_pop) )
+                .style("fill", (d) => colorScale(d.value.suicides_pop) )
                 .style("opacity", behind_opacity)
                 .style("stroke", "white");
     }
   
 
 
-
 }
+
+
+
+// aggregate data by sex
+const aggregateDataScatter = (dataIn) => {
+    const data = d3.nest()
+      .key( (d) => d.country)
+      .rollup( (d) =>  ({
+        suicides_pop: Math.round(d3.mean(d, (g) => g.suicides_pop)),
+        gdp_for_year: d[0].gdp_for_year,    // same for each category
+        gdp_per_capita: d[0].gdp_per_capita
+      }))
+    .entries(dataIn)
+    return data;
+  };
 
 
 // draw graph on dataloaded

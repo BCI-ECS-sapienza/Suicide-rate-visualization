@@ -14,7 +14,7 @@ Controller = function () {
     this.dataMap;
 
     // help vars
-    this.suicideColorScale = ['#fee0d2','#fc9272','#de2d26']; //from https://colorbrewer2.org/
+    this.suicideColorScale = ['#fee0d2','#fc9272','#de2d26']; //all color scales from https://colorbrewer2.org/
 }
 
 Controller.prototype.loadData = function () {
@@ -40,6 +40,7 @@ Controller.prototype.loadData = function () {
 
         //console.log(_obj.dataAll)
         //console.log(_obj.countryNames)
+        //console.log( _obj.dataYear)
         //console.log( _obj.dataFiltered)
     
         //console.log("data loaded!")
@@ -68,11 +69,6 @@ Controller.prototype.getDataYear = function () {
 Controller.prototype.getDataFiltered = function () {
     if (this.dataFiltered == undefined) return this.dataYear;
     return this.dataFiltered;
-}
-
-
-Controller.prototype.getSuicideColorScale = function () {
-    return this.suicideColorScale;
 }
 
 
