@@ -57,13 +57,14 @@ function makeMap() {
     .call(legend)
       .attr("class","axis-text");
   
-  // Tooltip
-  const tip = d3.select('#map-holder')
-    .append('tip')
-    .attr("id", "tooltip")
-    .attr("class", "tooltip")
-    .attr('style', 'opacity: 0;');
-  
+  var tool_tip = d3.tip()
+    .attr('class', 'd3-tip')
+    .offset([-10, 0])
+    .html(function(d) {
+      return d.properties.name + ": "+d.total;
+    })
+    map.call(tool_tip);
+
   d3.json(
     "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson", function(json) {
 
@@ -96,12 +97,15 @@ function makeMap() {
         d3.select(this)
             .style("fill", '#80ced6')
             .style("cursor", "pointer");
-        d3.select('#tooltip')
+        /*d3.select('#tooltip')
             .style("left", (d3.event.pageX + 15) + "px")
             .style("top", (d3.event.pageY - 28) + "px")
             .transition().duration(400)
             .style("opacity", 1)
-            .text(d.properties.name + ': ' + d.total);
+            .text(d.properties.name + ': ' + d.total);*/
+        tool_tip
+          .direction('se')
+          .show(d);
       })
       // adding event on mouseout
       .on("mouseout", function(d){
@@ -113,9 +117,10 @@ function makeMap() {
               return colorScale(d.total);
             }
           });	
-        d3.select('#tooltip')
+        /*d3.select('#tooltip')
           .transition().duration(300)
-          .style("opacity", 0);
+          .style("opacity", 0);*/
+        tool_tip.hide()
       })
   });
 }
