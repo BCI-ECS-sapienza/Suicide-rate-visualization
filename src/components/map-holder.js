@@ -1,15 +1,15 @@
-// Width and Height of the whole visualization
+// width and weight of the whole container
 const widthMap = document.getElementById('map-holder').offsetWidth;
 const heightMap = document.getElementById('map-holder').offsetHeight;
 
-// Create SVG
+// create SVG
 const map = d3.select( '#map-holder' )
   .append( "svg" )
   .attr( "width", '100%' )
   .attr( "height", '100%' )
   .attr('viewBox', ("0 0 "+ widthMap + " " + heightMap));
 
-// Create path and projection
+// create path and projection
 const path = d3.geoPath();
 const projection = d3.geoMercator()
   .scale(100, 30)
@@ -40,13 +40,13 @@ function makeMap() {
   }
   
 
-  // Data and color scale
+  // data and color scale
   const colorArray = controller.suicideColorScale;
   const colorScale = d3.scaleQuantize()
         .domain([0, max_val_filtered_x])
         .range(colorArray);
 
-  // Legend
+  // legend
   const g = map.append("g")
     .attr("class", "legendThreshold")
     .attr("transform", "translate(20, 100)");
@@ -56,7 +56,7 @@ function makeMap() {
   map.select(".legendThreshold")
     .call(legend)
       .attr("class","axis-text");
-  
+  // tooltip
   var tool_tip = d3.tip()
     .attr('class', 'd3-tip')
     .offset([-10, 0])
@@ -64,6 +64,15 @@ function makeMap() {
       return d.properties.name + ": "+d.total;
     })
     map.call(tool_tip);
+  
+  // zoom and pan
+  let zoom = d3.zoom()
+   .scaleExtent([1, 2])
+   .translateExtent([[-widthMap/10, -heightMap/10], [widthMap + widthMap/10, heightMap + heightMap/10]])
+   .on('zoom', () => {
+       map.attr('transform', d3.event.transform)
+   });
+   d3.select( '#map-holder' ).call(zoom);
 
   d3.json(
     "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson", function(json) {
@@ -97,12 +106,6 @@ function makeMap() {
         d3.select(this)
             .style("fill", '#80ced6')
             .style("cursor", "pointer");
-        /*d3.select('#tooltip')
-            .style("left", (d3.event.pageX + 15) + "px")
-            .style("top", (d3.event.pageY - 28) + "px")
-            .transition().duration(400)
-            .style("opacity", 1)
-            .text(d.properties.name + ': ' + d.total);*/
         tool_tip
           .direction('se')
           .show(d);
@@ -117,9 +120,6 @@ function makeMap() {
               return colorScale(d.total);
             }
           });	
-        /*d3.select('#tooltip')
-          .transition().duration(300)
-          .style("opacity", 0);*/
         tool_tip.hide()
       })
   });
