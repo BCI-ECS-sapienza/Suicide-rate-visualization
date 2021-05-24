@@ -129,17 +129,15 @@ html,body {
     text-anchor: start;
     font-weight: bold;
 }
-.tooltip {
+.d3-tip {
     position: absolute;
-    padding: 7px;
-    font-size: 0.8em;
-    color: rgb(73, 72, 72);
-    pointer-events: none;
-    background: #fff;
-    border: 1px solid #ccc;
+    padding: 2px;
+    line-height: 1;
+    background: gray;
     border-radius: 4px;
-    box-shadow: 3px 3px 10px 0px rgba(0, 0, 0, 0.25);
-}
+    font-size: 0.8em;
+    color: gainsboro;
+  }
 
 
 
