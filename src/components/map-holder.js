@@ -1,20 +1,20 @@
 // Width and Height of the whole visualization
-const width = document.getElementById('map-holder').offsetWidth;
-const height = document.getElementById('map-holder').offsetHeight;
+const widthMap = document.getElementById('map-holder').offsetWidth;
+const heightMap = document.getElementById('map-holder').offsetHeight;
 
 // Create SVG
 const map = d3.select( '#map-holder' )
   .append( "svg" )
   .attr( "width", '100%' )
   .attr( "height", '100%' )
-  .attr('viewBox', ("0 0 "+ width + " " + height));
+  .attr('viewBox', ("0 0 "+ widthMap + " " + heightMap));
 
 // Create path and projection
 const path = d3.geoPath();
 const projection = d3.geoMercator()
   .scale(100, 30)
   .center([0, 10])
-  .translate([width/2, height/2]);
+  .translate([widthMap/2, heightMap/2]);
 
 
 function makeMap() {
