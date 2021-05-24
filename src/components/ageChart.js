@@ -33,7 +33,7 @@ function makeAgeChart() {
   const xLabel = 'Age';;
   const yLabel = 'Suicide ratio';
   const xPadding = 0.5;
-  const barColors = ['#8c510a','#d8b365','#f6e8c3','#c7eae5','#5ab4ac','#01665e'];
+  const barColors = ['#f1eef6','#d0d1e6','#a6bddb','#74a9cf','#2b8cbe','#045a8d']; //['#8c510a','#d8b365','#f6e8c3','#c7eae5','#5ab4ac','#01665e'];
   const behindOpacity = 0.3;
   const backOffset = 5;
 

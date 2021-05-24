@@ -3,7 +3,7 @@ const initial_width_scatterPlot = document.getElementById('scatterPlot').offsetW
 const initial_height_scatterPlot = document.getElementById('scatterPlot').offsetHeight;
 
 // set the dimensions and margins of the graph
-const margin_scatterPlot = {top: 25, right: 130, bottom: 60, left: 80},
+const margin_scatterPlot = {top: 25, right: 25, bottom: 60, left: 80},
     width_scatterPlot = initial_width_scatterPlot - margin_scatterPlot.left - margin_scatterPlot.right,
     height_scatterPlot = initial_height_scatterPlot - margin_scatterPlot.top - margin_scatterPlot.bottom;
 
@@ -14,6 +14,11 @@ const svgScatterPlot = d3.select("#scatterPlot")
       .attr("height", initial_height_scatterPlot)
     .append("g")
       .attr("transform", "translate(" + margin_scatterPlot.left + "," + margin_scatterPlot.top + ")");  //padding
+
+const tooltipScatter = d3.select("#scatterPlot")
+    .append("div")
+    .style("opacity", 0)
+    .attr("class", "tooltip-scatter")
     
 
 function makeScatterPlot() {
@@ -64,10 +69,6 @@ function makeScatterPlot() {
     const xAxis = d3.axisBottom(xScale).tickFormat(AxisTickFormat);
     const yAxis = d3.axisLeft(yScale).tickFormat(AxisTickFormat);
 
-    // legend setup
-    const legend = d3.legendColor().scale(colorScale)
-                    .labelFormat(d3.format(".0f")).title(colorLabel);
-
 
     // add X axis
     svgScatterPlot.append("g")
@@ -93,7 +94,7 @@ function makeScatterPlot() {
    
     // add label bottom
     const bottom_label_x = width_scatterPlot/2;
-    const bottom_label_y = height_scatterPlot + ((margin_scatterPlot.bottom/6)*5) + 3;
+    const bottom_label_y = height_scatterPlot + ((margin_scatterPlot.bottom/6)*5);
     svgScatterPlot.append('text')
         .attr('class', 'axis-label')
         .attr("text-anchor", "middle")
@@ -115,12 +116,6 @@ function makeScatterPlot() {
         .scale(yScale)
         .tickSize(-width_scatterPlot, 0, 0)
         .tickFormat(''))
-
-    // add legend
-    svgScatterPlot.append("g")
-        .attr("transform", `translate(${width_scatterPlot+20},${margin_scatterPlot.top})`)
-        .call(legend)
-            .attr("class","axis-text");
 
 
     // add circles
@@ -148,16 +143,14 @@ function makeScatterPlot() {
                         '<br><b>GDP for year:</b> ' + gdp_year + 
                         "<br><b>Gdp per capita:</b> " + gdp_capita + 
                         "<br><b>Suicide ratio:</b> " + d.value.suicides_pop)
-                    .style("left", (d3.mouse(this)[0]+30) + width + "px")   //to fix name
-                    .style("top", (d3.mouse(this)[1]+10) + height+ "px")
+                    .style("left", (d3.mouse(this)[0]+30) + widthMap + initial_width_legend + "px")   
+                    .style("top", (d3.mouse(this)[1]+10) + "px")
               })
             .on("mouseout", function(d){	
                 tooltipScatter
                     .transition()
                     .style("opacity", 0)
             })
-
-
 
 
     // add avg line for y
@@ -196,13 +189,6 @@ function makeScatterPlot() {
 
 
 }
-
-
-
-const tooltipScatter = d3.select("#scatterPlot")
-    .append("div")
-    .style("opacity", 0)
-    .attr("class", "tooltip")
 
 
 // aggregate data by sex
