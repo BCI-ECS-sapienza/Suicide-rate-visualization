@@ -36,8 +36,6 @@ function makeMap() {
   // mapping (country, #suicides) in data
   const data = d3.map();
   for (var i = 0; i<dataFiltered.length; i++){
-    console.log(dataFiltered[i].key);
-    console.log(dataFiltered[i].value.suicides_pop);
     data.set(dataFiltered[i].key, +dataFiltered[i].value.suicides_pop);
   }
   
@@ -52,7 +50,6 @@ function makeMap() {
   const g = map.append("g")
     .attr("class", "legendThreshold")
     .attr("transform", "translate(20, 100)");
-  const labels = ['0', '1-5', '6-10', '11-25', '26-50'];
   const legend = d3.legendColor().scale(colorScale)
     .labelFormat(d3.format(".0f"))
     .title(colorLabel);
@@ -81,10 +78,15 @@ function makeMap() {
         .projection(projection)
       )
       // set the color of each country
-      .attr("fill", function (d) {    
-        d.total = data.get(d.properties.name) || 0;
-        //console.log(d.total);
-        return colorScale(d.total);
+      .attr("fill", function (d) {
+        if(typeof(data.get(d.properties.name)) === "undefined"){
+          d.total = 'Missing data';
+          return '#DCDCDC'; 
+        }
+        else{
+          d.total = data.get(d.properties.name);// || 0;
+          return colorScale(d.total);
+        }        
       })
       .style("stroke", "transparent")
       .attr("class", function(d){ return "Country" } )
@@ -104,7 +106,13 @@ function makeMap() {
       // adding event on mouseout
       .on("mouseout", function(d){
         d3.select(this)
-          .style("fill", colorScale(d.total));	
+          .style("fill", (d)=>{
+            if(d.total === "Missing data") 
+              return '#DCDCDC';
+            else{
+              return colorScale(d.total);
+            }
+          });	
         d3.select('#tooltip')
           .transition().duration(300)
           .style("opacity", 0);
