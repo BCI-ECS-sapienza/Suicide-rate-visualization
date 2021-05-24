@@ -3,12 +3,12 @@ const initial_width_sexChart = document.getElementById('sexChart').offsetWidth;
 const initial_height_sexChart = document.getElementById('sexChart').offsetHeight;
 
 // set the dimensions and margins of the graph
-const margin_sexChart = {top: 30, right: 30, bottom: 60, left: 80},
+const margin_sexChart = {top: 25, right: 30, bottom: 60, left: 80},
     width_sexChart = initial_width_sexChart - margin_sexChart.left - margin_sexChart.right,
     height_sexChart = initial_height_sexChart - margin_sexChart.top - margin_sexChart.bottom;
 
 // append the svg object to the body of the page
-var svgSex = d3.select("#sexChart")
+const svgSex = d3.select("#sexChart")
     .append("svg")
       .attr("width", initial_width_sexChart)
       .attr("height", initial_height_sexChart)
@@ -33,7 +33,7 @@ function makeSexChart() {
   const behindOpacity = 0.3;
   const backOffset = 5;
 
-  // add some padding on top yAxis (10% more than max between dataYear and dataFiltered)
+  // add some padding on top yAxis (1/10 more than max between dataYear and dataFiltered)
   const max_val_year = d3.max(dataYear, yValue) 
   const max_val_filtered = d3.max(dataFiltered, yValue) 
   const max_val = (max_val_year >  max_val_filtered) ? max_val_year : max_val_filtered;
@@ -124,13 +124,12 @@ function makeSexChart() {
     
   barGroups
     .append('rect')
+    .attr('class', 'sexBars-filtered')
     .attr('x', (d) => xScale(d.key))
     .attr('y', (d) => yScale(d.value.suicides_pop))
     .attr('height', (d) => height_sexChart - yScale(d.value.suicides_pop))
     .attr('width', xScale.bandwidth())
     .style("fill",  (d) => color(d.key))
-    .style("stroke", "black")  
-    .style("stroke-width", 1.5)
     .on('mouseenter', function (actual, i) {
       // all original values on bars transparent
       d3.selectAll('.bar-value-sex')  
@@ -142,6 +141,7 @@ function makeSexChart() {
         .duration(300)
         .attr('x', (d) => xScale(d.key) - 5)
         .attr('width', xScale.bandwidth() + 10)
+        .style("cursor", "pointer");
 
       // show value on bar
       barGroups.append('text')

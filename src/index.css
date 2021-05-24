@@ -163,6 +163,14 @@ html,body {
     fill: yellow;
     font-size: 18px;
 }
+.sexBars-filtered {
+    stroke: black;
+    stroke-width: 1.5;
+}
+.ageBars-filtered {
+    stroke: black;
+    stroke-width: 1.5;
+}
 
 
 

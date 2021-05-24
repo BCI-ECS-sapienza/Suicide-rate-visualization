@@ -3,12 +3,12 @@ const initial_width_ageChart = document.getElementById('ageChart').offsetWidth;
 const initial_height_ageChart = document.getElementById('ageChart').offsetHeight;
 
 // set the dimensions and margins of the graph
-const margin_ageChart = {top: 30, right: 30, bottom: 60, left: 80},
+const margin_ageChart = {top: 25, right: 30, bottom: 60, left: 70},
     width_ageChart = initial_width_ageChart - margin_ageChart.left - margin_ageChart.right,
     height_ageChart = initial_height_ageChart - margin_ageChart.top - margin_ageChart.bottom;
 
 // append the svg object to the body of the page
-var svgAge = d3.select("#ageChart")
+const svgAge = d3.select("#ageChart")
     .append("svg")
       .attr("width", initial_width_ageChart)
       .attr("height", initial_height_ageChart)
@@ -23,6 +23,7 @@ function makeAgeChart() {
   const dataYear = aggregateDataAge(dataYearLoaded);
   const dataFiltered = aggregateDataAge(dataFilteredLoaded);
 
+  // sort ages
   dataYear.sort((a, b) => d3.ascending(a.key, b.key));
   dataFiltered.sort((a, b) => d3.ascending(a.key, b.key));
 
@@ -36,7 +37,7 @@ function makeAgeChart() {
   const behindOpacity = 0.3;
   const backOffset = 5;
 
-  // add some padding on top yAxis (10% more than max between dataYear and dataFiltered)
+  // add some padding on top yAxis (1/10 more than max between dataYear and dataFiltered)
   const max_val_year = d3.max(dataYear, yValue) 
   const max_val_filtered = d3.max(dataFiltered, yValue) 
   const max_val = (max_val_year >  max_val_filtered) ? max_val_year : max_val_filtered;
@@ -76,7 +77,7 @@ function makeAgeChart() {
        .attr("class","axis-text");
 
   // add label left
-  const left_label_x = ((margin_ageChart.left/5) * 3) +3;
+  const left_label_x = ((margin_ageChart.left/5) * 3);
   const left_label_y = (height_ageChart/2);
   svgAge.append('text')
     .attr('class', 'axis-label')
@@ -127,13 +128,12 @@ function makeAgeChart() {
     
   barGroups
     .append('rect')
+    .attr('class', 'ageBars-filtered')
     .attr('x', (d) => xScale(d.key))
     .attr('y', (d) => yScale(d.value.suicides_pop))
     .attr('height', (d) => height_ageChart - yScale(d.value.suicides_pop))
     .attr('width', xScale.bandwidth())
     .style("fill",  (d) => color(d.key))
-    .style("stroke", "black")  
-    .style("stroke-width", 1.5)
     .on('mouseenter', function (actual, i) {
       // all original values on bars transparent
       d3.selectAll('.bar-value-age')  
@@ -145,6 +145,7 @@ function makeAgeChart() {
         .duration(300)
         .attr('x', (d) => xScale(d.key) - 5)
         .attr('width', xScale.bandwidth() + 10)
+        .style("cursor", "pointer");
 
       // show value on bar
       barGroups.append('text')
