@@ -3,7 +3,7 @@ const initial_width_sexChart = document.getElementById('sexChart').offsetWidth;
 const initial_height_sexChart = document.getElementById('sexChart').offsetHeight;
 
 // set the dimensions and margins of the graph
-const margin_sexChart = {top: 25, right: 30, bottom: 50, left: 80},
+const margin_sexChart = {top: 25, right: 30, bottom: 50, left: 70},
     width_sexChart = initial_width_sexChart - margin_sexChart.left - margin_sexChart.right,
     height_sexChart = initial_height_sexChart - margin_sexChart.top - margin_sexChart.bottom;
 
@@ -106,11 +106,11 @@ function makeSexChart() {
       .enter()
       .append('g')
       .append('rect')
-      .attr('x', (d) => xScale(d.key) + backOffset)
-      .attr('y', (d) => yScale(d.value.suicides_pop))
-      .attr('height', (d) => height_sexChart - yScale(d.value.suicides_pop))
+      .attr('x', (d) => xScale(xValue(d)) + backOffset)
+      .attr('y', (d) => yScale(yValue(d)))
+      .attr('height', (d) => height_sexChart - yScale(yValue(d)))
       .attr('width', xScale.bandwidth() + backOffset)
-      .style("fill",  (d) => color(d.key))
+      .style("fill",  (d) => color(xValue(d)))
       .style("stroke", "black") 
       .attr('opacity', behindOpacity)
   } 
@@ -125,11 +125,11 @@ function makeSexChart() {
   barGroups
     .append('rect')
     .attr('class', 'sexBars-filtered')
-    .attr('x', (d) => xScale(d.key))
-    .attr('y', (d) => yScale(d.value.suicides_pop))
-    .attr('height', (d) => height_sexChart - yScale(d.value.suicides_pop))
+    .attr('x', (d) => xScale(xValue(d)))
+    .attr('y', (d) => yScale(yValue(d)))
+    .attr('height', (d) => height_sexChart - yScale(yValue(d)))
     .attr('width', xScale.bandwidth())
-    .style("fill",  (d) => color(d.key))
+    .style("fill",  (d) => color(xValue(d)))
     .on('mouseenter', function (actual, i) {
       // all original values on bars transparent
       d3.selectAll('.bar-value-sex')  
@@ -139,18 +139,18 @@ function makeSexChart() {
       d3.select(this)
         .transition()
         .duration(300)
-        .attr('x', (d) => xScale(d.key) - 5)
+        .attr('x', (d) => xScale(xValue(d)) - 5)
         .attr('width', xScale.bandwidth() + 10)
         .style("cursor", "pointer");
 
       // show value on bar
       barGroups.append('text')
         .attr('class', 'divergence-sex')  //needed to remove on mouseleave
-        .attr('x', (d) => xScale(d.key) + xScale.bandwidth() / 2)
-        .attr('y', (d) => yScale(d.value.suicides_pop) + 30)
+        .attr('x', (d) => xScale(xValue(d)) + xScale.bandwidth() / 2)
+        .attr('y', (d) => yScale(yValue(d)) + 30)
         .attr('text-anchor', 'middle')
         .text((d, idx) => {
-          const divergence = (d.value.suicides_pop - actual.value.suicides_pop).toFixed(1)
+          const divergence = (yValue(d) - actual.value.suicides_pop).toFixed(1)
           
           let text = ''
           if (divergence > 0) text += '+'
@@ -168,7 +168,7 @@ function makeSexChart() {
       d3.select(this)
         .transition()
         .duration(300)
-        .attr('x', (d) => xScale(d.key))
+        .attr('x', (d) => xScale(xValue(d)))
         .attr('width', xScale.bandwidth())
 
       // remove divergence value
@@ -179,13 +179,13 @@ function makeSexChart() {
   barGroups 
     .append('text')
     .attr('class', 'bar-value-sex')
-    .attr('x', (d) => xScale(d.key) + xScale.bandwidth() / 2)
-    .attr('y', (d) => yScale(d.value.suicides_pop) + 30)
+    .attr('x', (d) => xScale(xValue(d)) + xScale.bandwidth() / 2)
+    .attr('y', (d) => yScale(yValue(d)) + 30)
     .attr('text-anchor', 'middle')
-    .text((d) => `${d.value.suicides_pop}`)
+    .text((d) => `${yValue(d)}`)
 
   // add avg line
-  const avg_value = Math.round((d3.sum(dataFiltered, (d) => d.value.suicides_pop)) / dataFiltered.length);
+  const avg_value = Math.round((d3.sum(dataFiltered, (d) => yValue(d))) / dataFiltered.length);
   const avg_value_scaled = yScale(avg_value)
   svgSex.append("line")
     .attr('class', 'avg-line')
