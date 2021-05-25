@@ -1,11 +1,17 @@
-// Width and Height of the box
+// chart static params
 const initial_width_scatterPlot = document.getElementById('scatterPlot').offsetWidth;
 const initial_height_scatterPlot = document.getElementById('scatterPlot').offsetHeight;
+const scatter_xLabel = 'GDP for year';;
+const scatter_yLabel = 'GDP per capita';
+const scatter_circle_size = 5;
+const scatter_selected_circle_size = 10;
 
 // set the dimensions and margins of the graph
 const margin_scatterPlot = {top: 25, right: 25, bottom: 60, left: 80},
     width_scatterPlot = initial_width_scatterPlot - margin_scatterPlot.left - margin_scatterPlot.right,
     height_scatterPlot = initial_height_scatterPlot - margin_scatterPlot.top - margin_scatterPlot.bottom;
+
+
 
 // append the svg object to the body of the page
 const svgScatterPlot = d3.select("#scatterPlot")
@@ -14,10 +20,6 @@ const svgScatterPlot = d3.select("#scatterPlot")
       .attr("height", initial_height_scatterPlot)
     .append("g")
       .attr("transform", "translate(" + margin_scatterPlot.left + "," + margin_scatterPlot.top + ")");  //padding
-
-// label names
-const scatter_xLabel = 'GDP for year';;
-const scatter_yLabel = 'GDP per capita';
 
 // add label left
 const scatter_left_label_x = ((margin_scatterPlot.left/5) * 3) +3;
@@ -43,33 +45,31 @@ const tooltipScatter = d3.select("#scatterPlot")
     .attr("class", "tooltip-scatter")
     
 
+
 function makeScatterPlot() {
-    const dataYearLoaded = controller.getDataYear();
-    const dataFilteredLoaded = controller.getDataFiltered();
-    
-    const dataYear = aggregateDataByCountry(dataYearLoaded);
-    const dataFiltered = aggregateDataByCountry(dataFilteredLoaded);
+    const dataAll = aggregateDataByCountry(controller.dataAll);
+    const dataFiltered = aggregateDataByCountry(controller.dataFiltered);
 
     // set params
     const country = d => d.key
     const xValue = d => d.value.gdp_for_year;
     const yValue = d => d.value.gdp_per_capita;
     const colorValue = d => d.value.suicides_pop;
-    const colorArray = controller.suicideColorScale;
-    const circle_size = 5;
-    const selected_circle_size = 10;
 
-    // add some padding on top xAxis (1/100 more than max between dataYear and dataFiltered)
-    const max_val_year_x = d3.max(dataYear, xValue) 
+
+    // add some padding on top xAxis (1/100 more than max between dataAll and dataFiltered)
+    //const max_val_year_x = d3.max(dataAll, xValue) 
     const max_val_filtered_x = d3.max(dataFiltered, xValue) 
-    const max_val_x = (max_val_year_x >  max_val_filtered_x) ? max_val_year_x : max_val_filtered_x;
-    const domain_max_x = parseInt(max_val_x) + parseInt(max_val_x/100) 
+    //const max_val_x = (max_val_year_x >  max_val_filtered_x) ? max_val_year_x : max_val_filtered_x;
+    //const domain_max_x = parseInt(max_val_x) + parseInt(max_val_x/100) 
+    const domain_max_x = parseInt(max_val_filtered_x) + parseInt(max_val_filtered_x/100)
 
-    // add some padding on top yAxis (1/100 more than max between dataYear and dataFiltered)
-    const max_val_year_y = d3.max(dataYear, yValue) 
+    // add some padding on top yAxis (1/100 more than max between dataAll and dataFiltered)
+    //const max_val_year_y = d3.max(dataAll, yValue) 
     const max_val_filtered_y = d3.max(dataFiltered, yValue) 
-    const max_val_y = (max_val_year_y >  max_val_filtered_y) ? max_val_year_y : max_val_filtered_y;
-    const domain_max_y = parseInt(max_val_y) + parseInt(max_val_y/100) 
+    //const max_val_y = (max_val_year_y >  max_val_filtered_y) ? max_val_year_y : max_val_filtered_y;
+    //const domain_max_y = parseInt(max_val_y) + parseInt(max_val_y/100) 
+    const domain_max_y = parseInt(max_val_filtered_y) + parseInt(max_val_filtered_y/100)
 
     // set scales
     const xScale = d3.scaleLinear()
@@ -83,7 +83,7 @@ function makeScatterPlot() {
 
     const colorScale = d3.scaleQuantize()
         .domain([0, d3.max(dataFiltered,colorValue)])
-        .range(colorArray);
+        .range(controller.suicideColorScale);
 
 
     // axis setup
@@ -128,17 +128,17 @@ function makeScatterPlot() {
         .data(dataFiltered)
         .enter()
         .append("circle")
-            .attr('class', 'scatter-points') //background color
+            .attr('class', 'scatter-points') 
             .attr("cx", (d) => xScale(xValue(d)))
             .attr("cy", (d) => yScale(yValue(d)))
-            .attr("r", circle_size)
+            .attr("r", scatter_circle_size)
             .style("fill", (d) => colorScale(colorValue(d)))
             .style("opacity", 1)
             .on("mouseover", function (d) {
                 d3.select(this)
                     .style("cursor", "pointer")
                     .attr("class", "selected-circle")
-                    .attr("r", selected_circle_size )
+                    .attr("r", scatter_selected_circle_size )
 
                 const gdp_year = d3.format('.2s')(xValue(d)).replace('G', 'B');
                 const gdp_capita = d3.format('.2s')(yValue(d)).replace('G', 'B');
@@ -156,26 +156,29 @@ function makeScatterPlot() {
             .on("mousemove", function (d) {
                 d3.select(this)
                     .style("cursor", "pointer")
-                    .attr("r", selected_circle_size)
+                    .attr("r", scatter_selected_circle_size)
                     .style("stroke", "gold");
 
                 const gdp_year = d3.format('.2s')(xValue(d)).replace('G', 'B');
                 const gdp_capita = d3.format('.2s')(yValue(d)).replace('G', 'B');
+                const avg_show = ""
+                //if (controller.isDataFiltered == true) 
+                    avg_show = " (avg.)"
                 
                 tooltipScatter            
                     .style("opacity", 1)
                     .html(
                         '<b>Country:</b> ' + country(d) + 
-                        '<br><b>GDP for year:</b> ' + gdp_year + 
-                        "<br><b>Gdp per capita:</b> " + gdp_capita + 
-                        "<br><b>Suicide ratio:</b> " + d.value.suicides_pop)
+                        '<br><b>GDP for year (avg.):</b> ' + gdp_year + 
+                        '<br><b>Gdp per capita (avg.):</b> ' + gdp_capita + 
+                        '<br><b>Suicide ratio:</b> ' + d.value.suicides_pop)
                     .style("left", (d3.mouse(this)[0]+30) + widthMap + initial_width_legend + "px")   
                     .style("top", (d3.mouse(this)[1]) + "px")
 
             })
             .on("mouseout", function(d){	
                 d3.select(this)
-                    .attr("r", circle_size )
+                    .attr("r", scatter_circle_size )
                     .attr("class", "not-selected-circle");
 
                 tooltipScatter
@@ -220,9 +223,9 @@ function makeScatterPlot() {
 
 }
 
-
-// A function that update the chart
-function ScatterUpateYear() {
+  
+// update data graph
+controller.addListener('yearChanged', function (e) {
     svgScatterPlot.selectAll('.axis-text').remove()
     svgScatterPlot.selectAll('.tick').remove()
     svgScatterPlot.selectAll('.grid-scatter').remove()
@@ -230,18 +233,5 @@ function ScatterUpateYear() {
     svgScatterPlot.selectAll('.avg-line').remove()
     svgScatterPlot.selectAll('.avg-label').remove()
     makeScatterPlot()
-}
-  
-  
-// draw graph on dataloaded
-controller.addListener('yearChanged', function (e) {
-    ScatterUpateYear();
-});
-
-
-
-// draw graph on dataloaded
-controller.addListener('dataLoaded', function (e) {
-  makeScatterPlot();
 });
 

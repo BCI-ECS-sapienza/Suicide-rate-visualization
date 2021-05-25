@@ -21,11 +21,11 @@ const projection = d3.geoMercator()
 
 function makeMap() {
   // setting parameters
-  const dataYearLoaded = controller.getDataYear();
-  const dataFilteredLoaded = controller.getDataFiltered();
+  const dataYearLoaded = controller.dataAll;
+  const dataFilteredLoaded = controller.dataFiltered;
 
-  const dataYear = aggregateDataMap(dataYearLoaded);
-  const dataFiltered = aggregateDataMap(dataFilteredLoaded);
+  const dataYear = aggregateDataByCountry(dataYearLoaded);
+  const dataFiltered = aggregateDataByCountry(dataFilteredLoaded);
   const colorLabel = 'Suicide ratio';
   
   const countryNames = d => d.key;
@@ -140,19 +140,3 @@ function makeMap() {
       })
   });
 }
-
-// aggregate data by sex
-const aggregateDataMap = (dataIn) => {
-  const data = d3.nest()
-    .key( (d) => d.country)
-    .rollup( (d) =>  ({
-      suicides_pop: Math.round(d3.mean(d, (g) => g.suicides_pop))
-    }))
-  .entries(dataIn)
-  return data;
-};
-
-// draw map on dataloaded
-controller.addListener('dataLoaded', function (e) {
-  makeMap();
-});
