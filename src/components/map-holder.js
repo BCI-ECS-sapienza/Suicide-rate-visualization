@@ -117,8 +117,6 @@ function makeMap() {
       // adding event on mousemove
       .on("mousemove", function (d) {
         tooltip
-          .transition()
-          .duration(200)
           .style("opacity", 1)
           .html(
             '<b>Country:</b> ' + d.properties.name + 
@@ -139,7 +137,6 @@ function makeMap() {
         tooltip
           .transition()
           .style("opacity", 0);
-        //tooltip.hide()
       })
   });
 }
