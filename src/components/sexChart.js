@@ -14,24 +14,50 @@ const svgSex = d3.select("#sexChart")
       .attr("height", initial_height_sexChart)
     .append("g")
       .attr("transform", "translate(" + margin_sexChart.left + "," + margin_sexChart.top + ")");  //padding
+
+// label names
+const sex_xLabel = 'Sex';;
+const sex_yLabel = 'Suicide ratio';
+      
+// add label left
+const sex_left_label_x = ((margin_sexChart.left/5) * 3);
+const sex_left_label_y = (height_sexChart/2);
+svgSex.append('text')
+  .attr('class', 'axis-label')
+  .attr("text-anchor", "middle")
+  .attr("transform", `translate(${-sex_left_label_x}, ${sex_left_label_y}), rotate(-90)`) 
+  .text(sex_yLabel)
+  
+// add label bottom
+const sex_bottom_label_x = width_sexChart/2;
+const sex_bottom_label_y = height_sexChart + ((margin_sexChart.bottom/6)*5) ;
+svgSex.append('text')
+  .attr('class', 'axis-label')
+  .attr("text-anchor", "middle")
+  .attr("transform", `translate(${sex_bottom_label_x},${sex_bottom_label_y})`) //to put on bottom
+  .text(sex_xLabel)
     
 
 function makeSexChart() {
   const dataYearLoaded = controller.getDataYear();
   const dataFilteredLoaded = controller.getDataFiltered();
 
-  const dataYear = aggregateDataSex(dataYearLoaded);
-  const dataFiltered = aggregateDataSex(dataFilteredLoaded);
+  const dataYear = aggregateDataBySex(dataYearLoaded);
+  const dataFiltered = aggregateDataBySex(dataFilteredLoaded);
+  const colorData = aggregateDataByCountry(dataFilteredLoaded);
+
+  // sort classes
+  dataYear.sort((a, b) => d3.descending(a.key, b.key));
+  dataFiltered.sort((a, b) => d3.descending(a.key, b.key));
 
   // set params
   const xValue = d => d.key;
   const yValue = d => d.value.suicides_pop;
-  const xLabel = 'Sex';;
-  const yLabel = 'Suicide ratio';
   const xPadding = 0.6;
-  const barColors = ['#af8dc3','#7fbf7b'];
   const behindOpacity = 0.3;
   const backOffset = 5;
+  const colorArray = controller.suicideColorScale;
+
 
   // add some padding on top yAxis (1/10 more than max between dataYear and dataFiltered)
   const max_val_year = d3.max(dataYear, yValue) 
@@ -50,9 +76,9 @@ function makeSexChart() {
     .range([ height_sexChart, 0])
     .nice();
 
-  const color = d3.scaleOrdinal()
-    .domain(dataYear.map(xValue))
-    .range(barColors);
+  const colorScale = d3.scaleQuantize()
+    .domain([0, d3.max(colorData,yValue)])
+    .range(colorArray);
 
   // axis setup
   const xAxis = d3.axisBottom(xScale);
@@ -72,23 +98,6 @@ function makeSexChart() {
    .selectAll("text")
        .attr("class","axis-text");
 
-  // add label left
-  const left_label_x = ((margin_sexChart.left/5) * 3);
-  const left_label_y = (height_sexChart/2);
-  svgSex.append('text')
-    .attr('class', 'axis-label')
-    .attr("text-anchor", "middle")
-    .attr("transform", `translate(${-left_label_x}, ${left_label_y}), rotate(-90)`) 
-    .text(yLabel)
-   
-  // add label bottom
-  const bottom_label_x = width_sexChart/2;
-  const bottom_label_y = height_sexChart + ((margin_sexChart.bottom/6)*5) ;
-  svgSex.append('text')
-    .attr('class', 'axis-label')
-    .attr("text-anchor", "middle")
-    .attr("transform", `translate(${bottom_label_x},${bottom_label_y})`) //to put on bottom
-    .text(xLabel)
 
   // add Grid 
   svgSex.append('g')
@@ -106,11 +115,12 @@ function makeSexChart() {
       .enter()
       .append('g')
       .append('rect')
+      .attr('class', 'sexBars-back')
       .attr('x', (d) => xScale(xValue(d)) + backOffset)
       .attr('y', (d) => yScale(yValue(d)))
       .attr('height', (d) => height_sexChart - yScale(yValue(d)))
       .attr('width', xScale.bandwidth() + backOffset)
-      .style("fill",  (d) => color(xValue(d)))
+      .style("fill",  (d) => colorScale(yValue(d)))
       .style("stroke", "black") 
       .attr('opacity', behindOpacity)
   } 
@@ -129,7 +139,7 @@ function makeSexChart() {
     .attr('y', (d) => yScale(yValue(d)))
     .attr('height', (d) => height_sexChart - yScale(yValue(d)))
     .attr('width', xScale.bandwidth())
-    .style("fill",  (d) => color(xValue(d)))
+    .style("fill",  (d) => colorScale(yValue(d)))
     .on('mouseenter', function (actual, i) {
       // all original values on bars transparent
       d3.selectAll('.bar-value-sex')  
@@ -203,18 +213,24 @@ function makeSexChart() {
 
 }
 
+// A function that update the chart
+function sexChartUpateYear() {
+  svgSex.selectAll('.axis-text').remove()
+  svgSex.selectAll('.tick').remove()
+  svgSex.selectAll('.grid-barchart').remove()
+  svgSex.selectAll('.sexBars-back').remove()
+  svgSex.selectAll('.sexBars-filtered').remove()
+  svgSex.selectAll('.bar-value-sex').remove()
+  svgSex.selectAll('.avg-line').remove()
+  svgSex.selectAll('.avg-label').remove()
+  makeSexChart()
+}
 
-// aggregate data by sex
-const aggregateDataSex = (dataIn) => {
-  const data = d3.nest()
-    .key( (d) => d.sex)
-    .rollup( (d) =>  ({
-      suicides_pop: Math.round(d3.mean(d, (g) => g.suicides_pop)),
-    }))
-  .entries(dataIn)
-  return data;
-};
 
+// draw graph on dataloaded
+controller.addListener('yearChanged', function (e) {
+  sexChartUpateYear();
+});
 
 // draw graph on dataloaded
 controller.addListener('dataLoaded', function (e) {

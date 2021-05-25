@@ -15,13 +15,38 @@ const svgAge = d3.select("#ageChart")
     .append("g")
       .attr("transform", "translate(" + margin_ageChart.left + "," + margin_ageChart.top + ")");  //padding
     
+// label names
+const age_xLabel = 'Age';;
+const age_yLabel = 'Suicide ratio';
+
+
+// add label left
+const age_left_label_x = ((margin_ageChart.left/5) * 3);
+const age_left_label_y = (height_ageChart/2);
+svgAge.append('text')
+  .attr('class', 'axis-label')
+  .attr("text-anchor", "middle")
+  .attr("transform", `translate(${-age_left_label_x}, ${age_left_label_y}), rotate(-90)`) 
+  .text(age_yLabel)
+  
+// add label bottom
+const age_bottom_label_x = width_ageChart/2;
+const age_bottom_label_y = height_ageChart + ((margin_ageChart.bottom/6)*5);
+svgAge.append('text')
+  .attr('class', 'axis-label')
+  .attr("text-anchor", "middle")
+  .attr("transform", `translate(${age_bottom_label_x},${age_bottom_label_y})`) //to put on bottom
+  .text(age_xLabel)
+
+
 
 function makeAgeChart() {
   const dataYearLoaded = controller.getDataYear();
   const dataFilteredLoaded = controller.getDataFiltered();
 
-  const dataYear = aggregateDataAge(dataYearLoaded);
-  const dataFiltered = aggregateDataAge(dataFilteredLoaded);
+  const dataYear = aggregateDataByAge(dataYearLoaded);
+  const dataFiltered = aggregateDataByAge(dataFilteredLoaded);
+  const colorData = aggregateDataByCountry(dataFilteredLoaded);
 
   // sort ages
   dataYear.sort((a, b) => d3.ascending(a.key, b.key));
@@ -30,12 +55,11 @@ function makeAgeChart() {
   // set params
   const xValue = d => d.key;
   const yValue = d => d.value.suicides_pop;
-  const xLabel = 'Age';;
-  const yLabel = 'Suicide ratio';
   const xPadding = 0.5;
-  const barColors = ['#f1eef6','#d0d1e6','#a6bddb','#74a9cf','#2b8cbe','#045a8d']; //['#8c510a','#d8b365','#f6e8c3','#c7eae5','#5ab4ac','#01665e'];
   const behindOpacity = 0.3;
   const backOffset = 5;
+  const colorArray = controller.suicideColorScale;
+
 
   // add some padding on top yAxis (1/10 more than max between dataYear and dataFiltered)
   const max_val_year = d3.max(dataYear, yValue) 
@@ -54,9 +78,9 @@ function makeAgeChart() {
     .range([ height_ageChart, 0])
     .nice();
 
-  const color = d3.scaleOrdinal()
-    .domain(dataYear.map(xValue))
-    .range(barColors);
+  const colorScale = d3.scaleQuantize()
+    .domain([0, d3.max(colorData, yValue)])
+    .range(colorArray);
 
   // axis setup
   const xAxis = d3.axisBottom(xScale);
@@ -76,23 +100,6 @@ function makeAgeChart() {
    .selectAll("text")
        .attr("class","axis-text");
 
-  // add label left
-  const left_label_x = ((margin_ageChart.left/5) * 3);
-  const left_label_y = (height_ageChart/2);
-  svgAge.append('text')
-    .attr('class', 'axis-label')
-    .attr("text-anchor", "middle")
-    .attr("transform", `translate(${-left_label_x}, ${left_label_y}), rotate(-90)`) 
-    .text(yLabel)
-   
-  // add label bottom
-  const bottom_label_x = width_ageChart/2;
-  const bottom_label_y = height_ageChart + ((margin_ageChart.bottom/6)*5);
-  svgAge.append('text')
-    .attr('class', 'axis-label')
-    .attr("text-anchor", "middle")
-    .attr("transform", `translate(${bottom_label_x},${bottom_label_y})`) //to put on bottom
-    .text(xLabel)
 
   // add Grid 
   svgAge.append('g')
@@ -110,11 +117,12 @@ function makeAgeChart() {
       .enter()
       .append('g')
       .append('rect')
+      .attr('class', 'ageBars-back')
       .attr('x', (d) => xScale(xValue(d)) + backOffset)
       .attr('y', (d) => yScale(yValue(d)))
       .attr('height', (d) => height_ageChart - yScale(yValue(d)))
       .attr('width', xScale.bandwidth() + backOffset)
-      .style("fill",  (d) => color(d.key))
+      .style("fill",  (d) => colorScale(yValue(d)))
       .style("stroke", "black") 
       .attr('opacity', behindOpacity)
   } 
@@ -133,7 +141,7 @@ function makeAgeChart() {
     .attr('y', (d) => yScale(yValue(d)))
     .attr('height', (d) => height_ageChart - yScale(yValue(d)))
     .attr('width', xScale.bandwidth())
-    .style("fill",  (d) => color(xValue(d)))
+    .style("fill",  (d) => colorScale(yValue(d)))
     .on('mouseenter', function (actual, i) {
       // all original values on bars transparent
       d3.selectAll('.bar-value-age')  
@@ -207,17 +215,25 @@ function makeAgeChart() {
 
 }
 
+// A function that update the chart
+function ageChartUpateYear() {
+  svgAge.selectAll('.axis-text').remove()
+  svgAge.selectAll('.tick').remove()
+  svgAge.selectAll('.grid-barchart').remove()
+  svgAge.selectAll('.ageBars-back').remove()
+  svgAge.selectAll('.ageBars-filtered').remove()
+  svgAge.selectAll('.bar-value-sex').remove()
+  svgAge.selectAll('.avg-line').remove()
+  svgAge.selectAll('.avg-label').remove()
+  makeAgeChart()
+}
 
-// aggregate data by sex
-const aggregateDataAge = (dataIn) => {
-  const data = d3.nest()
-    .key( (d) => d.age)
-    .rollup( (d) =>  ({
-      suicides_pop: Math.round(d3.mean(d, (g) => g.suicides_pop)),
-    }))
-  .entries(dataIn)
-  return data;
-};
+
+// draw graph on dataloaded
+controller.addListener('yearChanged', function (e) {
+  ageChartUpateYear();
+});
+
 
 
 // draw graph on dataloaded
