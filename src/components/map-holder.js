@@ -12,8 +12,10 @@ const map = d3.select( '#map-holder' )
 // create path and projection
 const path = d3.geoPath();
 const projection = d3.geoMercator()
-  .scale(100, 30)
-  .center([0, 10])
+  //.scale(100, 30)
+  //.center([0, 10])
+  .scale(80 ,30)
+  .center([0, 30])
   .translate([widthMap/2, heightMap/2]);
 
 
@@ -47,7 +49,7 @@ function makeMap() {
         .range(colorArray);
 
   // legend
-  const g = map.append("g")
+  /*const g = map.append("g")
     .attr("class", "legendThreshold")
     .attr("transform", "translate(20, 100)");
   const legend = d3.legendColor().scale(colorScale)
@@ -55,15 +57,16 @@ function makeMap() {
     .title(colorLabel);
   map.select(".legendThreshold")
     .call(legend)
-      .attr("class","axis-text");
+      .attr("class","axis-text");*/
+
   // tooltip
-  var tool_tip = d3.tip()
+  var tooltip = d3.tip()
     .attr('class', 'd3-tip')
     .offset([-10, 0])
     .html(function(d) {
       return d.properties.name + ": "+d.total;
     })
-    map.call(tool_tip);
+    map.call(tooltip);
   
   // zoom and pan
   let zoom = d3.zoom()
@@ -72,7 +75,7 @@ function makeMap() {
    .on('zoom', () => {
        map.attr('transform', d3.event.transform)
    });
-   d3.select( '#map-holder' ).call(zoom);
+   d3.select('#map-holder').call(zoom);
 
   d3.json(
     "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson", function(json) {
@@ -94,7 +97,7 @@ function makeMap() {
           return '#DCDCDC'; 
         }
         else{
-          d.total = data.get(d.properties.name);// || 0;
+          d.total = data.get(d.properties.name);
           return colorScale(d.total);
         }        
       })
@@ -104,10 +107,12 @@ function makeMap() {
       // adding event on mouseover
       .on("mouseover", function (d) {
         d3.select(this)
-            .style("fill", '#80ced6')
-            .style("cursor", "pointer");
-        tool_tip
-          .direction('se')
+          .style("fill", '#80ced6')
+          .style("cursor", "pointer");
+        tooltip
+          .style("left", (d + 'px'))   
+          .style("top", (d3.mouse + "px"))
+          //.direction('se')
           .show(d);
       })
       // adding event on mouseout
@@ -120,7 +125,7 @@ function makeMap() {
               return colorScale(d.total);
             }
           });	
-        tool_tip.hide()
+        tooltip.hide()
       })
   });
 }
