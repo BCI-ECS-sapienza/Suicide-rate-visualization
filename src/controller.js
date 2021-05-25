@@ -72,6 +72,18 @@ Controller.prototype.getDataFiltered = function () {
 }
 
 
+// events dispatch
+Controller.prototype.notifyYearChanged = function () {
+    this.listenersContainer.dispatchEvent(new Event('yearChanged'));
+    console.log('year changed!')
+}
+
+
+// filter data by year
+Controller.prototype.triggerYearFilterEvent = function (selectedYear) {
+    // TODO
+    this.notifyYearChanged();
+}
 
 
 // data rows parser
