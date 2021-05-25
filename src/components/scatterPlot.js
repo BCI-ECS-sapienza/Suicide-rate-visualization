@@ -29,14 +29,15 @@ function makeScatterPlot() {
     const dataFiltered = aggregateDataScatter(dataFilteredLoaded);
 
     // set params
+    const country = d => d.key
     const xValue = d => d.value.gdp_for_year;
     const yValue = d => d.value.gdp_per_capita;
     const colorValue = d => d.value.suicides_pop;
     const xLabel = 'GDP for year';;
     const yLabel = 'GDP per capita';
-    const colorLabel = 'Suicide ratio'
     const colorArray = controller.suicideColorScale;
     const circle_size = 5;
+    const selected_circle_size = 10;
 
     // add some padding on top xAxis (1/100 more than max between dataYear and dataFiltered)
     const max_val_year_x = d3.max(dataYear, xValue) 
@@ -124,37 +125,62 @@ function makeScatterPlot() {
         .data(dataFiltered)
         .enter()
         .append("circle")
-            .attr("cx", (d) => xScale(d.value.gdp_for_year) )
-            .attr("cy", (d) => yScale(d.value.gdp_per_capita))
+            .attr("cx", (d) => xScale(xValue(d)))
+            .attr("cy", (d) => yScale(yValue(d)))
             .attr("r", circle_size)
-            .style("fill", (d) => colorScale(d.value.suicides_pop) )
+            .style("fill", (d) => colorScale(colorValue(d)))
             .style("opacity", 1)
             .on("mouseover", function (d) {
                 d3.select(this)
-                    .style("cursor", "pointer");
+                    .style("cursor", "pointer")
+                    .attr("class", "selected-circle")
+                    .attr("r", selected_circle_size )
 
-                const gdp_year = d3.format('.2s')(d.value.gdp_for_year).replace('G', 'B');
-                const gdp_capita = d3.format('.2s')(d.value.gdp_per_capita).replace('G', 'B');
+                const gdp_year = d3.format('.2s')(xValue(d)).replace('G', 'B');
+                const gdp_capita = d3.format('.2s')(yValue(d)).replace('G', 'B');
                 
                 tooltipScatter
                     .style("opacity", 1)
                     .html(
-                        '<b>Country:</b> ' + d.key + 
+                        '<b>Country:</b> ' + country(d) + 
                         '<br><b>GDP for year:</b> ' + gdp_year + 
                         "<br><b>Gdp per capita:</b> " + gdp_capita + 
                         "<br><b>Suicide ratio:</b> " + d.value.suicides_pop)
                     .style("left", (d3.mouse(this)[0]+30) + widthMap + initial_width_legend + "px")   
                     .style("top", (d3.mouse(this)[1]) + "px")
             })
+            .on("mousemove", function (d) {
+                d3.select(this)
+                    .style("cursor", "pointer")
+                    .attr("r", selected_circle_size)
+                    .style("stroke", "gold");
+
+                const gdp_year = d3.format('.2s')(xValue(d)).replace('G', 'B');
+                const gdp_capita = d3.format('.2s')(yValue(d)).replace('G', 'B');
+                
+                tooltipScatter            
+                    .style("opacity", 1)
+                    .html(
+                        '<b>Country:</b> ' + country(d) + 
+                        '<br><b>GDP for year:</b> ' + gdp_year + 
+                        "<br><b>Gdp per capita:</b> " + gdp_capita + 
+                        "<br><b>Suicide ratio:</b> " + d.value.suicides_pop)
+                    .style("left", (d3.mouse(this)[0]+30) + widthMap + initial_width_legend + "px")   
+                    .style("top", (d3.mouse(this)[1]) + "px")
+
+            })
             .on("mouseout", function(d){	
+                d3.select(this)
+                    .attr("r", circle_size )
+                    .attr("class", "not-selected-circle");
+
                 tooltipScatter
-                    .transition()
                     .style("opacity", 0)
             })
 
 
     // add avg line for y
-    const avg_value_y = Math.round((d3.sum(dataFiltered, (d) => d.value.gdp_per_capita)) / dataFiltered.length);
+    const avg_value_y = Math.round((d3.sum(dataFiltered, (d) => yValue(d))) / dataFiltered.length);
     const avg_value_scaled_y = yScale(avg_value_y)
     svgScatterPlot.append("line")
         .attr('class', 'avg-line')
@@ -171,7 +197,7 @@ function makeScatterPlot() {
         .text(d3.format('.2s')(avg_value_y))
 
     // add avg line for x
-    const avg_value_x = Math.round((d3.sum(dataFiltered, (d) => d.value.gdp_for_year)) / dataFiltered.length);
+    const avg_value_x = Math.round((d3.sum(dataFiltered, (d) => xValue(d))) / dataFiltered.length);
     const avg_value_scaled_x = xScale(avg_value_x)
     svgScatterPlot.append("line")
         .attr('class', 'avg-line')

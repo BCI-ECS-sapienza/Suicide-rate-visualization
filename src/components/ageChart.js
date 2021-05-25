@@ -110,9 +110,9 @@ function makeAgeChart() {
       .enter()
       .append('g')
       .append('rect')
-      .attr('x', (d) => xScale(d.key) + backOffset)
-      .attr('y', (d) => yScale(d.value.suicides_pop))
-      .attr('height', (d) => height_ageChart - yScale(d.value.suicides_pop))
+      .attr('x', (d) => xScale(xValue(d)) + backOffset)
+      .attr('y', (d) => yScale(yValue(d)))
+      .attr('height', (d) => height_ageChart - yScale(yValue(d)))
       .attr('width', xScale.bandwidth() + backOffset)
       .style("fill",  (d) => color(d.key))
       .style("stroke", "black") 
@@ -129,11 +129,11 @@ function makeAgeChart() {
   barGroups
     .append('rect')
     .attr('class', 'ageBars-filtered')
-    .attr('x', (d) => xScale(d.key))
-    .attr('y', (d) => yScale(d.value.suicides_pop))
-    .attr('height', (d) => height_ageChart - yScale(d.value.suicides_pop))
+    .attr('x', (d) => xScale(xValue(d)))
+    .attr('y', (d) => yScale(yValue(d)))
+    .attr('height', (d) => height_ageChart - yScale(yValue(d)))
     .attr('width', xScale.bandwidth())
-    .style("fill",  (d) => color(d.key))
+    .style("fill",  (d) => color(xValue(d)))
     .on('mouseenter', function (actual, i) {
       // all original values on bars transparent
       d3.selectAll('.bar-value-age')  
@@ -143,18 +143,18 @@ function makeAgeChart() {
       d3.select(this)
         .transition()
         .duration(300)
-        .attr('x', (d) => xScale(d.key) - 5)
+        .attr('x', (d) => xScale(xValue(d)) - 5)
         .attr('width', xScale.bandwidth() + 10)
         .style("cursor", "pointer");
 
       // show value on bar
       barGroups.append('text')
         .attr('class', 'divergence-age')  //needed to remove on mouseleave
-        .attr('x', (d) => xScale(d.key) + xScale.bandwidth() / 2)
-        .attr('y', (d) => yScale(d.value.suicides_pop) + 30)
+        .attr('x', (d) => xScale(xValue(d)) + xScale.bandwidth() / 2)
+        .attr('y', (d) => yScale(yValue(d)) + 30)
         .attr('text-anchor', 'middle')
         .text((d, idx) => {
-          const divergence = (d.value.suicides_pop - actual.value.suicides_pop).toFixed(1)
+          const divergence = (yValue(d) - actual.value.suicides_pop).toFixed(1)
           
           let text = ''
           if (divergence > 0) text += '+'
@@ -172,7 +172,7 @@ function makeAgeChart() {
       d3.select(this)
         .transition()
         .duration(300)
-        .attr('x', (d) => xScale(d.key))
+        .attr('x', (d) => xScale(xValue(d)))
         .attr('width', xScale.bandwidth())
 
       // remove divergence value
@@ -183,13 +183,13 @@ function makeAgeChart() {
   barGroups 
     .append('text')
     .attr('class', 'bar-value-age')
-    .attr('x', (d) => xScale(d.key) + xScale.bandwidth() / 2)
-    .attr('y', (d) => yScale(d.value.suicides_pop) + 30)
+    .attr('x', (d) => xScale(xValue(d)) + xScale.bandwidth() / 2)
+    .attr('y', (d) => yScale(yValue(d)) + 30)
     .attr('text-anchor', 'middle')
-    .text((d) => `${d.value.suicides_pop}`)
+    .text((d) => `${yValue(d)}`)
 
   // add avg line
-  const avg_value = Math.round((d3.sum(dataFiltered, (d) => d.value.suicides_pop)) / dataFiltered.length);
+  const avg_value = Math.round((d3.sum(dataFiltered, (d) => yValue(d))) / dataFiltered.length);
   const avg_value_scaled = yScale(avg_value)
   svgAge.append("line")
     .attr('class', 'avg-line')
