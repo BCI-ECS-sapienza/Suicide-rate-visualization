@@ -3,7 +3,7 @@ const initial_width_sexChart = document.getElementById('sexChart').offsetWidth;
 const initial_height_sexChart = document.getElementById('sexChart').offsetHeight;
 
 // set the dimensions and margins of the graph
-const margin_sexChart = {top: 25, right: 30, bottom: 60, left: 80},
+const margin_sexChart = {top: 25, right: 30, bottom: 50, left: 80},
     width_sexChart = initial_width_sexChart - margin_sexChart.left - margin_sexChart.right,
     height_sexChart = initial_height_sexChart - margin_sexChart.top - margin_sexChart.bottom;
 
@@ -73,7 +73,7 @@ function makeSexChart() {
        .attr("class","axis-text");
 
   // add label left
-  const left_label_x = ((margin_sexChart.left/5) * 3) +3;
+  const left_label_x = ((margin_sexChart.left/5) * 3);
   const left_label_y = (height_sexChart/2);
   svgSex.append('text')
     .attr('class', 'axis-label')
@@ -83,7 +83,7 @@ function makeSexChart() {
    
   // add label bottom
   const bottom_label_x = width_sexChart/2;
-  const bottom_label_y = height_sexChart + ((margin_sexChart.bottom/6)*5) + 3;
+  const bottom_label_y = height_sexChart + ((margin_sexChart.bottom/6)*5) ;
   svgSex.append('text')
     .attr('class', 'axis-label')
     .attr("text-anchor", "middle")
