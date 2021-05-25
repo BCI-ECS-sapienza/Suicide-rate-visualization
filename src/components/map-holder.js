@@ -59,14 +59,10 @@ function makeMap() {
     .call(legend)
       .attr("class","axis-text");*/
 
-  // tooltip
-  var tooltip = d3.tip()
-    .attr('class', 'd3-tip')
-    .offset([-10, 0])
-    .html(function(d) {
-      return d.properties.name + ": "+d.total;
-    })
-    map.call(tooltip);
+  const tooltip = d3.select("#map-holder")
+    .append("div")
+    .style("opacity", 0)
+    .attr("class", "tooltip-scatter");
   
   // zoom and pan
   let zoom = d3.zoom()
@@ -109,11 +105,26 @@ function makeMap() {
         d3.select(this)
           .style("fill", '#80ced6')
           .style("cursor", "pointer");
+        
         tooltip
-          .style("left", (d + 'px'))   
-          .style("top", (d3.mouse + "px"))
-          //.direction('se')
-          .show(d);
+          .style("opacity", 1)
+          .html(
+            '<b>Country:</b> ' + d.properties.name + 
+            '<br><b>Suicide ratio:</b> ' + d.total)
+          .style("left", (d3.mouse(this)[0]) + "px")   
+          .style("top", (d3.mouse(this)[1]) + "px");
+      })
+      // adding event on mousemove
+      .on("mousemove", function (d) {
+        tooltip
+          .transition()
+          .duration(200)
+          .style("opacity", 1)
+          .html(
+            '<b>Country:</b> ' + d.properties.name + 
+            '<br><b>Suicide ratio:</b> ' + d.total)
+          .style("left", (d3.mouse(this)[0]) + "px")   
+          .style("top", (d3.mouse(this)[1]) + "px");
       })
       // adding event on mouseout
       .on("mouseout", function(d){
@@ -125,7 +136,10 @@ function makeMap() {
               return colorScale(d.total);
             }
           });	
-        tooltip.hide()
+        tooltip
+          .transition()
+          .style("opacity", 0);
+        //tooltip.hide()
       })
   });
 }
