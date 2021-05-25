@@ -144,8 +144,8 @@ function makeScatterPlot() {
                         "<br><b>Gdp per capita:</b> " + gdp_capita + 
                         "<br><b>Suicide ratio:</b> " + d.value.suicides_pop)
                     .style("left", (d3.mouse(this)[0]+30) + widthMap + initial_width_legend + "px")   
-                    .style("top", (d3.mouse(this)[1]+10) + "px")
-              })
+                    .style("top", (d3.mouse(this)[1]) + "px")
+            })
             .on("mouseout", function(d){	
                 tooltipScatter
                     .transition()
@@ -202,7 +202,7 @@ const aggregateDataScatter = (dataIn) => {
       }))
     .entries(dataIn)
     return data;
-  };
+};
 
 
 // draw graph on dataloaded

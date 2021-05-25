@@ -8,17 +8,12 @@ html,body {
     background-color: #505250;
     color:white;
 }
-.title{
-    text-align: center;
-    margin-top: 1%;
-    font-size:22px;
-}
 .wrapper{
     height: 98%;
     max-width: 100%;
     display: grid;
     grid-template-columns: 22% 26% 8% auto;
-    grid-template-rows: 8% 26% 20% 5% 20% auto;
+    grid-template-rows: 7% 25% 23% auto;
     grid-gap: 3px;
 }
 .header{
@@ -26,6 +21,7 @@ html,body {
     grid-column-start: 1;
     grid-column-end:5;
     margin-bottom: 3px;
+    display:inline;
 }
 .container{
     border-radius: 25px;
@@ -95,6 +91,35 @@ html,body {
     left: 0;
 }
 
+
+/* header */
+.title{
+    text-align: center;
+    margin-top: 0.6%;
+    font-size:28px;
+}
+.right-header{
+    position:absolute;
+    top: 0;
+    right: 0;
+    margin-top: 1%;
+    margin-right: 0.8%;
+    font-size: 18px;
+    width: 160px;
+}
+.year-selector {
+    margin-left: 1%;
+    border-width: 0 3px 0 3px;
+    border-style: solid;
+    border-color: #394a6d;
+    border-radius: 2em;
+    background-color: rgb(231, 231, 231);
+}
+
+
+
+
+
 /* commons */
 .axis-text{
     fill: white;
@@ -103,9 +128,18 @@ html,body {
 }
 .axis-label{
     fill: white;
-    font-size: 20px;
+    font-size: 18px;
     font-family: sans-serif;
 }
+.avg-line {
+    stroke: yellow;
+    stroke-width: 1.5;
+}
+.avg-label {
+    fill: yellow;
+    font-size: 18px;
+}
+
 
 /* map */
 #map {
@@ -137,7 +171,7 @@ html,body {
     border-radius: 4px;
     font-size: 0.8em;
     color: gainsboro;
-  }
+}
 
 
 
@@ -153,14 +187,6 @@ html,body {
     font-size: 16px;
     font-family: sans-serif;
 }
-.avg-line {
-    stroke: yellow;
-    stroke-width: 1.5;
-}
-.avg-label {
-    fill: yellow;
-    font-size: 18px;
-}
 .sexBars-filtered {
     stroke: black;
     stroke-width: 1.5;
@@ -174,11 +200,6 @@ html,body {
 
 
 /* scatter Plot */
-.selected {
-    opacity: 1 !important;
-    stroke: black;
-    stroke-width: 1px;
-}
 .tooltip-scatter {
     position: absolute;
     padding: 7px;
