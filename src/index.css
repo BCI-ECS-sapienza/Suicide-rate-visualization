@@ -118,8 +118,6 @@ html,body {
 
 
 
-
-
 /* commons */
 .axis-text{
     fill: white;
@@ -138,6 +136,9 @@ html,body {
 .avg-label {
     fill: yellow;
     font-size: 18px;
+}
+.grid-barchart, .grid-scatter {
+    fill: rgb(110, 110, 110);
 }
 
 
@@ -176,9 +177,6 @@ html,body {
 
 
 /* bar chart */
-.grid-barchart {
-    fill: rgb(110, 110, 110);
-}
 .divergence-age, .divergence-sex{
     fill: black;
 }

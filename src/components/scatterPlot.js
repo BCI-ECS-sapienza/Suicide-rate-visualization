@@ -15,6 +15,28 @@ const svgScatterPlot = d3.select("#scatterPlot")
     .append("g")
       .attr("transform", "translate(" + margin_scatterPlot.left + "," + margin_scatterPlot.top + ")");  //padding
 
+// label names
+const scatter_xLabel = 'GDP for year';;
+const scatter_yLabel = 'GDP per capita';
+
+// add label left
+const scatter_left_label_x = ((margin_scatterPlot.left/5) * 3) +3;
+const scatter_left_label_y = (height_scatterPlot/2);
+svgScatterPlot.append('text')
+    .attr('class', 'axis-label')
+    .attr("text-anchor", "middle")
+    .attr("transform", `translate(${-scatter_left_label_x}, ${scatter_left_label_y}), rotate(-90)`) 
+    .text(scatter_yLabel)
+
+// add label bottom
+const scatter_bottom_label_x = width_scatterPlot/2;
+const scatter_bottom_label_y = height_scatterPlot + ((margin_scatterPlot.bottom/6)*5);
+svgScatterPlot.append('text')
+    .attr('class', 'axis-label')
+    .attr("text-anchor", "middle")
+    .attr("transform", `translate(${scatter_bottom_label_x},${scatter_bottom_label_y})`) //to put on bottom
+    .text(scatter_xLabel)
+
 const tooltipScatter = d3.select("#scatterPlot")
     .append("div")
     .style("opacity", 0)
@@ -25,16 +47,14 @@ function makeScatterPlot() {
     const dataYearLoaded = controller.getDataYear();
     const dataFilteredLoaded = controller.getDataFiltered();
     
-    const dataYear = aggregateDataScatter(dataYearLoaded);
-    const dataFiltered = aggregateDataScatter(dataFilteredLoaded);
+    const dataYear = aggregateDataByCountry(dataYearLoaded);
+    const dataFiltered = aggregateDataByCountry(dataFilteredLoaded);
 
     // set params
     const country = d => d.key
     const xValue = d => d.value.gdp_for_year;
     const yValue = d => d.value.gdp_per_capita;
     const colorValue = d => d.value.suicides_pop;
-    const xLabel = 'GDP for year';;
-    const yLabel = 'GDP per capita';
     const colorArray = controller.suicideColorScale;
     const circle_size = 5;
     const selected_circle_size = 10;
@@ -84,27 +104,10 @@ function makeScatterPlot() {
         .selectAll("text")
             .attr("class","axis-text");
 
-    // add label left
-    const left_label_x = ((margin_scatterPlot.left/5) * 3) +3;
-    const left_label_y = (height_scatterPlot/2);
-    svgScatterPlot.append('text')
-        .attr('class', 'axis-label')
-        .attr("text-anchor", "middle")
-        .attr("transform", `translate(${-left_label_x}, ${left_label_y}), rotate(-90)`) 
-        .text(yLabel)
-   
-    // add label bottom
-    const bottom_label_x = width_scatterPlot/2;
-    const bottom_label_y = height_scatterPlot + ((margin_scatterPlot.bottom/6)*5);
-    svgScatterPlot.append('text')
-        .attr('class', 'axis-label')
-        .attr("text-anchor", "middle")
-        .attr("transform", `translate(${bottom_label_x},${bottom_label_y})`) //to put on bottom
-        .text(xLabel)
 
     // add Grid veritcal
     svgScatterPlot.append('g')
-        .attr('class', 'grid-barchart') //background color
+        .attr('class', 'grid-scatter') //background color
         .attr('transform', `translate(0, ${height_scatterPlot})`)
         .call(d3.axisBottom()
             .scale(xScale)
@@ -125,6 +128,7 @@ function makeScatterPlot() {
         .data(dataFiltered)
         .enter()
         .append("circle")
+            .attr('class', 'scatter-points') //background color
             .attr("cx", (d) => xScale(xValue(d)))
             .attr("cy", (d) => yScale(yValue(d)))
             .attr("r", circle_size)
@@ -217,18 +221,23 @@ function makeScatterPlot() {
 }
 
 
-// aggregate data by sex
-const aggregateDataScatter = (dataIn) => {
-    const data = d3.nest()
-      .key( (d) => d.country)
-      .rollup( (d) =>  ({
-        suicides_pop: Math.round(d3.mean(d, (g) => g.suicides_pop)),
-        gdp_for_year: d[0].gdp_for_year,    // same for each category
-        gdp_per_capita: d[0].gdp_per_capita
-      }))
-    .entries(dataIn)
-    return data;
-};
+// A function that update the chart
+function ScatterUpateYear() {
+    svgScatterPlot.selectAll('.axis-text').remove()
+    svgScatterPlot.selectAll('.tick').remove()
+    svgScatterPlot.selectAll('.grid-scatter').remove()
+    svgScatterPlot.selectAll('.scatter-points').remove()
+    svgScatterPlot.selectAll('.avg-line').remove()
+    svgScatterPlot.selectAll('.avg-label').remove()
+    makeScatterPlot()
+}
+  
+  
+// draw graph on dataloaded
+controller.addListener('yearChanged', function (e) {
+    ScatterUpateYear();
+});
+
 
 
 // draw graph on dataloaded

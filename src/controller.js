@@ -11,7 +11,6 @@ Controller = function () {
     // data with different filters
     this.dataYear;
     this.dataFiltered;
-    this.dataMap;
 
     // help vars
     this.suicideColorScale = ['#fff5f0','#fee0d2','#fcbba1','#fc9272','#fb6a4a','#ef3b2c','#cb181d','#a50f15','#67000d']; //all color scales from https://colorbrewer2.org/
@@ -23,20 +22,18 @@ Controller.prototype.loadData = function () {
 
     d3.csv("../data/data.csv", parseRow, function (data) {
         //console.log("data loading...")
-        tmpData = [];
-        countries = new Set();
+        const dataYear = data.filter((d) => d.year==thisYear)
 
+        countries = new Set();
         data.forEach(d => {
-            if (d.year == thisYear) tmpData.push(d);  
             countries.add(d.country)      
         });
 
         _obj.dataAll = data;
         _obj.countryNames = countries;
-
-        _obj.dataYear = tmpData;
-        _obj.dataFiltered = tmpData;
-        _obj.dataMap = tmpData;
+        
+        _obj.dataYear = dataYear;
+        _obj.dataFiltered = dataYear;
 
         //console.log(_obj.dataAll)
         //console.log(_obj.countryNames)
@@ -81,7 +78,9 @@ Controller.prototype.notifyYearChanged = function () {
 
 // filter data by year
 Controller.prototype.triggerYearFilterEvent = function (selectedYear) {
-    // TODO
+    const dataYear = this.dataAll.filter((d) => d.year==selectedYear)
+    this.dataYear = dataYear;
+    this.dataFiltered = dataYear;
     this.notifyYearChanged();
 }
 

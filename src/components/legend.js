@@ -16,7 +16,7 @@ const svgLegend = d3.select("#map-legend")
 
 function makeLegend() {
     const dataFilteredLoaded = controller.getDataFiltered();
-    const dataFiltered = aggregateDataScatter(dataFilteredLoaded);
+    const dataFiltered = aggregateDataByCountry(dataFilteredLoaded);
 
     // set params
     const colorValue = d => d.value.suicides_pop;
@@ -33,13 +33,18 @@ function makeLegend() {
 
     // add legend
     svgLegend
+        .attr('class', 'legend')
         .call(legend)
             .attr("class","axis-text");
 }
 
-
+// draw graph on dataloaded
+controller.addListener('yearChanged', function (e) {
+    svgSex.select('.legend').remove()
+    makeLegend();
+});
 
 // draw graph on dataloaded
 controller.addListener('dataLoaded', function (e) {
     makeLegend();
-  });
+});
