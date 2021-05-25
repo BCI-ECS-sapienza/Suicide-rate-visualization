@@ -18,8 +18,8 @@ const aggregateDataByCountry = (dataIn) => {
       .key( (d) => d.country)
       .rollup( (d) =>  ({
         suicides_pop: Math.round(d3.mean(d, (g) => g.suicides_pop)),
-        gdp_for_year: d[0].gdp_for_year,    // same for each category
-        gdp_per_capita: d[0].gdp_per_capita
+        gdp_for_year: Math.round(d3.mean(d, (g) => g.gdp_for_year)),    
+        gdp_per_capita: Math.round(d3.mean(d, (g) => g.gdp_per_capita))
       }))
     .entries(dataIn)
     return data;

@@ -1,11 +1,18 @@
-// Width and Height of the box
+// chart static params
 const initial_width_ageChart = document.getElementById('ageChart').offsetWidth;
 const initial_height_ageChart = document.getElementById('ageChart').offsetHeight;
+const age_xLabel = 'Age';;
+const age_yLabel = 'Suicide ratio';
+const age_xPadding = 0.5;
+const age_behindOpacity = 0.3;
+const age_backOffset = 5;
 
 // set the dimensions and margins of the graph
 const margin_ageChart = {top: 25, right: 30, bottom: 50, left: 70},
     width_ageChart = initial_width_ageChart - margin_ageChart.left - margin_ageChart.right,
     height_ageChart = initial_height_ageChart - margin_ageChart.top - margin_ageChart.bottom;
+
+
 
 // append the svg object to the body of the page
 const svgAge = d3.select("#ageChart")
@@ -15,11 +22,6 @@ const svgAge = d3.select("#ageChart")
     .append("g")
       .attr("transform", "translate(" + margin_ageChart.left + "," + margin_ageChart.top + ")");  //padding
     
-// label names
-const age_xLabel = 'Age';;
-const age_yLabel = 'Suicide ratio';
-
-
 // add label left
 const age_left_label_x = ((margin_ageChart.left/5) * 3);
 const age_left_label_y = (height_ageChart/2);
@@ -41,37 +43,29 @@ svgAge.append('text')
 
 
 function makeAgeChart() {
-  const dataYearLoaded = controller.getDataYear();
-  const dataFilteredLoaded = controller.getDataFiltered();
-
-  const dataYear = aggregateDataByAge(dataYearLoaded);
-  const dataFiltered = aggregateDataByAge(dataFilteredLoaded);
-  const colorData = aggregateDataByCountry(dataFilteredLoaded);
+  const dataAll = aggregateDataByAge(controller.dataAll);
+  const dataFiltered = aggregateDataByAge(controller.dataFiltered);
+  const colorData = aggregateDataByCountry(controller.dataFiltered);
 
   // sort ages
-  dataYear.sort((a, b) => d3.ascending(a.key, b.key));
+  dataAll.sort((a, b) => d3.ascending(a.key, b.key));
   dataFiltered.sort((a, b) => d3.ascending(a.key, b.key));
 
   // set params
   const xValue = d => d.key;
   const yValue = d => d.value.suicides_pop;
-  const xPadding = 0.5;
-  const behindOpacity = 0.3;
-  const backOffset = 5;
-  const colorArray = controller.suicideColorScale;
 
-
-  // add some padding on top yAxis (1/10 more than max between dataYear and dataFiltered)
-  const max_val_year = d3.max(dataYear, yValue) 
+  // add some padding on top yAxis (1/10 more than max between dataAll and dataFiltered)
+  const max_val_year = d3.max(dataAll, yValue) 
   const max_val_filtered = d3.max(dataFiltered, yValue) 
   const max_val = (max_val_year >  max_val_filtered) ? max_val_year : max_val_filtered;
   const domain_max = parseInt(max_val) + parseInt(max_val/10) 
 
   // set scales
   const xScale = d3.scaleBand()
-    .domain(dataYear.map(xValue))
+    .domain(dataAll.map(xValue))
     .range([ 0, width_ageChart ])
-    .padding(xPadding);
+    .padding(age_xPadding);
 
   const yScale = d3.scaleLinear()
     .domain([0, domain_max ])
@@ -80,7 +74,7 @@ function makeAgeChart() {
 
   const colorScale = d3.scaleQuantize()
     .domain([0, d3.max(colorData, yValue)])
-    .range(colorArray);
+    .range(controller.suicideColorScale);
 
   // axis setup
   const xAxis = d3.axisBottom(xScale);
@@ -100,7 +94,6 @@ function makeAgeChart() {
    .selectAll("text")
        .attr("class","axis-text");
 
-
   // add Grid 
   svgAge.append('g')
     .attr('class', 'grid-barchart')
@@ -110,21 +103,21 @@ function makeAgeChart() {
       .tickFormat(''))
 
 
-  // if filters are applied show also dataYear behind with low opacity
+  // if filters are applied show also dataAll behind with low opacity
   if (controller.isDataFiltered == true) {
     svgAge.selectAll()
-      .data(dataYear)
+      .data(dataAll)
       .enter()
       .append('g')
       .append('rect')
       .attr('class', 'ageBars-back')
-      .attr('x', (d) => xScale(xValue(d)) + backOffset)
+      .attr('x', (d) => xScale(xValue(d)) + age_backOffset)
       .attr('y', (d) => yScale(yValue(d)))
       .attr('height', (d) => height_ageChart - yScale(yValue(d)))
-      .attr('width', xScale.bandwidth() + backOffset)
+      .attr('width', xScale.bandwidth() + age_backOffset)
       .style("fill",  (d) => colorScale(yValue(d)))
       .style("stroke", "black") 
-      .attr('opacity', behindOpacity)
+      .attr('opacity', age_behindOpacity)
   } 
 
 
@@ -215,8 +208,9 @@ function makeAgeChart() {
 
 }
 
-// A function that update the chart
-function ageChartUpateYear() {
+
+// update data chart
+controller.addListener('yearChanged', function (e) {
   svgAge.selectAll('.axis-text').remove()
   svgAge.selectAll('.tick').remove()
   svgAge.selectAll('.grid-barchart').remove()
@@ -226,18 +220,6 @@ function ageChartUpateYear() {
   svgAge.selectAll('.avg-line').remove()
   svgAge.selectAll('.avg-label').remove()
   makeAgeChart()
-}
-
-
-// draw graph on dataloaded
-controller.addListener('yearChanged', function (e) {
-  ageChartUpateYear();
 });
 
-
-
-// draw graph on dataloaded
-controller.addListener('dataLoaded', function (e) {
-  makeAgeChart();
-});
 
