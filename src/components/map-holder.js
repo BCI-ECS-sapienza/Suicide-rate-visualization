@@ -12,10 +12,10 @@ const map = d3.select( '#map-holder' )
 // create path and projection
 const path = d3.geoPath();
 const projection = d3.geoMercator()
-  //.scale(100, 30)
-  //.center([0, 10])
-  .scale(125 , 70)
-  .center([0, 25])
+  .scale(80, 30)
+  .center([0, 30])
+  //.scale(125 , 70)
+  //.center([0, 25])
   .translate([widthMap/2, heightMap/2]);
 
 
@@ -97,7 +97,8 @@ function makeMap(colorScale) {
       // adding event on mouseover
       .on("mouseover", function (d) {
         d3.select(this)
-          .style("fill", '#80ced6')
+          .style("fill", 'lightblue')
+          .style("stroke", "black")
           .style("cursor", "pointer");
         
         tooltip
@@ -121,6 +122,7 @@ function makeMap(colorScale) {
       // adding event on mouseout
       .on("mouseout", function(d){
         d3.select(this)
+          .style("stroke", "transparent")
           .style("fill", (d)=>{
             if(d.total === "Missing data") 
               return '#DCDCDC';
@@ -133,4 +135,21 @@ function makeMap(colorScale) {
           .style("opacity", 0);
       })
   });
+
+  // update data map
+  controller.addListener('yearChanged', function (e) {
+    
+    map.selectAll('g')
+      .remove()
+      .exit();
+    
+      d3.select('#map-holder')
+      .selectAll('tooltip-scatter')
+      .remove()
+      .exit();
+
+    makeMap(colorScale)
+  });
 }
+
+
