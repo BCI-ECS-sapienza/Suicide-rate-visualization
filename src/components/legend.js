@@ -1,5 +1,5 @@
 // legend static params
-const colorLabel = 'Suicide ratio'
+const colorLabel = 'Suicides/100k pop'
 const initial_width_legend = document.getElementById('map-legend').offsetWidth;
 const initial_height_legend = document.getElementById('map-legend').offsetHeight;
 
@@ -15,18 +15,10 @@ const svgLegend = d3.select("#map-legend")
     .append("g")
     .attr("transform", "translate(" + margin_legend.left + "," + margin_legend.top + ")");  //padding
 
-function makeLegend() {
-    const dataFiltered = aggregateDataByCountry(controller.dataFiltered);
-
-    // set scale
-    const colorValue = d => d.value.suicides_pop;
-    const colorScale = d3.scaleQuantize()
-        .domain([0, d3.max(dataFiltered,colorValue)])
-        .range(controller.suicideColorScale);
-
+function makeLegend(colorScale) {
     // legend setup
     const legend = d3.legendColor().scale(colorScale)
-        .labelFormat(d3.format(".0f")).title(colorLabel);
+        .labelFormat(d3.format(".0f")).title(colorLabel).titleWidth(18);
 
     // add legend
     svgLegend
@@ -38,5 +30,5 @@ function makeLegend() {
 // update data chart
 controller.addListener('yearChanged', function (e) {
     svgLegend.selectAll('.legend').remove()
-    makeLegend()
+    makeLegend(controller.colorScale)
   });

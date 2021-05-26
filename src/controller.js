@@ -9,13 +9,14 @@ Controller = function () {
     this.countryNames;
     this.dataFiltered;
 
-    // help vars
-    this.suicideColorScale = ['#fff5f0','#fee0d2','#fcbba1','#fc9272','#fb6a4a','#ef3b2c','#cb181d','#a50f15','#67000d']; //all color scales from https://colorbrewer2.org/
+    // help
+    this.colorScale
 }
 
 
 Controller.prototype.loadData = function () {
     _obj = this;
+    suicideColorScale = ['#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026']; //all color scales from https://colorbrewer2.org/
 
     d3.csv("../data/data.csv", parseRow, function (data) {
         //console.log("data loading...")
@@ -36,12 +37,18 @@ Controller.prototype.loadData = function () {
         //console.log( _obj.dataFiltered)
         //console.log("data loaded!")  
 
+        // set suicide colorScale
+        const colorValueScale = d => d.suicides_pop;
+        _obj.colorScale = d3.scaleQuantile()
+            .domain([0, 10, 20, 30, 40, 50, 60, 70, 80, d3.max(data, colorValueScale)])
+            .range(suicideColorScale)
+
         // draw graphs
-        makeMap();
-        makeLegend();
-        makeScatterPlot();  
-        makeSexChart();
-        makeAgeChart();
+        makeMap(_obj.colorScale);
+        makeLegend(_obj.colorScale);
+        makeScatterPlot(_obj.colorScale);  
+        makeSexChart(_obj.colorScale);
+        makeAgeChart(_obj.colorScale);
     });
 }
 

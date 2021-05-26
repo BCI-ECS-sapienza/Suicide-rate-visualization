@@ -19,7 +19,7 @@ const projection = d3.geoMercator()
   .translate([widthMap/2, heightMap/2]);
 
 
-function makeMap() {
+function makeMap(colorScale) {
   // setting parameters
   const dataYearLoaded = controller.dataAll;
   const dataFilteredLoaded = controller.dataFiltered;
@@ -40,13 +40,7 @@ function makeMap() {
   for (var i = 0; i<dataFiltered.length; i++){
     data.set(dataFiltered[i].key, +dataFiltered[i].value.suicides_pop);
   }
-  
-
-  // data and color scale
-  const colorArray = controller.suicideColorScale;
-  const colorScale = d3.scaleQuantize()
-        .domain([0, max_val_filtered_x])
-        .range(colorArray);
+        
 
   // legend
   /*const g = map.append("g")

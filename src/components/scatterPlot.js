@@ -46,7 +46,7 @@ const tooltipScatter = d3.select("#scatterPlot")
     
 
 
-function makeScatterPlot() {
+function makeScatterPlot(colorScale) {
     const dataAll = aggregateDataByCountry(controller.dataAll);
     const dataFiltered = aggregateDataByCountry(controller.dataFiltered);
 
@@ -80,10 +80,6 @@ function makeScatterPlot() {
         .domain([0, domain_max_y ])
         .range([ height_scatterPlot, 0])
         .nice();
-
-    const colorScale = d3.scaleQuantize()
-        .domain([0, d3.max(dataFiltered,colorValue)])
-        .range(controller.suicideColorScale);
 
 
     // axis setup
@@ -234,6 +230,6 @@ controller.addListener('yearChanged', function (e) {
     svgScatterPlot.selectAll('.scatter-points').remove()
     svgScatterPlot.selectAll('.avg-line').remove()
     svgScatterPlot.selectAll('.avg-label').remove()
-    makeScatterPlot()
+    makeScatterPlot(controller.colorScale)
 });
 

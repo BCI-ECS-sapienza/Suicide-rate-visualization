@@ -2,7 +2,7 @@
 const initial_width_ageChart = document.getElementById('ageChart').offsetWidth;
 const initial_height_ageChart = document.getElementById('ageChart').offsetHeight;
 const age_xLabel = 'Age';;
-const age_yLabel = 'Suicide ratio';
+const age_yLabel = 'Suicides/100k pop';
 const age_xPadding = 0.5;
 const age_behindOpacity = 0.3;
 const age_backOffset = 5;
@@ -42,10 +42,9 @@ svgAge.append('text')
 
 
 
-function makeAgeChart() {
+function makeAgeChart(colorScale) {
   const dataAll = aggregateDataByAge(controller.dataAll);
   const dataFiltered = aggregateDataByAge(controller.dataFiltered);
-  const colorData = aggregateDataByCountry(controller.dataFiltered);
 
   // sort ages
   dataAll.sort((a, b) => d3.ascending(a.key, b.key));
@@ -71,10 +70,6 @@ function makeAgeChart() {
     .domain([0, domain_max ])
     .range([ height_ageChart, 0])
     .nice();
-
-  const colorScale = d3.scaleQuantize()
-    .domain([0, d3.max(colorData, yValue)])
-    .range(controller.suicideColorScale);
 
   // axis setup
   const xAxis = d3.axisBottom(xScale);
@@ -219,7 +214,7 @@ controller.addListener('yearChanged', function (e) {
   svgAge.selectAll('.bar-value-sex').remove()
   svgAge.selectAll('.avg-line').remove()
   svgAge.selectAll('.avg-label').remove()
-  makeAgeChart()
+  makeAgeChart(controller.colorScale)
 });
 
 
