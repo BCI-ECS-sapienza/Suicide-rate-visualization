@@ -121,6 +121,11 @@ function makeScatterPlot() {
         .tickSize(-width_scatterPlot, 0, 0)
         .tickFormat(''))
 
+    // if no filter applied then we show avg
+    let avg_show = ""
+    if (controller.isDataFiltered == false) 
+        avg_show = " (avg.)"
+
 
     // add circles
     svgScatterPlot.append('g')
@@ -147,8 +152,8 @@ function makeScatterPlot() {
                     .style("opacity", 1)
                     .html(
                         '<b>Country:</b> ' + country(d) + 
-                        '<br><b>GDP for year:</b> ' + gdp_year + 
-                        "<br><b>Gdp per capita:</b> " + gdp_capita + 
+                        '<br><b>GDP for year:' + avg_show + '</b> ' + gdp_year + 
+                        '<br><b>Gdp per capita:' + avg_show + '</b> '  + gdp_capita + 
                         "<br><b>Suicide ratio:</b> " + d.value.suicides_pop)
                     .style("left", (d3.mouse(this)[0]+30) + widthMap + initial_width_legend + "px")   
                     .style("top", (d3.mouse(this)[1]) + "px")
@@ -161,16 +166,13 @@ function makeScatterPlot() {
 
                 const gdp_year = d3.format('.2s')(xValue(d)).replace('G', 'B');
                 const gdp_capita = d3.format('.2s')(yValue(d)).replace('G', 'B');
-                const avg_show = ""
-                //if (controller.isDataFiltered == true) 
-                    avg_show = " (avg.)"
                 
                 tooltipScatter            
                     .style("opacity", 1)
                     .html(
                         '<b>Country:</b> ' + country(d) + 
-                        '<br><b>GDP for year (avg.):</b> ' + gdp_year + 
-                        '<br><b>Gdp per capita (avg.):</b> ' + gdp_capita + 
+                        '<br><b>GDP for year' + avg_show + ':</b> ' + gdp_year + 
+                        '<br><b>Gdp per capita' + avg_show + '</b> ' + gdp_capita + 
                         '<br><b>Suicide ratio:</b> ' + d.value.suicides_pop)
                     .style("left", (d3.mouse(this)[0]+30) + widthMap + initial_width_legend + "px")   
                     .style("top", (d3.mouse(this)[1]) + "px")

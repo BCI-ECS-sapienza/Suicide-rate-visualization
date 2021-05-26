@@ -14,8 +14,8 @@ const path = d3.geoPath();
 const projection = d3.geoMercator()
   //.scale(100, 30)
   //.center([0, 10])
-  .scale(80 ,30)
-  .center([0, 30])
+  .scale(125 , 70)
+  .center([0, 25])
   .translate([widthMap/2, heightMap/2]);
 
 
@@ -66,7 +66,7 @@ function makeMap() {
   
   // zoom and pan
   let zoom = d3.zoom()
-   .scaleExtent([1, 2])
+   .scaleExtent([1, 2.5])
    .translateExtent([[-widthMap/10, -heightMap/10], [widthMap + widthMap/10, heightMap + heightMap/10]])
    .on('zoom', () => {
        map.attr('transform', d3.event.transform)
