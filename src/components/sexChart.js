@@ -2,7 +2,7 @@
 const initial_width_sexChart = document.getElementById('sexChart').offsetWidth;
 const initial_height_sexChart = document.getElementById('sexChart').offsetHeight;
 const sex_xLabel = 'Sex';;
-const sex_yLabel = 'Suicide ratio';
+const sex_yLabel = 'Suicides/100k pop';
 const sex_xPadding = 0.5;
 const sex_behindOpacity = 0.3;
 const sex_backOffset = 5;
@@ -42,10 +42,9 @@ svgSex.append('text')
     
 
 
-function makeSexChart() {
+function makeSexChart(colorScale) {
   const dataAll = aggregateDataBySex(controller.dataAll);
   const dataFiltered = aggregateDataBySex(controller.dataFiltered);
-  const colorData = aggregateDataByCountry(controller.dataFiltered);
 
   // sort classes
   dataAll.sort((a, b) => d3.descending(a.key, b.key));
@@ -72,10 +71,6 @@ function makeSexChart() {
     .domain([0, domain_max ])
     .range([ height_sexChart, 0])
     .nice();
-
-  const colorScale = d3.scaleQuantize()
-    .domain([0, d3.max(colorData,yValue)])
-    .range(controller.suicideColorScale);
 
   // axis setup
   const xAxis = d3.axisBottom(xScale);
@@ -220,6 +215,6 @@ controller.addListener('yearChanged', function (e) {
   svgSex.selectAll('.bar-value-sex').remove()
   svgSex.selectAll('.avg-line').remove()
   svgSex.selectAll('.avg-label').remove()
-  makeSexChart()
+  makeSexChart(controller.colorScale)
 });
 

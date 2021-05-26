@@ -130,11 +130,11 @@ html,body {
     font-family: sans-serif;
 }
 .avg-line {
-    stroke: yellow;
+    stroke: lightblue;
     stroke-width: 1.5;
 }
 .avg-label {
-    fill: yellow;
+    fill: lightblue;
     font-size: 18px;
 }
 .grid-barchart, .grid-scatter {
