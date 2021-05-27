@@ -104,8 +104,8 @@ function makeMap(colorScale) {
       // adding event on mouseover
       .on("mouseover", function (d) {
         d3.select(this)
-          .style("fill", 'lightblue')
-          .style("stroke", "black")
+          .classed('over-object', true)
+          .style("fill", "rgb(131, 20, 131)")
           .style("cursor", "pointer");
         
         tooltip
@@ -123,9 +123,8 @@ function makeMap(colorScale) {
         const id = '#' + d.properties.name;
         d3.select('#scatterPlot')
           .select(id)
-          .style("cursor", "pointer")
-          .attr("class", "selected-circle")
           .attr("r", scatter_selected_circle_size )
+          .classed('over-object', true)
       })
       // adding event on mousemove
       .on("mousemove", function (d) {
@@ -159,7 +158,7 @@ function makeMap(colorScale) {
         d3.select('#scatterPlot')
           .select(id)
           .attr("r", scatter_circle_size )
-          .attr("class", "not-selected-circle");
+          .classed('over-object', false)
       })
       // add event on click
       .on("click", function(d){
