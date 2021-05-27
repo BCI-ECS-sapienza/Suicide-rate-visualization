@@ -92,6 +92,7 @@ function makeMap(colorScale) {
         }        
       })
       .style("stroke", "transparent")
+      .attr("id", function(d){ return d.properties.name; })
       .attr("class", function(d){ return "Country" } )
       .style("opacity", .8)
       // adding event on mouseover
@@ -102,12 +103,23 @@ function makeMap(colorScale) {
           .style("cursor", "pointer");
         
         tooltip
-          .style("opacity", 1)
+          .transition()
+          .duration(250)
+          .style("opacity", 1);
+         tooltip
           .html(
             '<b>Country:</b> ' + d.properties.name + 
             '<br><b>Suicide ratio:</b> ' + d.total)
           .style("left", (d3.mouse(this)[0]) + "px")   
           .style("top", (d3.mouse(this)[1]) + "px");
+
+        // manage circles on scatterPlot
+        const id = '#' + d.properties.name;
+        d3.select('#scatterPlot')
+          .select(id)
+          .style("cursor", "pointer")
+          .attr("class", "selected-circle")
+          .attr("r", scatter_selected_circle_size )
       })
       // adding event on mousemove
       .on("mousemove", function (d) {
@@ -129,27 +141,63 @@ function makeMap(colorScale) {
             else{
               return colorScale(d.total);
             }
-          });	
+          });
+
         tooltip
           .transition()
+          .duration(250)
           .style("opacity", 0);
+
+        // manage circles on scatterPlot
+        const id = '#' + d.properties.name;
+        d3.select('#scatterPlot')
+          .select(id)
+          .attr("r", scatter_circle_size )
+          .attr("class", "not-selected-circle");
       })
+      console.log(d3.select('#map-holder').select('#Italy'));
+      d3.select('#map-holder').select('#Italy').style("fill", 'blue');
   });
 
-  // update data map
-  controller.addListener('yearChanged', function (e) {
-    
-    map.selectAll('g')
-      .remove()
-      .exit();
-    
-      d3.select('#map-holder')
-      .selectAll('tooltip-scatter')
-      .remove()
-      .exit();
+  /*
+  function updateMap(){
+    const dataYearLoaded = controller.dataAll;
+    const dataFilteredLoaded = controller.dataFiltered;
 
-    makeMap(colorScale)
-  });
+    const dataYear = aggregateDataByCountry(dataYearLoaded);
+    const dataFiltered = aggregateDataByCountry(dataFilteredLoaded);
+
+    const data = d3.map();
+    for (var i = 0; i<dataFiltered.length; i++){
+      data.set(dataFiltered[i].key, +dataFiltered[i].value.suicides_pop);
+    }
+
+    map.select("g")
+      .selectAll("path")
+      .attr("fill", function (d) {
+        if(typeof(data.get(d.properties.name)) === "undefined"){
+          d.total = 'Missing data';
+          return '#DCDCDC'; 
+        }
+        else{
+          d.total = data.get(d.properties.name);
+          return colorScale(d.total);
+        }      
+    });
+  }*/
 }
 
+// update data map
+controller.addListener('yearChanged', function (e) {
+    
+  map.selectAll('g')
+    .remove()
+    .exit();
+  
+    d3.select('#map-holder')
+    .selectAll('tooltip-scatter')
+    .remove()
+    .exit();
 
+  makeMap(controller.colorScale)
+});
