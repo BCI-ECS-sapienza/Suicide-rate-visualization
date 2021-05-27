@@ -175,6 +175,21 @@ function makeSexChart(colorScale) {
       // remove divergence value
       svgSex.selectAll('.divergence-sex').remove()
     })
+    .on('click', function (e) {
+      let selection = xValue(this.__data__)
+      // toggle bar selection highlight
+      if (d3.select(this).classed("selected-bar") == false) {
+        d3.selectAll('.sexBars-filtered').classed("selected-bar", false) // so that the other get toggle
+        d3.select(this).classed("selected-bar", true)
+      } 
+      else {
+        d3.select(this).classed("selected-bar", false);
+        selection = 'all' // toggle agin => back to all
+      }
+
+      // apply filter
+      controller.triggerSexFilterEvent(selection);
+    })
 
   // add values on bars
   barGroups 
@@ -186,7 +201,7 @@ function makeSexChart(colorScale) {
     .text((d) => `${yValue(d)}`)
 
   // add avg line
-  const avg_value = Math.round((d3.sum(dataFiltered, (d) => yValue(d))) / dataFiltered.length);
+  const avg_value = Math.round((d3.sum(dataFiltered, (d) => yValue(d))) / dataFiltered.length *10) /10;
   const avg_value_scaled = yScale(avg_value)
   svgSex.append("line")
     .attr('class', 'avg-line')
@@ -199,7 +214,7 @@ function makeSexChart(colorScale) {
   svgSex.append("text")
     .attr('class', 'avg-label')
     .attr("text-anchor", "middle")
-    .attr("transform", `translate(${width_sexChart-15}, ${avg_value_scaled-10})`) 
+    .attr("transform", `translate(${width_sexChart-20}, ${avg_value_scaled-10})`) 
     .text(avg_value)
 
 }
@@ -217,4 +232,3 @@ controller.addListener('yearChanged', function (e) {
   svgSex.selectAll('.avg-label').remove()
   makeSexChart(controller.colorScale)
 });
-

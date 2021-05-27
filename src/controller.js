@@ -1,7 +1,7 @@
 Controller = function () {
     // events handlers
     this.isDataFiltered = false;  //set true when visualization filters applied
-    this.appliedFilters = {'age':'05-20'}; //dictionary of applied filters
+    this.appliedFilters = {}; //dictionary of applied filters
     this.listenersContainer = new EventTarget();
 
     // data with different filters
@@ -10,7 +10,7 @@ Controller = function () {
     this.dataFiltered;
 
     // help
-    this.colorScale
+    this.colorScale;
 }
 
 
@@ -19,7 +19,7 @@ Controller.prototype.loadData = function () {
     suicideColorScale = ['#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026']; //all color scales from https://colorbrewer2.org/
 
     d3.csv("../data/data.csv", parseRow, function (data) {
-        //console.log("data loading...")
+        //console.log("data loading...")   
 
         countries = new Set();
         data.forEach(d => {
@@ -64,16 +64,28 @@ Controller.prototype.notifyYearChanged = function () {
     //console.log('year changed!')
 }
 
+// events dispatch
+Controller.prototype.notifyAgeChanged = function () {
+    this.listenersContainer.dispatchEvent(new Event('ageChanged'));
+    //console.log('year changed!')
+}
 
-// filter by yar
+// events dispatch
+Controller.prototype.notifySexChanged = function () {
+    this.listenersContainer.dispatchEvent(new Event('sexChanged'));
+    //console.log('year changed!')
+}
+
+
+
+// filter by year
 Controller.prototype.triggerYearFilterEvent = function (selectedYear) {
     const appliedFilters = this.appliedFilters;
 
     if (isNaN(selectedYear)==true) {
         delete this.appliedFilters['year'];
-        this.dataFiltered = this.dataAll;
-        //this.dataFiltered = this.dataAll.filter((d) => d.year==selectedYear);
-        this.isDataFiltered = false;
+        this.dataFiltered = this.dataAll; 
+        this.isDataFiltered = false;  
     }
     else {
         appliedFilters['year'] = selectedYear
@@ -82,8 +94,49 @@ Controller.prototype.triggerYearFilterEvent = function (selectedYear) {
     }
         
     this.notifyYearChanged();
-    console.log(this.appliedFilters)
 }
+
+
+// TO FIX
+// filter by age
+Controller.prototype.triggerAgeFilterEvent = function (selectedAge) {
+    const appliedFilters = this.appliedFilters;
+    console.log(this.dataFiltered)
+    console.log(selectedAge)
+
+    appliedFilters['age'] = selectedAge //just for test
+    const filter = (age) => this.dataFiltered = this.dataAll.filter((d) => d.age==age); 
+    filter('75+ years') // just for test
+    
+    this.isDataFiltered = true; 
+        
+    this.notifyAgeChanged();
+    console.log(this.appliedFilters)
+    console.log(this.dataFiltered)
+}
+
+
+// filter by sex
+Controller.prototype.triggerSexFilterEvent = function (selectedSex) {
+    if (selectedSex == 'all') {
+        this.dataFiltered = this.dataAll
+    }
+    else {
+        const appliedFilters = this.appliedFilters;
+        console.log(this.dataFiltered)
+        console.log(selectedSex)
+    
+        appliedFilters['sex'] = selectedSex //just for test
+        this.dataFiltered = this.dataAll.filter((d) => d.sex==selectedSex);
+        this.isDataFiltered = true; 
+            
+        this.notifySexChanged();
+    }
+
+    console.log(this.appliedFilters)
+    console.log(this.dataFiltered)
+}
+
 
 
 // data rows parser

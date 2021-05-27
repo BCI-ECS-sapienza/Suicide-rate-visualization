@@ -2,6 +2,7 @@
 const AxisTickFormat = number =>
   	d3.format('.2s')(number).replace('G', 'B');
 
+const sumSet = mySet => [...mySet].reduce((a,b) => a + b, 0)
 
 // year filter from header
 const yearSelected = () => {
