@@ -177,19 +177,7 @@ function makeAgeChart(colorScale) {
         // get back basic avg
         const avg_value = Math.round((d3.sum(dataFiltered, (d) => yValue(d))) / dataFiltered.length*10) /10;
         const avg_value_scaled = yScale(avg_value)
-        svgAge.append("line")
-          .attr('class', 'avg-line')
-          .attr("x1", 0)
-          .attr("x2", width_ageChart+2)
-          .attr("y1", avg_value_scaled)
-          .attr("y2", avg_value_scaled)
-        
-        // avg value print
-        svgAge.append("text")
-          .attr('class', 'avg-label')
-          .attr("text-anchor", "middle")
-          .attr("transform", `translate(${width_ageChart-20}, ${avg_value_scaled-10})`) 
-          .text(avg_value)
+        printAvgY(svgAge, avg_value, avg_value_scaled, width_ageChart)
       }
     })
 
@@ -206,19 +194,7 @@ function makeAgeChart(colorScale) {
   // add avg line
   const avg_value = Math.round((d3.sum(dataFiltered, (d) => yValue(d))) / dataFiltered.length*10) /10;
   const avg_value_scaled = yScale(avg_value)
-  svgAge.append("line")
-    .attr('class', 'avg-line')
-    .attr("x1", 0)
-    .attr("x2", width_ageChart+2)
-    .attr("y1", avg_value_scaled)
-    .attr("y2", avg_value_scaled)
-  
-  // avg value print
-  svgAge.append("text")
-    .attr('class', 'avg-label')
-    .attr("text-anchor", "middle")
-    .attr("transform", `translate(${width_ageChart-20}, ${avg_value_scaled-10})`) 
-    .text(avg_value)
+  printAvgY(svgAge, avg_value, avg_value_scaled, width_ageChart)
 
 }
 
@@ -230,7 +206,7 @@ controller.addListener('yearChanged', function (e) {
   svgAge.selectAll('.grid-barchart').remove()
   svgAge.selectAll('.ageBars-back').remove()
   svgAge.selectAll('.ageBars-filtered').remove()
-  svgAge.selectAll('.bar-value-sex').remove()
+  svgAge.selectAll('.bar-value-age').remove()
   svgAge.selectAll('.avg-line').remove()
   svgAge.selectAll('.avg-label').remove()
   makeAgeChart(controller.colorScale)

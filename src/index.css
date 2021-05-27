@@ -122,11 +122,6 @@ html,body {
     font-size: 18px;
     font-family: sans-serif;
 }
-/*
-.grid-barchart, .grid-scatter {
-    fill: rgb(110, 110, 110);
-}
-*/
 .tick line {
     stroke: lightgray;
     opacity: 0.5;
@@ -151,8 +146,7 @@ html,body {
     font-size: 18px;
 }
 .over-object {
-    /* stroke: rgb(131, 20, 131); */ 
-    stroke: lightblue;
+    stroke: rgb(131, 20, 131);  
     stroke-width: 2px;
 }
 .not-over-object {

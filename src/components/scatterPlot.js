@@ -1,28 +1,21 @@
 function makeScatterPlot(colorScale) {
-    const dataAll = aggregateDataByCountry(controller.dataAll);
-    const dataFiltered = aggregateDataByCountry(controller.dataFiltered);
-    
-    // set params
-    const country = d => d.key
-    const xValue = d => d.value.gdp_for_year;
-    const yValue = d => d.value.gdp_per_capita;
-    const colorValue = d => d.value.suicides_pop;
 
-    // callbacks for circles interactions
+    // callback for mouseover circles 
     const onPoint = function (d) {
         // highlight circle
         d3.select(this)
             .style("cursor", "pointer")
-            .attr("class", "over-object")
             .attr("r", scatter_selected_circle_size )
+            .classed('over-object', true)
     
         // highlight state on map
         d3.select('#map-holder').select('#'+country(d))
-            .style("fill", 'lightblue')
-            .style("stroke", "black");
+            .classed('over-object', true)
+            .style("fill", "rgb(131, 20, 131)");
     
         const gdp_year = d3.format('.2s')(xValue(d)).replace('G', 'B');
         const gdp_capita = d3.format('.2s')(yValue(d)).replace('G', 'B');
+        
         
         // show tooltip
         tooltipScatter
@@ -33,9 +26,10 @@ function makeScatterPlot(colorScale) {
                 '<br><b>Gdp per capita:' + avg_show + '</b> '  + gdp_capita + 
                 "<br><b>Suicide ratio:</b> " + d.value.suicides_pop)
             .style("left", (d3.mouse(this)[0]+30) + widthMap + initial_width_legend + "px")   
-            .style("top", (d3.mouse(this)[1]) + "px")
+            .style("top", (d3.mouse(this)[1]) + "px") //heightMap + "px")
     }
 
+    // callback for mousemove circles 
     const moveOverPoint = function (d) {
         const gdp_year = d3.format('.2s')(xValue(d)).replace('G', 'B');
         const gdp_capita = d3.format('.2s')(yValue(d)).replace('G', 'B');
@@ -49,30 +43,98 @@ function makeScatterPlot(colorScale) {
                 '<br><b>Gdp per capita:' + avg_show + '</b> '  + gdp_capita + 
                 "<br><b>Suicide ratio:</b> " + d.value.suicides_pop)
             .style("left", (d3.mouse(this)[0]+30) + widthMap + initial_width_legend + "px")   
-            .style("top", (d3.mouse(this)[1]) + "px")
+            .style("top", (d3.mouse(this)[1]) + "px") //heightMap + "px")
     }
     
+    // callback for mouseleave circles 
     const leavePoint = function(d){	
+        // remove highlight circle
         d3.select(this)
             .attr("r", scatter_circle_size )
-            .attr("class", "not-over-object");
+            .classed('over-object', false)
     
+        // remove highlight state on map
         d3.select('#map-holder').select('#'+country(d))
-        .style("stroke", "transparent")
-        .style("fill", (d)=>{
-            if(d.total === "Missing data") 
-                return '#DCDCDC';
-            else{
-                return colorScale(d.total);
-            }
-        });
+            .style("stroke", "transparent")
+            .style("fill", (d)=>{
+                if(d.total === "Missing data") 
+                    return '#DCDCDC';
+                else{
+                    return colorScale(d.total);
+                }
+            });
     
         tooltipScatter
             .style("opacity", 0)
     }
 
+    // needed for brush callback
+    var idleTimeout
+    const idled = () =>  idleTimeout = null; 
+   
+    // brush callback
+    const updateChart = () => {
+        extent = d3.event.selection
+
+        // If no selection, back to initial coordinate. Otherwise, update X axis domain
+        if(!extent){
+            if (!idleTimeout) return idleTimeout = setTimeout(idled, 350);
+            xScale.domain([0, domain_max_x ])
+            yScale.domain([0, domain_max_y ])
+        } else{
+            const x0 = xScale.invert(extent[0][0])
+            const x1 = xScale.invert(extent[1][0])
+            const y0 = yScale.invert(extent[1][1])
+            const y1 = yScale.invert(extent[0][1])
+
+            // TO ADD FILTER EVENT
+            //const brushed = (d) => x0 <= xScale(xValue(d)) && xScale(xValue(d)) <= x1 && y0 <= yScale(yValue(d)) && yScale(yValue(d)) <= y1;
+            //const brushedPoints = brushed();
+            //console.log(brushedPoints)
+
+            xScale.domain([ x0, x1 ])
+            yScale.domain([ y0, y1 ])
+            scatterArea.select(".brush").call(scatterBrush.move, null) // This remove the grey brush area as soon as the selection has been done
+        }
+
+        // update axis 
+        scatterXAxisSvg.transition().duration(1000).call(xAxis)
+            .selectAll("text") 
+                .attr("class","axis-text");
+
+        scatterYAxisSvg.transition().duration(1000).call(yAxis)
+            .selectAll("text") 
+                .attr("class","axis-text");
+        
+        // update circles position
+        scatterArea
+            .selectAll("circle")
+            .transition()
+            .duration(scatter_transition_time)
+            .attr("cx", (d) => xScale(xValue(d)))
+            .attr("cy", (d) => yScale(yValue(d)))
+            .attr("r", scatter_circle_size)
+            .style("opacity", 1)
+
+    }
 
 
+   
+    // get data
+    const dataFiltered = aggregateDataByCountry(controller.dataFiltered);
+
+    // set data iterators
+    const country = d => d.key
+    const xValue = d => d.value.gdp_for_year;
+    const yValue = d => d.value.gdp_per_capita;
+    const colorValue = d => d.value.suicides_pop;
+
+     // if no filter applied then show avg in tooltip
+     let avg_show = " (avg.)"
+     if (controller.isYearFiltered == true) 
+         avg_show = ""
+
+    
     // add some padding on top xAxis (1/100 more than max between dataAll and dataFiltered)
     //const max_val_year_x = d3.max(dataAll, xValue) 
     const max_val_filtered_x = d3.max(dataFiltered, xValue) 
@@ -87,8 +149,8 @@ function makeScatterPlot(colorScale) {
     //const domain_max_y = parseInt(max_val_y) + parseInt(max_val_y/100) 
     const domain_max_y = parseInt(max_val_filtered_y) + parseInt(max_val_filtered_y/100)
 
-    // set scales
-    const xScale = d3.scaleLinear()
+    // set scales ranges
+    const xScale = d3.scaleLinear() 
         .domain([0, domain_max_x ])
         .range([ 0, width_scatterPlot ])
 
@@ -97,35 +159,45 @@ function makeScatterPlot(colorScale) {
         .range([ height_scatterPlot, 0])
         .nice();
 
-
     // axis setup
     const xAxis = d3.axisBottom(xScale).tickFormat(AxisTickFormat);
     const yAxis = d3.axisLeft(yScale).tickFormat(AxisTickFormat);
 
+    // compute avg line for y
+    const avg_value_y = Math.round((d3.sum(dataFiltered, (d) => yValue(d))) / dataFiltered.length);
+    const avg_value_scaled_y = yScale(avg_value_y)
 
-    // add X axis
-    svgScatterPlot.append("g")
+    // compute avg line for x
+    const avg_value_x = Math.round((d3.sum(dataFiltered, (d) => xValue(d))) / dataFiltered.length);
+    const avg_value_scaled_x = xScale(avg_value_x)
+
+        
+    // Add brushing
+    const scatterBrush = d3.brush()                 
+        .extent( [ [0,0], [width_scatterPlot,height_scatterPlot] ] )
+        .on("end", updateChart) 
+
+
+    // call x Axis
+    scatterXAxisSvg.call(xAxis)
         .transition()
         .duration(scatter_transition_time)
-        .attr("transform", "translate(0," + height_scatterPlot + ")") //to put on bottom
-        .call(xAxis)
             .selectAll("text")  //text color
                 .attr("class","axis-text");
 
-    // add Y axis
-    svgScatterPlot.append("g")
-        .transition()
+    // call Y axis
+    scatterYAxisSvg.transition()
         .duration(scatter_transition_time)
         .call(yAxis)
         .selectAll("text")
             .attr("class","axis-text");
 
-
+            
     // add Grid veritcal
-    svgScatterPlot.append('g')
+    scatterXGridSvg
         .transition()
         .duration(scatter_transition_time)
-        .attr('class', 'grid-scatter') //background color
+        .attr('class', 'grid-scatter') 
         .attr('transform', `translate(0, ${height_scatterPlot})`)
         .call(d3.axisBottom()
             .scale(xScale)
@@ -133,7 +205,7 @@ function makeScatterPlot(colorScale) {
             .tickFormat(''))
 
     // add Grid oriziontal
-    svgScatterPlot.append('g')
+    scatterYGridSvg 
         .transition()
         .duration(scatter_transition_time)
         .call(d3.axisLeft()
@@ -141,14 +213,9 @@ function makeScatterPlot(colorScale) {
             .tickSize(-width_scatterPlot, 0, 0)
             .tickFormat(''))
 
-    // if no filter applied then we show avg
-    let avg_show = ""
-    if (controller.isDataFiltered == false) 
-        avg_show = " (avg.)"
-
 
     // add circles
-    svgScatterPlot.append('g')
+    scatterArea
         .selectAll("circle")
         .data(dataFiltered)
         .enter()
@@ -165,60 +232,28 @@ function makeScatterPlot(colorScale) {
             .attr("cy", (d) => yScale(yValue(d)))
             .attr("r", scatter_circle_size)
             .style("opacity", 1)
-            
 
 
-    // add avg line for y
-    const avg_value_y = Math.round((d3.sum(dataFiltered, (d) => yValue(d))) / dataFiltered.length);
-    const avg_value_scaled_y = yScale(avg_value_y)
-    svgScatterPlot.append("line")
-        .transition()
-        .duration(scatter_transition_time)
-        .attr('class', 'avg-line')
-        .attr("x1", 0)
-        .attr("x2", width_scatterPlot+2)
-        .attr("y1", avg_value_scaled_y)
-        .attr("y2", avg_value_scaled_y)
-  
-    // avg value print for y
-    svgScatterPlot.append("text")
-        .transition()
-        .duration(scatter_transition_time)
-        .attr('class', 'avg-label')
-        .attr("text-anchor", "middle")
-        .attr("transform", `translate(${width_scatterPlot-20}, ${avg_value_scaled_y-10})`) 
-        .text(d3.format('.2s')(avg_value_y))
-
-    // add avg line for x
-    const avg_value_x = Math.round((d3.sum(dataFiltered, (d) => xValue(d))) / dataFiltered.length);
-    const avg_value_scaled_x = xScale(avg_value_x)
-    svgScatterPlot.append("line")
-        .transition()
-        .duration(scatter_transition_time)
-        .attr('class', 'avg-line')
-        .attr("x1", avg_value_scaled_x)
-        .attr("x2", avg_value_scaled_x)
-        .attr("y1", 0)
-        .attr("y2", height_scatterPlot+2)
-  
-    // avg value print for x
-    svgScatterPlot.append("text")
-        .transition()
-        .duration(scatter_transition_time)
-        .attr('class', 'avg-label')
-        .attr("text-anchor", "middle")
-        .attr("transform", `translate(${avg_value_scaled_x+25}, ${20})`) 
-        .text(d3.format('.2s')(avg_value_x).replace('G', 'B'))
-
+    // add brushing
+    scatterArea
+        .append("g")
+            .attr("class", "brush")
+            .call(scatterBrush);
+                
+    // add A=avg lines
+    printAvgY(svgScatterPlot, avg_value_y, avg_value_scaled_y, width_scatterPlot)
+    printAvgX(svgScatterPlot, avg_value_x, avg_value_scaled_x, height_scatterPlot)
 }
 
 
 
-
   
-// update data graph
+// update data on year changed
 controller.addListener('yearChanged', function (e) {
-
-    //makeScatterPlot.onPoint()
+    svgScatterPlot.selectAll('.scatter-points').remove()
+    svgScatterPlot.selectAll('.avg-line').remove()
+    svgScatterPlot.selectAll('.avg-label').remove()
+    makeScatterPlot(controller.colorScale);
 });
+
 
