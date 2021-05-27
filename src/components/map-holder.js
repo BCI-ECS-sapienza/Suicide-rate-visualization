@@ -163,7 +163,7 @@ function makeMap(colorScale) {
       })
       // add event on click
       .on("click", function(d){
-        console.log(firstAdded);
+        
         if(controller.selectedCountries.includes(this)){
           const index = controller.selectedCountries.indexOf(this);
           if (index > -1) {
@@ -205,7 +205,7 @@ function makeMap(colorScale) {
           svgRadar
             .attr("opacity", 1);
         }
-        console.log(controller.selectedCountries);
+        
       });
   });   
 }
