@@ -155,8 +155,6 @@ function makeMap(colorScale) {
           .attr("r", scatter_circle_size )
           .attr("class", "not-selected-circle");
       })
-      console.log(d3.select('#map-holder').select('#Italy'));
-      d3.select('#map-holder').select('#Italy').style("fill", 'blue');
   });
 
   /*
