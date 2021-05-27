@@ -137,14 +137,21 @@ function makeScatterPlot(colorScale) {
             .style("fill", (d) => colorScale(colorValue(d)))
             .style("opacity", 1)
             .on("mouseover", function (d) {
+                // highlight circle
                 d3.select(this)
                     .style("cursor", "pointer")
                     .attr("class", "selected-circle")
                     .attr("r", scatter_selected_circle_size )
 
+                // highlight state on map
+                d3.select('#map-holder').select('#'+country(d))
+                    .style("fill", 'lightblue')
+                    .style("stroke", "black");
+
                 const gdp_year = d3.format('.2s')(xValue(d)).replace('G', 'B');
                 const gdp_capita = d3.format('.2s')(yValue(d)).replace('G', 'B');
                 
+                // show tooltip
                 tooltipScatter
                     .style("opacity", 1)
                     .html(
@@ -156,14 +163,21 @@ function makeScatterPlot(colorScale) {
                     .style("top", (d3.mouse(this)[1]) + "px")
             })
             .on("mousemove", function (d) {
+                // highlight circle
                 d3.select(this)
                     .style("cursor", "pointer")
                     .attr("r", scatter_selected_circle_size)
-                    .style("stroke", "gold");
+                    .style("stroke", 'lightblue');
+
+                // highlight state on map
+                d3.select('#map-holder').select('#'+country(d))
+                    .style("fill", 'lightblue')
+                    .style("stroke", "black");
 
                 const gdp_year = d3.format('.2s')(xValue(d)).replace('G', 'B');
                 const gdp_capita = d3.format('.2s')(yValue(d)).replace('G', 'B');
                 
+                // show tooltip
                 tooltipScatter            
                     .style("opacity", 1)
                     .html(
@@ -179,6 +193,16 @@ function makeScatterPlot(colorScale) {
                 d3.select(this)
                     .attr("r", scatter_circle_size )
                     .attr("class", "not-selected-circle");
+
+                d3.select('#map-holder').select('#'+country(d))
+                .style("stroke", "transparent")
+                .style("fill", (d)=>{
+                    if(d.total === "Missing data") 
+                        return '#DCDCDC';
+                    else{
+                        return colorScale(d.total);
+                    }
+                });
 
                 tooltipScatter
                     .style("opacity", 0)
