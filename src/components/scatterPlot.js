@@ -130,6 +130,7 @@ function makeScatterPlot(colorScale) {
         .enter()
         .append("circle")
             .attr('class', 'scatter-points') 
+            .attr('id', (d) => country(d))
             .attr("cx", (d) => xScale(xValue(d)))
             .attr("cy", (d) => yScale(yValue(d)))
             .attr("r", scatter_circle_size)

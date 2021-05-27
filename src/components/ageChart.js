@@ -53,6 +53,8 @@ function makeAgeChart(colorScale) {
   // set params
   const xValue = d => d.key;
   const yValue = d => d.value.suicides_pop;
+  let selectedBars = new Set();
+  let selectedValues = new Set();
 
   // add some padding on top yAxis (1/10 more than max between dataAll and dataFiltered)
   const max_val_year = d3.max(dataAll, yValue) 
@@ -174,6 +176,67 @@ function makeAgeChart(colorScale) {
       // remove divergence value
       svgAge.selectAll('.divergence-age').remove()
     })
+    .on('click', function (e) {
+      // toggle bar selection highlight and get class
+      if (d3.select(this).classed("selected-bar") == false) {
+        d3.select(this).classed("selected-bar", true)
+        selectedBars.add(xValue(this.__data__))
+        selectedValues.add(yValue(this.__data__))
+      } 
+      else {
+        d3.select(this).classed("selected-bar", false);
+        selectedBars.delete(xValue(this.__data__))
+        selectedValues.delete(yValue(this.__data__))
+      }
+      
+      controller.triggerAgeFilterEvent(selectedBars);
+      svgAge.selectAll('.avg-line-selected').remove();
+      svgAge.selectAll('.avg-label-selected').remove();
+
+      
+      if (selectedValues.size > 0){
+        // remove basic avg
+        svgAge.selectAll('.avg-line').remove();
+        svgAge.selectAll('.avg-label').remove();
+
+        // add avg line selected
+        const avg_value = Math.round(sumSet(selectedValues)/selectedValues.size *10) /10;
+        const avg_value_scaled = yScale(avg_value)
+
+        svgAge.append("line")
+          .attr('class', 'avg-line-selected')
+          .attr("x1", 0)
+          .attr("x2", width_ageChart+2)
+          .attr("y1", avg_value_scaled)
+          .attr("y2", avg_value_scaled)
+        
+        // avg value print selected
+        svgAge.append("text")
+          .attr('class', 'avg-label-selected')
+          .attr("text-anchor", "middle")
+          .attr("transform", `translate(${width_ageChart-20}, ${avg_value_scaled-10})`) 
+          .text(avg_value)
+      }
+      else {
+        // get back basic avg
+        const avg_value = Math.round((d3.sum(dataFiltered, (d) => yValue(d))) / dataFiltered.length*10) /10;
+        const avg_value_scaled = yScale(avg_value)
+        svgAge.append("line")
+          .attr('class', 'avg-line')
+          .attr("x1", 0)
+          .attr("x2", width_ageChart+2)
+          .attr("y1", avg_value_scaled)
+          .attr("y2", avg_value_scaled)
+        
+        // avg value print
+        svgAge.append("text")
+          .attr('class', 'avg-label')
+          .attr("text-anchor", "middle")
+          .attr("transform", `translate(${width_ageChart-20}, ${avg_value_scaled-10})`) 
+          .text(avg_value)
+      }
+    })
+
 
   // add values on bars
   barGroups 
@@ -185,7 +248,7 @@ function makeAgeChart(colorScale) {
     .text((d) => `${yValue(d)}`)
 
   // add avg line
-  const avg_value = Math.round((d3.sum(dataFiltered, (d) => yValue(d))) / dataFiltered.length);
+  const avg_value = Math.round((d3.sum(dataFiltered, (d) => yValue(d))) / dataFiltered.length*10) /10;
   const avg_value_scaled = yScale(avg_value)
   svgAge.append("line")
     .attr('class', 'avg-line')
@@ -198,7 +261,7 @@ function makeAgeChart(colorScale) {
   svgAge.append("text")
     .attr('class', 'avg-label')
     .attr("text-anchor", "middle")
-    .attr("transform", `translate(${width_ageChart-15}, ${avg_value_scaled-10})`) 
+    .attr("transform", `translate(${width_ageChart-20}, ${avg_value_scaled-10})`) 
     .text(avg_value)
 
 }

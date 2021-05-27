@@ -129,17 +129,27 @@ html,body {
     font-size: 18px;
     font-family: sans-serif;
 }
-.avg-line {
-    stroke: lightblue;
-    stroke-width: 1.5;
-}
-.avg-label {
-    fill: lightblue;
-    font-size: 18px;
-}
 .grid-barchart, .grid-scatter {
     fill: rgb(110, 110, 110);
 }
+.avg-line {
+    stroke: lightgreen;
+    stroke-width: 1.5;
+}
+.avg-label {
+    fill: lightgreen;
+    font-size: 18px;
+}
+.avg-line-selected {
+    stroke: lightblue;
+    stroke-width: 1.5;
+}
+.avg-label-selected {
+    fill: lightblue;
+    font-size: 18px;
+}
+
+
 
 
 /* map */
@@ -192,6 +202,10 @@ html,body {
 .ageBars-filtered {
     stroke: black;
     stroke-width: 1.5;
+}
+.selected-bar {
+    stroke: lightblue;
+    stroke-width: 3;
 }
 
 
