@@ -163,7 +163,7 @@ function makeMap(colorScale) {
       })
       // add event on click
       .on("click", function(d){
-
+        console.log(firstAdded);
         if(controller.selectedCountries.includes(this)){
           const index = controller.selectedCountries.indexOf(this);
           if (index > -1) {
@@ -191,7 +191,12 @@ function makeMap(colorScale) {
             const index = controller.selectedCountries.indexOf(firstAdded);
             if (index > -1) {
               controller.selectedCountries.splice(index, 1);
-              console.log('I am here');
+            }
+            if(controller.selectedCountries.length != 0){
+              firstAdded = controller.selectedCountries[0];
+            }
+            else{
+              firstAdded = null;
             }
             controller.selectedCountries.push(this);
           }          
