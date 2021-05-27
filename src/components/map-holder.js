@@ -34,6 +34,8 @@ function makeMap(colorScale) {
   const max_val_year_x = d3.max(dataYear, suicidesValue); 
   const max_val_filtered_x = d3.max(dataFiltered, suicidesValue); 
 
+  var firstAdded = null; // used to save the oldest between selected states
+
   
   // mapping (country, #suicides) in data
   /*const data = d3.map();
@@ -161,18 +163,44 @@ function makeMap(colorScale) {
       })
       // add event on click
       .on("click", function(d){
-        if(svgRadar.attr("opacity") === '0'){
+
+        if(controller.selectedCountries.includes(this)){
+          const index = controller.selectedCountries.indexOf(this);
+          if (index > -1) {
+            controller.selectedCountries.splice(index, 1);
+          } 
+          
+          if(controller.selectedCountries.length == 0){
+            //svgPca
+              //.attr("opacity", 1);
+            svgRadar
+              .attr("opacity", 0);
+          }
+          if(firstAdded === this && controller.selectedCountries.length != 0){
+            firstAdded = controller.selectedCountries[0];
+          }
+        }
+        else{
+          if(controller.selectedCountries.length < 3){
+            if(controller.selectedCountries.length == 0){
+              firstAdded = this;
+            }
+            controller.selectedCountries.push(this);
+          }
+          else{
+            const index = controller.selectedCountries.indexOf(firstAdded);
+            if (index > -1) {
+              controller.selectedCountries.splice(index, 1);
+              console.log('I am here');
+            }
+            controller.selectedCountries.push(this);
+          }          
           //svgPca
-            //.attr("opacity", 0);
+            //.attr("opacity", 0);  
           svgRadar
             .attr("opacity", 1);
         }
-        else{
-          //svgPca
-            //.attr("opacity", 1);
-          svgRadar
-            .attr("opacity", 0);
-        }
+        console.log(controller.selectedCountries);
       });
   });   
 }
