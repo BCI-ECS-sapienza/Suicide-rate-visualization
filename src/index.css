@@ -60,14 +60,7 @@ html,body {
     grid-row-start: 4;
     grid-row-end: -1;
 }
-.radarChart{
-    margin-right: 3px;
-    grid-column-start: 4;
-    grid-column-end: 5;
-    grid-row-start: 4;
-    grid-row-end: -1;
-}
-.pca{
+.radar-pca{
     margin-right: 3px;
     grid-column-start: 4;
     grid-column-end: 5;
