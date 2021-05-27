@@ -159,19 +159,7 @@ function makeSexChart(colorScale) {
   // add avg line
   const avg_value = Math.round((d3.sum(dataFiltered, (d) => yValue(d))) / dataFiltered.length *10) /10;
   const avg_value_scaled = yScale(avg_value)
-  svgSex.append("line")
-    .attr('class', 'avg-line')
-    .attr("x1", 0)
-    .attr("x2", width_sexChart+2)
-    .attr("y1", avg_value_scaled)
-    .attr("y2", avg_value_scaled)
-  
-  // avg value print
-  svgSex.append("text")
-    .attr('class', 'avg-label')
-    .attr("text-anchor", "middle")
-    .attr("transform", `translate(${width_sexChart-20}, ${avg_value_scaled-10})`) 
-    .text(avg_value)
+  printAvgY(svgSex, avg_value, avg_value_scaled, width_sexChart)
 
 }
 

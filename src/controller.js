@@ -1,5 +1,6 @@
 Controller = function () {
     // events handlers
+    this.isDataFiltered = false;  //set true when year filter applied
     this.isDataFiltered = false;  //set true when visualization filters applied
     this.appliedFilters = {}; //dictionary of applied filters
     this.listenersContainer = new EventTarget();
@@ -12,6 +13,7 @@ Controller = function () {
 
     // help
     this.colorScale;
+    this.avgTransitionTime = 1000;
 }
 
 
@@ -86,12 +88,12 @@ Controller.prototype.triggerYearFilterEvent = function (selectedYear) {
     if (isNaN(selectedYear)==true) {
         delete this.appliedFilters['year'];
         this.dataFiltered = this.dataAll; 
-        this.isDataFiltered = false;  
+        this.isYearFiltered = false;  
     }
     else {
         appliedFilters['year'] = selectedYear
         this.dataFiltered = this.dataAll.filter((d) => d.year==selectedYear); 
-        this.isDataFiltered = true; 
+        this.isYearFiltered = true; 
     }
         
     this.notifyYearChanged();

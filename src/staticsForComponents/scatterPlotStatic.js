@@ -12,6 +12,10 @@ const margin_scatterPlot = {top: 25, right: 25, bottom: 60, left: 80},
     width_scatterPlot = initial_width_scatterPlot - margin_scatterPlot.left - margin_scatterPlot.right,
     height_scatterPlot = initial_height_scatterPlot - margin_scatterPlot.top - margin_scatterPlot.bottom;
 
+const tooltipScatter = d3.select("#scatterPlot")
+    .append("div")
+    .style("opacity", 0)
+    .attr("class", "tooltip-scatter")
 
 // append the svg object to the body of the page
 const svgScatterPlot = d3.select("#scatterPlot")
@@ -41,8 +45,30 @@ svgScatterPlot.append('text')
     .attr("transform", `translate(${scatter_bottom_label_x},${scatter_bottom_label_y})`) //to put on bottom
     .text(scatter_xLabel)
 
-const tooltipScatter = d3.select("#scatterPlot")
-    .append("div")
-    .style("opacity", 0)
-    .attr("class", "tooltip-scatter")
+// add X axis
+const scatterXAxisSvg = svgScatterPlot.append("g")
+    .attr("transform", "translate(0," + height_scatterPlot + ")") //to put on bottom
+
+// add Y axis
+const scatterYAxisSvg = svgScatterPlot.append("g")
+
+// add Grids
+const scatterXGridSvg = svgScatterPlot.append('g')
+const scatterYGridSvg = svgScatterPlot.append('g')
+
+
+// Add a clipPath: everything out of this area won't be drawn.
+const scatterClip = scatterYGridSvg.append("defs").append("svg:clipPath")
+    .attr("id", "clip")
+    .append("svg:rect")
+    .attr("width", width_scatterPlot )
+    .attr("height", height_scatterPlot )
+    .attr("x", 0)
+    .attr("y", 0);
+
+
+    // Create the scatter variable: where both the circles and the brush take place
+const scatterArea = svgScatterPlot.append('g')
+    .attr("clip-path", "url(#clip)")
+
     
