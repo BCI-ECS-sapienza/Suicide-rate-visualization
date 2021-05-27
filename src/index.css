@@ -228,3 +228,17 @@ html,body {
     border-radius: 4px;
     box-shadow: 3px 3px 10px 0px rgba(0, 0, 0, 0.25);
 }
+.button-brush {
+    position: absolute;
+    right: 1.5%;
+    top: 51%;
+    width: 120px;
+    border-width: 0 3px 0 3px;
+    border-style: solid;
+    border-color: #394a6d;
+    border-radius: 2em;
+    background-color: rgb(231, 231, 231);
+}
+.toggle-brush {
+    background-color: lightseagreen;
+}

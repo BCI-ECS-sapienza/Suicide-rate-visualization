@@ -1,4 +1,4 @@
-function makeScatterPlot(colorScale) {
+makeScatterPlot = (colorScale) => {
 
     // callback for mouseover circles 
     const onPoint = function (d) {
@@ -110,7 +110,7 @@ function makeScatterPlot(colorScale) {
         scatterArea
             .selectAll("circle")
             .transition()
-            .duration(scatter_transition_time)
+            .duration(controller.transitionTime)
             .attr("cx", (d) => xScale(xValue(d)))
             .attr("cy", (d) => yScale(yValue(d)))
             .attr("r", scatter_circle_size)
@@ -170,24 +170,23 @@ function makeScatterPlot(colorScale) {
     // compute avg line for x
     const avg_value_x = Math.round((d3.sum(dataFiltered, (d) => xValue(d))) / dataFiltered.length);
     const avg_value_scaled_x = xScale(avg_value_x)
+        
+    // brushing
+    scatterBrush.on("end", updateChart) 
+
 
         
-    // Add brushing
-    const scatterBrush = d3.brush()                 
-        .extent( [ [0,0], [width_scatterPlot,height_scatterPlot] ] )
-        .on("end", updateChart) 
-
 
     // call x Axis
     scatterXAxisSvg.call(xAxis)
         .transition()
-        .duration(scatter_transition_time)
+        .duration(controller.transitionTime)
             .selectAll("text")  //text color
                 .attr("class","axis-text");
 
     // call Y axis
     scatterYAxisSvg.transition()
-        .duration(scatter_transition_time)
+        .duration(controller.transitionTime)
         .call(yAxis)
         .selectAll("text")
             .attr("class","axis-text");
@@ -196,7 +195,7 @@ function makeScatterPlot(colorScale) {
     // add Grid veritcal
     scatterXGridSvg
         .transition()
-        .duration(scatter_transition_time)
+        .duration(controller.transitionTime)
         .attr('class', 'grid-scatter') 
         .attr('transform', `translate(0, ${height_scatterPlot})`)
         .call(d3.axisBottom()
@@ -207,7 +206,7 @@ function makeScatterPlot(colorScale) {
     // add Grid oriziontal
     scatterYGridSvg 
         .transition()
-        .duration(scatter_transition_time)
+        .duration(controller.transitionTime)
         .call(d3.axisLeft()
             .scale(yScale)
             .tickSize(-width_scatterPlot, 0, 0)
@@ -227,29 +226,38 @@ function makeScatterPlot(colorScale) {
             .attr('id', (d) => country(d))
             .style("fill", (d) => colorScale(colorValue(d)))
             .transition()
-            .duration(scatter_transition_time)
+            .duration(controller.transitionTime)
             .attr("cx", (d) => xScale(xValue(d)))
             .attr("cy", (d) => yScale(yValue(d)))
             .attr("r", scatter_circle_size)
             .style("opacity", 1)
-
-
-    // add brushing
-    scatterArea
-        .append("g")
-            .attr("class", "brush")
-            .call(scatterBrush);
                 
     // add A=avg lines
     printAvgY(svgScatterPlot, avg_value_y, avg_value_scaled_y, width_scatterPlot)
     printAvgX(svgScatterPlot, avg_value_x, avg_value_scaled_x, height_scatterPlot)
+
 }
 
+const toggleBrush = () => {
+    if (scatter_toggle_brush ==  false) {
+        // add brushing
+        scatterArea
+            .append("g")
+                .attr("class", "brush")
+                .call(scatterBrush);
+        d3.select('#button-brush').classed('toggle-brush', true)
 
+    } else {
+        svgScatterPlot.select('.brush').remove()
+        d3.select('#button-brush').classed('toggle-brush', false)
+    }
+
+    scatter_toggle_brush = !scatter_toggle_brush;
+}
 
   
 // update data on year changed
-controller.addListener('yearChanged', function (e) {
+controller.addListener('yearChanged', (e) => {
     svgScatterPlot.selectAll('.scatter-points').remove()
     svgScatterPlot.selectAll('.avg-line').remove()
     svgScatterPlot.selectAll('.avg-label').remove()

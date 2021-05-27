@@ -13,7 +13,7 @@ Controller = function () {
 
     // help
     this.colorScale;
-    this.avgTransitionTime = 1000;
+    this.transitionTime = 1000;
 }
 
 
