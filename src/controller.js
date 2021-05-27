@@ -3,6 +3,7 @@ Controller = function () {
     this.isDataFiltered = false;  //set true when visualization filters applied
     this.appliedFilters = {}; //dictionary of applied filters
     this.listenersContainer = new EventTarget();
+    this.selectedCountries = []; // max three selected countries
 
     // data with different filters
     this.dataAll;
