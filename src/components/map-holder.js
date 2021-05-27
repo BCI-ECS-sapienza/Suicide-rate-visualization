@@ -36,11 +36,15 @@ function makeMap(colorScale) {
 
   
   // mapping (country, #suicides) in data
-  const data = d3.map();
+  /*const data = d3.map();
   for (var i = 0; i<dataFiltered.length; i++){
     data.set(dataFiltered[i].key, +dataFiltered[i].value.suicides_pop);
-  }
-        
+  }*/
+  const data = d3.map();
+  for (var i = 0; i<dataFiltered.length; i++){
+    data.set(dataFiltered[i].key, +dataFiltered[i].value.suicides_pop, dataFiltered[i].value.suicides_no, +dataFiltered[i].value.gdp_for_year,
+      +dataFiltered[i].value.gdp_per_capita);
+  }    
 
   // legend
   /*const g = map.append("g")
@@ -155,34 +159,22 @@ function makeMap(colorScale) {
           .attr("r", scatter_circle_size )
           .attr("class", "not-selected-circle");
       })
-  });
-
-  /*
-  function updateMap(){
-    const dataYearLoaded = controller.dataAll;
-    const dataFilteredLoaded = controller.dataFiltered;
-
-    const dataYear = aggregateDataByCountry(dataYearLoaded);
-    const dataFiltered = aggregateDataByCountry(dataFilteredLoaded);
-
-    const data = d3.map();
-    for (var i = 0; i<dataFiltered.length; i++){
-      data.set(dataFiltered[i].key, +dataFiltered[i].value.suicides_pop);
-    }
-
-    map.select("g")
-      .selectAll("path")
-      .attr("fill", function (d) {
-        if(typeof(data.get(d.properties.name)) === "undefined"){
-          d.total = 'Missing data';
-          return '#DCDCDC'; 
+      // add event on click
+      .on("click", function(d){
+        if(svgRadar.attr("opacity") === '0'){
+          //svgPca
+            //.attr("opacity", 0);
+          svgRadar
+            .attr("opacity", 1);
         }
         else{
-          d.total = data.get(d.properties.name);
-          return colorScale(d.total);
-        }      
-    });
-  }*/
+          //svgPca
+            //.attr("opacity", 1);
+          svgRadar
+            .attr("opacity", 0);
+        }
+      });
+  });   
 }
 
 // update data map
