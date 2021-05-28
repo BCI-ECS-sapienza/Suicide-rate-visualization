@@ -1,4 +1,114 @@
 function makeAgeChart(colorScale) {
+
+  // callback for mouseover bar
+  const mouseOver = function (actual, i) {
+    // all original values on bars transparent
+    d3.selectAll('.bar-value-age')  
+      .attr('opacity', 0)
+
+    // enlarge bar
+    d3.select(this)
+      .transition()
+      .duration(300)
+      .attr('x', (d) => xScale(xValue(d)) - 5)
+      .attr('width', xScale.bandwidth() + 10)
+      .style("cursor", "pointer");
+
+    // show value on bar
+    barGroups.append('text')
+      .attr('class', 'divergence-age')  //needed to remove on mouseleave
+      .attr('x', (d) => xScale(xValue(d)) + xScale.bandwidth() / 2)
+      .attr('y', (d) => yScale(yValue(d)) + 30)
+      .attr('text-anchor', 'middle')
+      .text((d, idx) => {
+        const divergence = (yValue(d) - actual.value.suicides_pop).toFixed(1)
+        
+        let text = ''
+        if (divergence > 0) text += '+'
+        text += `${divergence}`
+
+        return idx !== i ? text : '';
+      })
+
+  }
+
+  // callback for mouseLeave bar
+  const mouseLeave =  function () {
+    d3.selectAll('.bar-value-age')
+      .attr('opacity', 1)
+
+    // bar to normal size
+    d3.select(this)
+      .transition()
+      .duration(300)
+      .attr('x', (d) => xScale(xValue(d)))
+      .attr('width', xScale.bandwidth())
+
+    // remove divergence value
+    svgAge.selectAll('.divergence-age').remove()
+  }
+
+  // callback for mouseClick bar
+  const mouseClick = function (e) {
+    // toggle bar selection highlight and get class
+    if (d3.select(this).classed("selected-bar") == false) {
+      d3.select(this).classed("selected-bar", true)
+      selectedBars.add(xValue(this.__data__))
+      selectedValues.add(yValue(this.__data__))
+
+    }  else {
+      d3.select(this).classed("selected-bar", false);
+      selectedBars.delete(xValue(this.__data__))
+      selectedValues.delete(yValue(this.__data__))
+    }
+    
+    controller.triggerAgeFilterEvent(selectedBars);
+
+    // remove old avg line for update
+    svgAge.selectAll('.avg-line-selected').remove();
+    svgAge.selectAll('.avg-label-selected').remove();
+
+    
+    if (selectedValues.size > 0){
+      // remove basic avg
+      svgAge.selectAll('.avg-line').remove();
+      svgAge.selectAll('.avg-label').remove();
+
+      // add avg line selected
+      const avg_value = Math.round(sumSet(selectedValues)/selectedValues.size *10) /10;
+      const avg_value_scaled = yScale(avg_value)
+
+      svgAge
+        .append("line")
+        .attr('class', 'avg-line-selected')
+        .transition()
+        .duration(controller.transitionTime/2)
+        .attr("x1", 0)
+        .attr("x2", width_ageChart+2)
+        .attr("y1", avg_value_scaled)
+        .attr("y2", avg_value_scaled)
+      
+      // avg value print selected
+      svgAge.append("text")
+        .attr('class', 'avg-label-selected')
+        .transition()
+        .duration(controller.transitionTime/2)
+        .attr("text-anchor", "middle")
+        .attr("transform", `translate(${width_ageChart-20}, ${avg_value_scaled-10})`) 
+        .text(avg_value)
+
+    } else {
+
+      // get back basic avg
+      const avg_value = Math.round((d3.sum(dataFiltered, (d) => yValue(d))) / dataFiltered.length*10) /10;
+      const avg_value_scaled = yScale(avg_value)
+      printAvgY(svgAge, avg_value, avg_value_scaled, width_ageChart)
+    }
+  }
+
+
+
+  // get data
   const dataAll = aggregateDataByAge(controller.dataAll);
   const dataFiltered = aggregateDataByAge(controller.dataFiltered);
 
@@ -33,23 +143,28 @@ function makeAgeChart(colorScale) {
   const xAxis = d3.axisBottom(xScale);
   const yAxis = d3.axisLeft(yScale).tickFormat(AxisTickFormat);
 
+  // compute avg line
+  const avg_value = Math.round((d3.sum(dataFiltered, (d) => yValue(d))) / dataFiltered.length*10) /10;
+  const avg_value_scaled = yScale(avg_value)
 
-  // add X axis
-  svgAge.append("g")
-    .attr("transform", "translate(0," + height_ageChart + ")") //to put on bottom
+
+  // call X axis
+  ageXAxisSvg.transition()
+    .duration(controller.transitionTime/2)
     .call(xAxis)
-    .selectAll("text")  //text color
+    .selectAll("text")  
       .attr("class","axis-text");
 
-  // add Y axis
-  svgAge.append("g")
-   .call(yAxis)
-   .selectAll("text")
-       .attr("class","axis-text");
+  // call Y axis
+  ageYAxisSvg.transition()
+    .duration(controller.transitionTime/2)
+    .call(yAxis)
+    .selectAll("text")
+      .attr("class","axis-text");
 
-  // add Grid 
-  svgAge.append('g')
-    .attr('class', 'grid-barchart')
+  // call Grid 
+  ageYGridSvg.transition()
+    .duration(controller.transitionTime/2)
     .call(d3.axisLeft()
       .scale(yScale)
       .tickSize(-width_ageChart, 0, 0)
@@ -57,7 +172,7 @@ function makeAgeChart(colorScale) {
 
 
   // if filters are applied show also dataAll behind with low opacity
-  if (controller.isDataFiltered == true) {
+  if (controller.isYearFiltered == true) {
     svgAge.selectAll()
       .data(dataAll)
       .enter()
@@ -82,118 +197,39 @@ function makeAgeChart(colorScale) {
     
   barGroups
     .append('rect')
+    .on('mouseenter', mouseOver)
+    .on('mouseleave', mouseLeave)
+    .on('click', mouseClick)
     .attr('class', 'ageBars-filtered')
     .attr('x', (d) => xScale(xValue(d)))
-    .attr('y', (d) => yScale(yValue(d)))
-    .attr('height', (d) => height_ageChart - yScale(yValue(d)))
+    .attr('y', (d) => yScale(0))
+    .attr('height', (d) => height_ageChart - yScale(0))
     .attr('width', xScale.bandwidth())
     .style("fill",  (d) => colorScale(yValue(d)))
-    .on('mouseenter', function (actual, i) {
-      // all original values on bars transparent
-      d3.selectAll('.bar-value-age')  
-        .attr('opacity', 0)
-
-      // enlarge bar
-      d3.select(this)
-        .transition()
-        .duration(300)
-        .attr('x', (d) => xScale(xValue(d)) - 5)
-        .attr('width', xScale.bandwidth() + 10)
-        .style("cursor", "pointer");
-
-      // show value on bar
-      barGroups.append('text')
-        .attr('class', 'divergence-age')  //needed to remove on mouseleave
-        .attr('x', (d) => xScale(xValue(d)) + xScale.bandwidth() / 2)
-        .attr('y', (d) => yScale(yValue(d)) + 30)
-        .attr('text-anchor', 'middle')
-        .text((d, idx) => {
-          const divergence = (yValue(d) - actual.value.suicides_pop).toFixed(1)
-          
-          let text = ''
-          if (divergence > 0) text += '+'
-          text += `${divergence}`
-
-          return idx !== i ? text : '';
-        })
-
-    })
-    .on('mouseleave', function () {
-      d3.selectAll('.bar-value-age')
-        .attr('opacity', 1)
-
-      // bar to normal size
-      d3.select(this)
-        .transition()
-        .duration(300)
-        .attr('x', (d) => xScale(xValue(d)))
-        .attr('width', xScale.bandwidth())
-
-      // remove divergence value
-      svgAge.selectAll('.divergence-age').remove()
-    })
-    .on('click', function (e) {
-      // toggle bar selection highlight and get class
-      if (d3.select(this).classed("selected-bar") == false) {
-        d3.select(this).classed("selected-bar", true)
-        selectedBars.add(xValue(this.__data__))
-        selectedValues.add(yValue(this.__data__))
-      } 
-      else {
-        d3.select(this).classed("selected-bar", false);
-        selectedBars.delete(xValue(this.__data__))
-        selectedValues.delete(yValue(this.__data__))
-      }
-      
-      controller.triggerAgeFilterEvent(selectedBars);
-      svgAge.selectAll('.avg-line-selected').remove();
-      svgAge.selectAll('.avg-label-selected').remove();
-
-      
-      if (selectedValues.size > 0){
-        // remove basic avg
-        svgAge.selectAll('.avg-line').remove();
-        svgAge.selectAll('.avg-label').remove();
-
-        // add avg line selected
-        const avg_value = Math.round(sumSet(selectedValues)/selectedValues.size *10) /10;
-        const avg_value_scaled = yScale(avg_value)
-
-        svgAge.append("line")
-          .attr('class', 'avg-line-selected')
-          .attr("x1", 0)
-          .attr("x2", width_ageChart+2)
-          .attr("y1", avg_value_scaled)
-          .attr("y2", avg_value_scaled)
-        
-        // avg value print selected
-        svgAge.append("text")
-          .attr('class', 'avg-label-selected')
-          .attr("text-anchor", "middle")
-          .attr("transform", `translate(${width_ageChart-20}, ${avg_value_scaled-10})`) 
-          .text(avg_value)
-      }
-      else {
-        // get back basic avg
-        const avg_value = Math.round((d3.sum(dataFiltered, (d) => yValue(d))) / dataFiltered.length*10) /10;
-        const avg_value_scaled = yScale(avg_value)
-        printAvgY(svgAge, avg_value, avg_value_scaled, width_ageChart)
-      }
-    })
+    
+  // for the bars animations
+  barGroups.selectAll("rect")
+    .transition()
+    .duration(controller.transitionTime)
+    .attr('y', (d) =>  yScale(yValue(d)))
+    .attr('height', (d) => height_ageChart - yScale(yValue(d)))
+    .delay( (d,i) => i*controller.transitionTime*2)
 
 
   // add values on bars
   barGroups 
     .append('text')
+    .attr('opacity', 0)
     .attr('class', 'bar-value-age')
     .attr('x', (d) => xScale(xValue(d)) + xScale.bandwidth() / 2)
     .attr('y', (d) => yScale(yValue(d)) + 30)
     .attr('text-anchor', 'middle')
+    .transition()
+    .duration(controller.transitionTime*2)
     .text((d) => `${yValue(d)}`)
+    .attr('opacity', 1)
 
   // add avg line
-  const avg_value = Math.round((d3.sum(dataFiltered, (d) => yValue(d))) / dataFiltered.length*10) /10;
-  const avg_value_scaled = yScale(avg_value)
   printAvgY(svgAge, avg_value, avg_value_scaled, width_ageChart)
 
 }
@@ -201,9 +237,6 @@ function makeAgeChart(colorScale) {
 
 // update data chart
 controller.addListener('yearChanged', function (e) {
-  svgAge.selectAll('.axis-text').remove()
-  svgAge.selectAll('.tick').remove()
-  svgAge.selectAll('.grid-barchart').remove()
   svgAge.selectAll('.ageBars-back').remove()
   svgAge.selectAll('.ageBars-filtered').remove()
   svgAge.selectAll('.bar-value-age').remove()
