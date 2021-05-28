@@ -9,11 +9,38 @@ var svgRadar = d3.select("#radar-pca").append("svg")
     .attr("viewBox", "0 0 " + width + " " + height)
     .attr("opacity", 0);
     
+// set parameters
+var features = ['population', 'year gdp', 'capita gdp', 'suicides ratio', '#suicides']
+var colors = ['#d8b365', '#f5f5f5', '#5ab4ac'];
+
 setRadar();
+
+function updateRadar(dataFiltered){   
+    var data = [];
+    if(controller.selectedCountries.length > 0){
+        countries = []
+        for(var i = 0; i<controller.selectedCountries.length; i++){
+            countries.push(controller.selectedCountries[i].id)
+        }
+        for (var j = 0; j<dataFiltered.length; j++){
+            if(countries.includes(dataFiltered[j].key)){
+                
+                data.push([
+                    {axis:'suicides ratio',value:dataFiltered[j].value.gdp_per_capita},
+                    //{axis:'#suicides',value:dataFiltered[j].value.suicides_no},
+                    //{axis:'population',value:dataFiltered[j].value.population},
+                    {axis:'year gdp',value:dataFiltered[j].value.gdp_for_year},
+                    {axis:'capita gdp',value:dataFiltered[j].value.gdp_per_capita}
+                ]);
+            }
+        }
+    } 
+    console.log(data);  
+}
 
 function setRadar(){
     var dataRadar = [];
-    var features = ["A","B","C","D","E","F"];
+    //var features = ["A","B","C","D","E","F"];
     //generate the dataRadar
     for (var i = 0; i < 3; i++){
         var point = {}
@@ -81,7 +108,7 @@ function setRadar(){
     var line = d3.line()
         .x(d => d.x)
         .y(d => d.y);
-    var colors = ["darkorange", "gray", "navy"];
+        
 
     function getPathCoordinates(dataRadar_point){
     var coordinates = [];

@@ -27,16 +27,20 @@ function makeMap(colorScale) {
   const dataYear = aggregateDataByCountry(dataYearLoaded);
   const dataFiltered = aggregateDataByCountry(dataFilteredLoaded);
   const colorLabel = 'Suicide ratio';
-  
-  const countryNames = d => d.key;
-  const suicidesValue = d => d.value.suicides_pop;
 
-  const max_val_year_x = d3.max(dataYear, suicidesValue); 
-  const max_val_filtered_x = d3.max(dataFiltered, suicidesValue); 
+  // set data iterators
+  const country = d => d.key
+  const gdp_for_year = d => d.value.gdp_for_year;
+  const gdp_per_capita = d => d.value.gdp_per_capita;
+  const suicides_pop = d => d.value.suicides_pop;
+  const suicides_no = d => d.value.suicides_no;
+  const population = d => d.value.population;
+
+  const max_val_year_x = d3.max(dataYear, suicides_pop); 
+  const max_val_filtered_x = d3.max(dataFiltered, suicides_pop); 
 
   var firstAdded = null; // used to save the oldest between selected states
 
-  
   // mapping (country, #suicides) in data
   /*const data = d3.map();
   for (var i = 0; i<dataFiltered.length; i++){
@@ -172,8 +176,8 @@ function makeMap(colorScale) {
           if(controller.selectedCountries.length == 0){
             //svgPca
               //.attr("opacity", 1);
-            svgRadar
-              .attr("opacity", 0);
+            //svgRadar
+              //.attr("opacity", 0);
           }
           if(firstAdded === this && controller.selectedCountries.length != 0){
             firstAdded = controller.selectedCountries[0];
@@ -201,10 +205,10 @@ function makeMap(colorScale) {
           }          
           //svgPca
             //.attr("opacity", 0);  
-          svgRadar
-            .attr("opacity", 1);
+          //svgRadar
+            //.attr("opacity", 1);
         }
-        
+        updateRadar(dataFiltered);
       });
   });   
 }
