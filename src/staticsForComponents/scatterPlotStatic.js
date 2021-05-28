@@ -7,6 +7,10 @@ const scatter_circle_size = 5;
 const scatter_selected_circle_size = 10;
 const scatter_transition_time = 1000;
 
+// needed for update
+var idleTimeout;
+const idled = () =>  idleTimeout = null; 
+
 // set the dimensions and margins of the graph
 const margin_scatterPlot = {top: 25, right: 25, bottom: 65, left: 80},
     width_scatterPlot = initial_width_scatterPlot - margin_scatterPlot.left - margin_scatterPlot.right,

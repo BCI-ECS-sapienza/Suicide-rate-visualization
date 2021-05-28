@@ -110,7 +110,7 @@ function makeAgeChart(colorScale) {
 
   // get data
   const dataAll = aggregateDataByAge(controller.dataAll);
-  const dataFiltered = aggregateDataByAge(controller.dataFiltered);
+  const dataFiltered = aggregateDataByAge(controller.dataAge);
 
   // sort ages
   dataAll.sort((a, b) => d3.ascending(a.key, b.key));
@@ -235,13 +235,33 @@ function makeAgeChart(colorScale) {
 }
 
 
-// update data chart
-controller.addListener('yearChanged', function (e) {
+function updateChart() {
   svgAge.selectAll('.ageBars-back').remove()
-  svgAge.selectAll('.ageBars-filtered').remove()
   svgAge.selectAll('.bar-value-age').remove()
+
+  // update bar
+  svgAge.selectAll('.ageBars-filtered').remove()
+
+  // update bar vaues
+  
+
   svgAge.selectAll('.avg-line').remove()
+
   svgAge.selectAll('.avg-label').remove()
+
+  
   makeAgeChart(controller.colorScale)
+  
+}
+
+// update data chart
+controller.addListener('yearFiltered', function (e) {
+  updateChart() 
+});
+
+
+// update data chart
+controller.addListener('sexFiltered', function (e) {
+  updateChart() 
 });
 
