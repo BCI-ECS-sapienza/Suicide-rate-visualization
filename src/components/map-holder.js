@@ -176,8 +176,8 @@ function makeMap(colorScale) {
           if(controller.selectedCountries.length == 0){
             //svgPca
               //.attr("opacity", 1);
-            //svgRadar
-              //.attr("opacity", 0);
+            svgRadar
+              .attr("opacity", 0);
           }
           if(firstAdded === this && controller.selectedCountries.length != 0){
             firstAdded = controller.selectedCountries[0];
@@ -205,8 +205,8 @@ function makeMap(colorScale) {
           }          
           //svgPca
             //.attr("opacity", 0);  
-          //svgRadar
-            //.attr("opacity", 1);
+          svgRadar
+            .attr("opacity", 1);
         }
         updateRadar(dataFiltered);
       });
