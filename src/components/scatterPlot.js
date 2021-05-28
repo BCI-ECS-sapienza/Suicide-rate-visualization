@@ -68,10 +68,7 @@ makeScatterPlot = (colorScale) => {
             .style("opacity", 0)
     }
 
-    // needed for brush callback
-    var idleTimeout
-    const idled = () =>  idleTimeout = null; 
-   
+
     // brush callback
     const updateChart = () => {
         extent = d3.event.selection
@@ -147,7 +144,7 @@ makeScatterPlot = (colorScale) => {
 
    
     // get data
-    const dataFiltered = aggregateDataByCountry(controller.dataFiltered);
+    const dataFiltered = aggregateDataByCountry(controller.dataScatter);
 
     // set data iterators
     const country = d => d.key
@@ -283,13 +280,38 @@ const toggleBrush = () => {
     scatter_toggle_brush = !scatter_toggle_brush;
 }
 
+
+const updateChartOut = (colorScale) => {
+    // get data
+    const dataFiltered = aggregateDataByCountry(controller.dataScatter);
+
+    const colorValue = d => d.value.suicides_pop;
+        
+    // update circles position
+    scatterArea
+        .selectAll("circle")
+        .transition()
+        .duration(controller.transitionTime)
+        .style("fill", (d) => colorScale(colorValue(d)))
+}
+
   
 // update data on year changed
-controller.addListener('yearChanged', (e) => {
+controller.addListener('yearFiltered', (e) => {
     svgScatterPlot.selectAll('.scatter-points').remove()
     svgScatterPlot.selectAll('.avg-line').remove()
     svgScatterPlot.selectAll('.avg-label').remove()
     makeScatterPlot(controller.colorScale);
+});
+
+
+// update data on year changed
+controller.addListener('sexFiltered', (e) => {
+    svgScatterPlot.selectAll('.scatter-points').remove()
+    svgScatterPlot.selectAll('.avg-line').remove()
+    svgScatterPlot.selectAll('.avg-label').remove()
+    makeScatterPlot(controller.colorScale);
+    //updateChartOut(controller.colorScale)
 });
 
 

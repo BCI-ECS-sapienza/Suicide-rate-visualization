@@ -22,7 +22,7 @@ const projection = d3.geoMercator()
 function makeMap(colorScale) {
   // setting parameters
   const dataYearLoaded = controller.dataAll;
-  const dataFilteredLoaded = controller.dataFiltered;
+  const dataFilteredLoaded = controller.dataMap;
 
   const dataYear = aggregateDataByCountry(dataYearLoaded);
   const dataFiltered = aggregateDataByCountry(dataFilteredLoaded);
@@ -210,7 +210,23 @@ function makeMap(colorScale) {
 }
 
 // update data map
-controller.addListener('yearChanged', function (e) {
+controller.addListener('yearFiltered', function (e) {
+    
+  map.selectAll('g')
+    .remove()
+    .exit();
+  
+    d3.select('#map-holder')
+    .selectAll('tooltip-scatter')
+    .remove()
+    .exit();
+
+  makeMap(controller.colorScale)
+});
+
+
+// update data map
+controller.addListener('sexFiltered', function (e) {
     
   map.selectAll('g')
     .remove()

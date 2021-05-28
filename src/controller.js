@@ -2,14 +2,16 @@ Controller = function () {
     // events handlers
     this.isDataFiltered = false;  //set true when year filter applied
     this.isYearFiltered = false;  //set true when visualization filters applied
-    this.appliedFilters = {}; //dictionary of applied filters
     this.listenersContainer = new EventTarget();
     this.selectedCountries = []; // max three selected countries
 
-    // data with different filters
+    // applied filters
+    this.sexFilter = 'all';
+    this.ageFilter = new Set();
+
+    // data with different filters, one for each visualization
     this.dataAll;
     this.countryNames;
-    this.dataFiltered;
     this.dataMap;
     this.dataScatter;
     this.dataSex;
@@ -35,14 +37,11 @@ Controller.prototype.loadData = function () {
 
         // save data 
         _obj.dataAll = data;
-        _obj.dataFiltered = data;
+        _obj.dataMap = data;
+        _obj.dataScatter = data;
+        _obj.dataSex = data;
+        _obj.dataAge = data;
         _obj.countryNames = countries;
-
-        //console.log(_obj.dataAll)
-        //console.log(_obj.countryNames)
-        //console.log( _obj.dataYear)
-        //console.log( _obj.dataFiltered)
-        //console.log("data loaded!")  
 
         // set suicide colorScale
         const colorValueScale = d => d.suicides_pop;
@@ -66,83 +65,110 @@ Controller.prototype.addListener = function (nameEvent, action) {
 }
 
 // events dispatch
-Controller.prototype.notifyYearChanged = function () {
-    this.listenersContainer.dispatchEvent(new Event('yearChanged'));
+Controller.prototype.notifyYearFiltered = function () {
+    this.listenersContainer.dispatchEvent(new Event('yearFiltered'));
     //console.log('year changed!')
 }
 
-// events dispatch
-Controller.prototype.notifyAgeChanged = function () {
-    this.listenersContainer.dispatchEvent(new Event('ageChanged'));
-    //console.log('year changed!')
+Controller.prototype.notifySexFiltered = function () {
+    this.listenersContainer.dispatchEvent(new Event('sexFiltered'));
+    //console.log('sex filtered!')
 }
 
-// events dispatch
-Controller.prototype.notifySexChanged = function () {
-    this.listenersContainer.dispatchEvent(new Event('sexChanged'));
-    //console.log('year changed!')
+Controller.prototype.notifyAgeFiltered = function () {
+    this.listenersContainer.dispatchEvent(new Event('ageFiltered'));
+    //console.log('age filtered!')
 }
 
 
 
 // filter by year
 Controller.prototype.triggerYearFilterEvent = function (selectedYear) {
-    const appliedFilters = this.appliedFilters;
 
     if (isNaN(selectedYear)==true) {
-        delete this.appliedFilters['year'];
-        this.dataFiltered = this.dataAll; 
+        this.dataMap = this.dataAll;
+        this.dataScatter = this.dataAll;
+        this.dataSex = this.dataAll;
+        this.dataAge = this.dataAll;
         this.isYearFiltered = false;  
-    }
-    else {
-        appliedFilters['year'] = selectedYear
-        this.dataFiltered = this.dataAll.filter((d) => d.year==selectedYear); 
+
+    } else {
+        dataFiltered = this.dataAll.filter((d) => d.year==selectedYear); 
+        this.dataMap = dataFiltered;
+        this.dataScatter = dataFiltered;
+        this.dataSex = dataFiltered;
+        this.dataAge = dataFiltered
         this.isYearFiltered = true; 
     }
         
-    this.notifyYearChanged();
-}
-
-
-// TO FIX
-// filter by age
-Controller.prototype.triggerAgeFilterEvent = function (selectedAge) {
-    const appliedFilters = this.appliedFilters;
-    console.log(this.dataFiltered)
-    console.log(selectedAge)
-
-    appliedFilters['age'] = selectedAge //just for test
-    const filter = (age) => this.dataFiltered = this.dataAll.filter((d) => d.age==age); 
-    filter('75+ years') // just for test
-    
-    this.isDataFiltered = true; 
-        
-    this.notifyAgeChanged();
-    console.log(this.appliedFilters)
-    console.log(this.dataFiltered)
+    this.notifyYearFiltered();
 }
 
 
 // filter by sex
 Controller.prototype.triggerSexFilterEvent = function (selectedSex) {
-    if (selectedSex == 'all') {
-        this.dataFiltered = this.dataAll
+    this.sexFilter = selectedSex;
+    this.globalFilter();
+    this.notifySexFiltered();
+}
+
+// filter by age
+Controller.prototype.triggerAgeFilterEvent = function (selectedAge) {
+    this.ageFilter = selectedAge;
+    this.globalFilter();
+    this.notifyAgeFiltered();
+}
+
+
+
+
+Controller.prototype.globalFilter = function () {
+    let dataMapScatter; // same for scatter
+    let dataSex;
+    let dataAge;
+
+    // not for sex chart
+    // filter sex first (that is boolean)
+    const sexFilter = this.sexFilter
+    if (sexFilter == 'all') {
+        dataMapScatter = this.dataAll;
+        dataAge = this.dataAll;
+        dataSex = this.dataAll;
     }
     else {
-        const appliedFilters = this.appliedFilters;
-        console.log(this.dataFiltered)
-        console.log(selectedSex)
-    
-        appliedFilters['sex'] = selectedSex //just for test
-        this.dataFiltered = this.dataAll.filter((d) => d.sex==selectedSex);
-        this.isDataFiltered = true; 
-            
-        this.notifySexChanged();
+        dataMapScatter = this.dataAll.filter((d) => d.sex==sexFilter);
+        dataAge = this.dataAll.filter((d) => d.sex==sexFilter);
+        dataSex = this.dataAll;
     }
 
-    console.log(this.appliedFilters)
-    console.log(this.dataFiltered)
+    // filter age
+    const ageFilterArray = this.ageFilter;
+    if (ageFilterArray.size > 0) {
+
+        let tmpData = []
+        // for each age selected take all corresponding data d
+        ageFilterArray.forEach((ageFilter) => {
+            dataMapScatter.forEach(d => {
+                if (d.age==ageFilter) tmpData.push(d);
+            });
+        })
+        
+        dataMapScatter = tmpData;
+        dataAge = this.dataAll;
+        dataSex = tmpData;
+    }
+    
+    // filter scatter
+    console.log(sexFilter)
+    console.log(ageFilterArray)
+
+    // map new values
+    this.dataMap = dataMapScatter;
+    this.dataScatter = dataMapScatter;
+    this.dataSex = dataSex;
+    this.dataAge = dataAge;
 }
+
 
 
 
