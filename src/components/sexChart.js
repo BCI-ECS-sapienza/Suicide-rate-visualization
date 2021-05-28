@@ -110,7 +110,7 @@ function makeSexChart(colorScale) {
   sexXAxisSvg.transition()
     .duration(controller.transitionTime/2)
     .call(xAxis)
-    .selectAll("text")  //text color
+    .selectAll("text")  
       .attr("class","axis-text");
 
   // call Y axis
@@ -171,7 +171,7 @@ function makeSexChart(colorScale) {
     .duration(controller.transitionTime)
     .attr('y', (d) =>  yScale(yValue(d)))
     .attr('height', (d) => height_sexChart - yScale(yValue(d)))
-    .delay( (d,i) => i*controller.transitionTime)
+    .delay( (d,i) => i*controller.transitionTime*2)
     
 
   // add values on bars
