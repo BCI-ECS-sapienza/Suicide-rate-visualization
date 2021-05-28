@@ -59,12 +59,12 @@ const scatterXAxisSvg = svgScatterPlot.append("g")
 const scatterYAxisSvg = svgScatterPlot.append("g")
 
 // add Grids
-const scatterXGridSvg = svgScatterPlot.append('g')
-const scatterYGridSvg = svgScatterPlot.append('g')
+const scatterXGridSvg = svgScatterPlot.append('g').attr('class', 'grid-scatter') 
+const scatterYGridSvg = svgScatterPlot.append('g').attr('class', 'grid-scatter') 
 
 
 // Add a clipPath: everything out of this area won't be drawn.
-const scatterClip = scatterYGridSvg.append("defs").append("svg:clipPath")
+const scatterClip = svgScatterPlot.append("defs").append("svg:clipPath")
     .attr("id", "clip")
     .append("svg:rect")
     .attr("width", width_scatterPlot )

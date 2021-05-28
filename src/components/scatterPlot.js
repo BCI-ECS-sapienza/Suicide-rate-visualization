@@ -76,25 +76,23 @@ makeScatterPlot = (colorScale) => {
     const updateChart = () => {
         extent = d3.event.selection
 
-        // If no selection, back to initial coordinate. Otherwise, update X axis domain
-        if(!extent){
+        // If no selection, back to initial coordinate. Otherwise, update domain
+        if (!extent) {
             if (!idleTimeout) return idleTimeout = setTimeout(idled, 350);
             xScale.domain([0, domain_max_x ])
             yScale.domain([0, domain_max_y ])
+
         } else{
-            const x0 = xScale.invert(extent[0][0])
-            const x1 = xScale.invert(extent[1][0])
-            const y0 = yScale.invert(extent[1][1])
-            const y1 = yScale.invert(extent[0][1])
+            const x0 = extent[0][0]
+            const x1 = extent[1][0]
+            const y0 = extent[1][1]
+            const y1 = extent[0][1]
 
-            // TO ADD FILTER EVENT
-            //const brushed = (d) => x0 <= xScale(xValue(d)) && xScale(xValue(d)) <= x1 && y0 <= yScale(yValue(d)) && yScale(yValue(d)) <= y1;
-            //const brushedPoints = brushed();
-            //console.log(brushedPoints)
+            xScale.domain([ xScale.invert(x0), xScale.invert(x1) ])
+            yScale.domain([ yScale.invert(y0), yScale.invert(y1) ])
 
-            xScale.domain([ x0, x1 ])
-            yScale.domain([ y0, y1 ])
-            scatterArea.select(".brush").call(scatterBrush.move, null) // This remove the grey brush area as soon as the selection has been done
+            // to remove the grey brush area as soon as the selection has been done
+            scatterArea.select(".brush").call(scatterBrush.move, null) 
         }
 
         // update axis 
@@ -105,7 +103,25 @@ makeScatterPlot = (colorScale) => {
         scatterYAxisSvg.transition().duration(1000).call(yAxis)
             .selectAll("text") 
                 .attr("class","axis-text");
-        
+
+        // update grid
+        scatterXGridSvg
+            .transition()
+            .duration(controller.transitionTime)
+            //.attr('transform', `translate(0, ${height_scatterPlot})`)
+            .call(d3.axisBottom()
+                .scale(xScale)
+                .tickSize(-height_scatterPlot, 0, 0)
+                .tickFormat(''))
+
+        scatterYGridSvg 
+            .transition()
+            .duration(controller.transitionTime)
+            .call(d3.axisLeft()
+                .scale(yScale)
+                .tickSize(-width_scatterPlot, 0, 0)
+                .tickFormat(''))
+            
         // update circles position
         scatterArea
             .selectAll("circle")
@@ -114,8 +130,18 @@ makeScatterPlot = (colorScale) => {
             .attr("cx", (d) => xScale(xValue(d)))
             .attr("cy", (d) => yScale(yValue(d)))
             .attr("r", scatter_circle_size)
-            .style("opacity", 1)
+            .delay( (d,i) => i*5)
 
+        // update avg lines
+        const avg_value_y = Math.round((d3.sum(dataFiltered, (d) => yValue(d))) / dataFiltered.length);
+        const avg_value_scaled_y = yScale(avg_value_y)
+        const avg_value_x = Math.round((d3.sum(dataFiltered, (d) => xValue(d))) / dataFiltered.length);
+        const avg_value_scaled_x = xScale(avg_value_x)
+
+        svgScatterPlot.selectAll('.avg-line').remove()
+        svgScatterPlot.selectAll('.avg-label').remove()
+        printAvgY(svgScatterPlot, avg_value_y, avg_value_scaled_y, width_scatterPlot)
+        printAvgX(svgScatterPlot, avg_value_x, avg_value_scaled_x, height_scatterPlot)
     }
 
 
@@ -175,38 +201,35 @@ makeScatterPlot = (colorScale) => {
     scatterBrush.on("end", updateChart) 
 
 
-        
-
     // call x Axis
-    scatterXAxisSvg.call(xAxis)
-        .transition()
-        .duration(controller.transitionTime)
+    scatterXAxisSvg.transition()
+        .duration(controller.transitionTime/2)
+        .call(xAxis)
             .selectAll("text")  //text color
                 .attr("class","axis-text");
 
     // call Y axis
     scatterYAxisSvg.transition()
-        .duration(controller.transitionTime)
+        .duration(controller.transitionTime/2)
         .call(yAxis)
         .selectAll("text")
             .attr("class","axis-text");
 
             
-    // add Grid veritcal
+    // call Grid veritcal
     scatterXGridSvg
         .transition()
-        .duration(controller.transitionTime)
-        .attr('class', 'grid-scatter') 
+        .duration(controller.transitionTime/2)
         .attr('transform', `translate(0, ${height_scatterPlot})`)
         .call(d3.axisBottom()
             .scale(xScale)
             .tickSize(-height_scatterPlot, 0, 0)
             .tickFormat(''))
 
-    // add Grid oriziontal
+    // call Grid oriziontal
     scatterYGridSvg 
         .transition()
-        .duration(controller.transitionTime)
+        .duration(controller.transitionTime/2)
         .call(d3.axisLeft()
             .scale(yScale)
             .tickSize(-width_scatterPlot, 0, 0)
@@ -215,6 +238,7 @@ makeScatterPlot = (colorScale) => {
 
     // add circles
     scatterArea
+        .append('g')
         .selectAll("circle")
         .data(dataFiltered)
         .enter()
@@ -225,19 +249,23 @@ makeScatterPlot = (colorScale) => {
             .attr('class', 'scatter-points') 
             .attr('id', (d) => country(d))
             .style("fill", (d) => colorScale(colorValue(d)))
+            .style("opacity", 1)
             .transition()
-            .duration(controller.transitionTime)
+            .duration(controller.transitionTime/2)
             .attr("cx", (d) => xScale(xValue(d)))
             .attr("cy", (d) => yScale(yValue(d)))
             .attr("r", scatter_circle_size)
-            .style("opacity", 1)
-                
-    // add A=avg lines
+            .delay( (d,i) => (i*10))
+          
+            
+    // add avg lines
     printAvgY(svgScatterPlot, avg_value_y, avg_value_scaled_y, width_scatterPlot)
     printAvgX(svgScatterPlot, avg_value_x, avg_value_scaled_x, height_scatterPlot)
 
 }
 
+
+// toggle brush when press button
 const toggleBrush = () => {
     if (scatter_toggle_brush ==  false) {
         // add brushing

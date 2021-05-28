@@ -1,7 +1,7 @@
 Controller = function () {
     // events handlers
     this.isDataFiltered = false;  //set true when year filter applied
-    this.isDataFiltered = false;  //set true when visualization filters applied
+    this.isYearFiltered = false;  //set true when visualization filters applied
     this.appliedFilters = {}; //dictionary of applied filters
     this.listenersContainer = new EventTarget();
     this.selectedCountries = []; // max three selected countries
@@ -10,6 +10,10 @@ Controller = function () {
     this.dataAll;
     this.countryNames;
     this.dataFiltered;
+    this.dataMap;
+    this.dataScatter;
+    this.dataSex;
+    this.dataAge;
 
     // help
     this.colorScale;
