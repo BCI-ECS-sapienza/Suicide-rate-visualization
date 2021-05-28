@@ -69,7 +69,7 @@ function makeSexChart(colorScale) {
 
   // get data
   const dataAll = aggregateDataBySex(controller.dataAll);
-  const dataFiltered = aggregateDataBySex(controller.dataFiltered);
+  const dataFiltered = aggregateDataBySex(controller.dataSex);
 
   // sort classes
   dataAll.sort((a, b) => d3.descending(a.key, b.key));
@@ -195,7 +195,7 @@ function makeSexChart(colorScale) {
 
 
 // update data chart
-controller.addListener('yearChanged', function (e) {
+controller.addListener('yearFiltered', function (e) {
   svgSex.selectAll('.sexBars-back').remove()
   svgSex.selectAll('.sexBars-filtered').remove()
   svgSex.selectAll('.bar-value-sex').remove()
@@ -203,3 +203,14 @@ controller.addListener('yearChanged', function (e) {
   svgSex.selectAll('.avg-label').remove()
   makeSexChart(controller.colorScale)
 });
+
+// update data chart
+controller.addListener('ageFiltered', function (e) {
+  svgSex.selectAll('.sexBars-back').remove()
+  svgSex.selectAll('.sexBars-filtered').remove()
+  svgSex.selectAll('.bar-value-sex').remove()
+  svgSex.selectAll('.avg-line').remove()
+  svgSex.selectAll('.avg-label').remove()
+  makeSexChart(controller.colorScale)
+});
+
