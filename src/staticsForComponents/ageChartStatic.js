@@ -40,5 +40,14 @@ svgAge.append('text')
   .attr("transform", `translate(${age_bottom_label_x},${age_bottom_label_y})`) //to put on bottom
   .text(age_xLabel)
 
+// add X axis
+const ageXAxisSvg = svgAge.append("g")
+    .attr("transform", "translate(0," + height_ageChart + ")") //to put on bottom
+
+// add Y axis
+const ageYAxisSvg = svgAge.append("g")
+
+// add Grids
+const ageYGridSvg = svgAge.append('g').attr('class', 'grid-barchart')
 
 

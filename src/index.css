@@ -200,11 +200,7 @@ html,body {
     font-size: 16px;
     font-family: sans-serif;
 }
-.sexBars-filtered {
-    stroke: black;
-    stroke-width: 1.5;
-}
-.ageBars-filtered {
+.sexBars-filtered, .ageBars-filtered  {
     stroke: black;
     stroke-width: 1.5;
 }
@@ -212,6 +208,7 @@ html,body {
     stroke: lightblue;
     stroke-width: 3;
 }
+
 
 
 

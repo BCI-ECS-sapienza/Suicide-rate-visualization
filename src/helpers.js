@@ -58,7 +58,7 @@ const printAvgY = (svg, avg_value_y, avg_value_scaled_y, width) => {
   // add avg line y
   svg.append("line")
       .transition()
-      .duration(controller.transitionTime)
+      .duration(scatter_transition_time)
       .attr('class', 'avg-line')
       .attr("x1", 0)
       .attr("x2", width+2)
@@ -68,7 +68,7 @@ const printAvgY = (svg, avg_value_y, avg_value_scaled_y, width) => {
   // avg value print for y
   svg.append("text")
       .transition()
-      .duration(controller.transitionTime)
+      .duration(scatter_transition_time)
       .attr('class', 'avg-label')
       .attr("text-anchor", "middle")
       .attr("transform", `translate(${width-20}, ${avg_value_scaled_y-10})`) 
@@ -79,7 +79,7 @@ const printAvgX = (svg, avg_value_x, avg_value_scaled_x, height) => {
   // add avg line x
   svg.append("line")
       .transition()
-      .duration(controller.transitionTime)
+      .duration(scatter_transition_time)
       .attr('class', 'avg-line')
       .attr("x1", avg_value_scaled_x)
       .attr("x2", avg_value_scaled_x)
@@ -89,7 +89,7 @@ const printAvgX = (svg, avg_value_x, avg_value_scaled_x, height) => {
   // avg value print for x
   svg.append("text")
       .transition()
-      .duration(controller.transitionTime)
+      .duration(scatter_transition_time)
       .attr('class', 'avg-label')
       .attr("text-anchor", "middle")
       .attr("transform", `translate(${avg_value_scaled_x+25}, ${20})`) 

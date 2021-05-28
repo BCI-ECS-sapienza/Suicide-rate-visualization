@@ -6,6 +6,7 @@ const sex_yLabel = 'Suicides/100k pop';
 const sex_xPadding = 0.5;
 const sex_behindOpacity = 0.3;
 const sex_backOffset = 5;
+const sex_transition_time = 300;
 
 // set the dimensions and margins of the graph
 const margin_sexChart = {top: 25, right: 30, bottom: 50, left: 70},
@@ -41,4 +42,12 @@ svgSex.append('text')
   .text(sex_xLabel)
     
 
+// add X axis
+const sexXAxisSvg = svgSex.append("g")
+    .attr("transform", "translate(0," + height_sexChart + ")") //to put on bottom
 
+// add Y axis
+const sexYAxisSvg = svgSex.append("g")
+
+// add Grids
+const sexYGridSvg = svgSex.append('g').attr('class', 'grid-barchart')
