@@ -22,7 +22,7 @@ const projection = d3.geoMercator()
 function makeMap(colorScale) {
   // setting parameters
   const dataYearLoaded = controller.dataAll;
-  const dataFilteredLoaded = controller.dataMap;
+  const dataFilteredLoaded = controller.dataMapScatter;
 
   const dataYear = aggregateDataByCountry(dataYearLoaded);
   const dataFiltered = aggregateDataByCountry(dataFilteredLoaded);

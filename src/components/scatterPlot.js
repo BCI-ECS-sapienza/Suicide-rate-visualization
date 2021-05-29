@@ -70,23 +70,43 @@ makeScatterPlot = (colorScale) => {
 
 
     // brush callback
-    const updateChart = () => {
+    const updateChart = async () => {
         extent = d3.event.selection
+        selectedPoints = []; // here we will have all the points in the selected region (or all the original points)
 
         // If no selection, back to initial coordinate. Otherwise, update domain
         if (!extent) {
             if (!idleTimeout) return idleTimeout = setTimeout(idled, 350);
+
+            // update axis scale
             xScale.domain([0, domain_max_x ])
             yScale.domain([0, domain_max_y ])
 
-        } else{
-            const x0 = extent[0][0]
-            const x1 = extent[1][0]
-            const y0 = extent[1][1]
-            const y1 = extent[0][1]
+            // back to all the original points for this year
+            selectedPoints = aggregateDataByCountry(controller.dataYear);
+            
+            // update filter
+            controller.triggerScatterFilterEvent(selectedPoints);
 
-            xScale.domain([ xScale.invert(x0), xScale.invert(x1) ])
-            yScale.domain([ yScale.invert(y0), yScale.invert(y1) ])
+        } else {  
+            // get back values in correct scale
+            const x0 = xScale.invert(extent[0][0])
+            const x1 = xScale.invert(extent[1][0])
+            const y0 = yScale.invert(extent[1][1])
+            const y1 = yScale.invert(extent[0][1])
+
+            // update axis scale
+            xScale.domain([ x0, x1 ])
+            yScale.domain([ y0, y1 ])
+
+            // get all the points in the region        
+            dataFiltered.forEach(( point ) => {
+                if (xValue(point) > x0 && xValue(point) < x1 && yValue(point) > y0 && yValue(point) < y1) 
+                    selectedPoints.push(point);
+            })
+
+            // update filter
+            controller.triggerScatterFilterEvent(selectedPoints);
 
             // to remove the grey brush area as soon as the selection has been done
             scatterArea.select(".brush").call(scatterBrush.move, null) 
@@ -139,12 +159,13 @@ makeScatterPlot = (colorScale) => {
         svgScatterPlot.selectAll('.avg-label').remove()
         printAvgY(svgScatterPlot, avg_value_y, avg_value_scaled_y, width_scatterPlot)
         printAvgX(svgScatterPlot, avg_value_x, avg_value_scaled_x, height_scatterPlot)
+
     }
 
 
    
     // get data
-    const dataFiltered = aggregateDataByCountry(controller.dataScatter);
+    const dataFiltered = aggregateDataByCountry(controller.dataMapScatter);
 
     // set data iterators
     const country = d => d.key
