@@ -235,6 +235,8 @@ function makeAgeChart(colorScale) {
 }
 
 
+
+
 function updateChart() {
   svgAge.selectAll('.ageBars-back').remove()
   svgAge.selectAll('.bar-value-age').remove()
@@ -253,6 +255,7 @@ function updateChart() {
   makeAgeChart(controller.colorScale)
   
 }
+
 
 // update data chart
 controller.addListener('yearFiltered', function (e) {

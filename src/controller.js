@@ -1,6 +1,5 @@
 Controller = function () {
     // events handlers
-    this.isDataFiltered = false;  //set true when year filter applied
     this.isYearFiltered = false;  //set true when visualization filters applied
     this.listenersContainer = new EventTarget();
     this.selectedCountries = []; // max three selected countries
@@ -8,14 +7,15 @@ Controller = function () {
     // applied filters
     this.sexFilter = 'all';
     this.ageFilter = new Set();
+    this.scatterFilter = [];
 
     // data with different filters, one for each visualization
     this.dataAll;
-    this.countryNames;
-    this.dataMap;
-    this.dataScatter;
+    this.dataYear;
+    this.dataMapScatter;
     this.dataSex;
     this.dataAge;
+    this.countryNames;
 
     // help
     this.colorScale;
@@ -37,8 +37,8 @@ Controller.prototype.loadData = function () {
 
         // save data 
         _obj.dataAll = data;
-        _obj.dataMap = data;
-        _obj.dataScatter = data;
+        _obj.dataYear = data;
+        _obj.dataMapScatter = data;
         _obj.dataSex = data;
         _obj.dataAge = data;
         _obj.countryNames = countries;
@@ -59,15 +59,22 @@ Controller.prototype.loadData = function () {
 }
 
 
+
 // custom listener
 Controller.prototype.addListener = function (nameEvent, action) {
     this.listenersContainer.addEventListener(nameEvent, action);
 }
 
+
 // events dispatch
 Controller.prototype.notifyYearFiltered = function () {
     this.listenersContainer.dispatchEvent(new Event('yearFiltered'));
     //console.log('year changed!')
+}
+
+Controller.prototype.notifyScatterFiltered = function () {
+    this.listenersContainer.dispatchEvent(new Event('scatterFiltered'));
+    console.log('GPD filtered!')
 }
 
 Controller.prototype.notifySexFiltered = function () {
@@ -82,20 +89,22 @@ Controller.prototype.notifyAgeFiltered = function () {
 
 
 
+
+
 // filter by year
 Controller.prototype.triggerYearFilterEvent = function (selectedYear) {
 
     if (isNaN(selectedYear)==true) {
-        this.dataMap = this.dataAll;
-        this.dataScatter = this.dataAll;
+        this.dataYear = this.dataAll;
+        this.dataMapScatter = this.dataAll;
         this.dataSex = this.dataAll;
         this.dataAge = this.dataAll;
         this.isYearFiltered = false;  
 
     } else {
         dataFiltered = this.dataAll.filter((d) => d.year==selectedYear); 
-        this.dataMap = dataFiltered;
-        this.dataScatter = dataFiltered;
+        this.dataYear = dataFiltered;
+        this.dataMapScatter = dataFiltered;
         this.dataSex = dataFiltered;
         this.dataAge = dataFiltered
         this.isYearFiltered = true; 
@@ -104,6 +113,13 @@ Controller.prototype.triggerYearFilterEvent = function (selectedYear) {
     this.notifyYearFiltered();
 }
 
+
+// filter by scatter
+Controller.prototype.triggerScatterFilterEvent = function (selectedPoints) {
+    this.scatterFilter = selectedPoints;
+    this.globalFilter();
+    this.notifyScatterFiltered();
+}
 
 // filter by sex
 Controller.prototype.triggerSexFilterEvent = function (selectedSex) {
@@ -121,27 +137,26 @@ Controller.prototype.triggerAgeFilterEvent = function (selectedAge) {
 
 
 
-
+// global filter 
 Controller.prototype.globalFilter = function () {
-    let dataMapScatter; // same for scatter
-    let dataSex;
-    let dataAge;
+    let dataMapScatter = this.dataYear;
+    let dataSex = this.dataYear;
+    let dataAge = this.dataYear;
 
-    // not for sex chart
-    // filter sex first (that is boolean)
+    // put scatter
+    // if nothing selected (arr empty) return dataYear
+    // else get only points selected by scatter
+    console.log(this.scatterFilter)
+    
+    // filter sex first (that is boolean) (not for dataSex)
     const sexFilter = this.sexFilter
-    if (sexFilter == 'all') {
-        dataMapScatter = this.dataAll;
-        dataAge = this.dataAll;
-        dataSex = this.dataAll;
-    }
-    else {
-        dataMapScatter = this.dataAll.filter((d) => d.sex==sexFilter);
-        dataAge = this.dataAll.filter((d) => d.sex==sexFilter);
-        dataSex = this.dataAll;
+    if (sexFilter != 'all') {
+        dataMapScatter = this.dataYear.filter((d) => d.sex==sexFilter);
+        dataAge = this.dataYear.filter((d) => d.sex==sexFilter);
+        dataSex = this.dataYear;    // do not delete other sex data!!
     }
 
-    // filter age
+    // filter age (not for dataAge)
     const ageFilterArray = this.ageFilter;
     if (ageFilterArray.size > 0) {
 
@@ -154,34 +169,19 @@ Controller.prototype.globalFilter = function () {
         })
         
         dataMapScatter = tmpData;
-        dataAge = this.dataAll;
         dataSex = tmpData;
+        //dataAge = already updated sex    // do not delete other ages data!!
     }
     
-    // filter scatter
-    console.log(sexFilter)
-    console.log(ageFilterArray)
+ 
+    //console.log(sexFilter)
+    //console.log(ageFilterArray)
 
-    // map new values
-    this.dataMap = dataMapScatter;
-    this.dataScatter = dataMapScatter;
+    // put new values 
+    this.dataMapScatter = dataMapScatter;
     this.dataSex = dataSex;
     this.dataAge = dataAge;
 }
-
-
-
-
-// data rows parser
-const parseRow = (d) => {
-    d.year = +d.year;
-    d.suicides_no = +d.suicides_no;
-    d.population =  +d.population;
-    d.suicides_pop = +d.suicides_pop;
-    d.gdp_for_year = +d.gdp_for_year;
-    d.gdp_per_capita = +d.gdp_per_capita;
-    return d;
-};
 
 
 const controller = new Controller();
