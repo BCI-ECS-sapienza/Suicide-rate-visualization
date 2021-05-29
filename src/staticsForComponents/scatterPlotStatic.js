@@ -6,6 +6,7 @@ const scatter_yLabel = 'GDP per capita';
 const scatter_circle_size = 5;
 const scatter_selected_circle_size = 10;
 const scatter_transition_time = 1000;
+let updateScatter;
 
 // needed for update
 var idleTimeout;

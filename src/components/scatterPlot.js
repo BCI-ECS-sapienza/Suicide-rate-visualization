@@ -303,6 +303,8 @@ const toggleBrush = () => {
 
 
 
+////////////////////////// UPDATE FUNCTIONS //////////////////////////
+
 const updateChartOut = (colorScale) => {
     // get data
     const dataFiltered = aggregateDataByCountry(controller.dataScatter);
@@ -336,5 +338,15 @@ controller.addListener('sexFiltered', (e) => {
     makeScatterPlot(controller.colorScale);
     //updateChartOut(controller.colorScale)
 });
+
+// update data on year changed
+controller.addListener('ageFiltered', (e) => {
+    svgScatterPlot.selectAll('.scatter-points').remove()
+    svgScatterPlot.selectAll('.avg-line').remove()
+    svgScatterPlot.selectAll('.avg-label').remove()
+    makeScatterPlot(controller.colorScale);
+    //updateChartOut(controller.colorScale)
+});
+
 
 

@@ -27,7 +27,7 @@ function makeSexChart(colorScale) {
         if (divergence > 0) text += '+'
         text += `${divergence}`
 
-        return idx !== i ? text : '';
+        return idx !== i ? text : `${actual.value.suicides_pop}`;
       })
 
   }
@@ -195,9 +195,29 @@ function makeSexChart(colorScale) {
 
 
 
-////////////////////////// HELP FUNCTIONS //////////////////////////
+////////////////////////// UPDATE FUNCTIONS //////////////////////////
+
+function updateSexChart() {
+  svgSex.selectAll('.sexBars-back').remove()
+  svgSex.selectAll('.sexBars-filtered').remove()
+  svgSex.selectAll('.bar-value-sex').remove()
+  svgSex.selectAll('.avg-line').remove()
+  svgSex.selectAll('.avg-label').remove()
+  makeSexChart(controller.colorScale)
+}
+
 
 // update data chart
+controller.addListener('ageFiltered', function (e) {
+  updateSexChart() 
+});
+
+// update data chart
+controller.addListener('scatterFiltered', function (e) {
+  updateSexChart() 
+});
+
+
 controller.addListener('yearFiltered', function (e) {
   svgSex.selectAll('.sexBars-back').remove()
   svgSex.selectAll('.sexBars-filtered').remove()
@@ -206,14 +226,3 @@ controller.addListener('yearFiltered', function (e) {
   svgSex.selectAll('.avg-label').remove()
   makeSexChart(controller.colorScale)
 });
-
-// update data chart
-controller.addListener('ageFiltered', function (e) {
-  svgSex.selectAll('.sexBars-back').remove()
-  svgSex.selectAll('.sexBars-filtered').remove()
-  svgSex.selectAll('.bar-value-sex').remove()
-  svgSex.selectAll('.avg-line').remove()
-  svgSex.selectAll('.avg-label').remove()
-  makeSexChart(controller.colorScale)
-});
-
