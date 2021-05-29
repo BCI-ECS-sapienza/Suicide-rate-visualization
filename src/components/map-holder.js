@@ -21,11 +21,9 @@ const projection = d3.geoMercator()
 
 function makeMap(colorScale) {
   // setting parameters
-  const dataYearLoaded = controller.dataAll;
-  const dataFilteredLoaded = controller.dataMapScatter;
-
-  const dataYear = aggregateDataByCountryRadar(dataYearLoaded);
-  const dataFiltered = aggregateDataByCountry(dataFilteredLoaded);
+  const dataYear = aggregateDataByCountryRadar(controller.dataAll);
+  const dataFiltered = aggregateDataByCountry(controller.dataMapScatter);
+    );
   const colorLabel = 'Suicide ratio';
 
   // set data iterators
