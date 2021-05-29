@@ -21,7 +21,7 @@ const projection = d3.geoMercator()
 
 function makeMap(colorScale) {
   // setting parameters
-  const dataYear = aggregateDataByCountry(controller.dataAll);
+  const dataYear = aggregateDataByCountryRadar(controller.dataAll);
   const dataFiltered = aggregateDataByCountry(controller.dataMapScatter);
 
   // set data iterators
@@ -204,7 +204,7 @@ function makeMap(colorScale) {
           svgRadar
             .attr("opacity", 1);
         }
-        updateRadar(dataFiltered);
+        drawRadar(dataYear);
       });
   });   
 }
