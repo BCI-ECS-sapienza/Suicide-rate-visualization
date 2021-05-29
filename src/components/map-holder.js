@@ -24,7 +24,7 @@ function makeMap(colorScale) {
   const dataYearLoaded = controller.dataAll;
   const dataFilteredLoaded = controller.dataMapScatter;
 
-  const dataYear = aggregateDataByCountry(dataYearLoaded);
+  const dataYear = aggregateDataByCountryRadar(dataYearLoaded);
   const dataFiltered = aggregateDataByCountry(dataFilteredLoaded);
   const colorLabel = 'Suicide ratio';
 
@@ -208,7 +208,7 @@ function makeMap(colorScale) {
           svgRadar
             .attr("opacity", 1);
         }
-        updateRadar(dataFiltered);
+        drawRadar(dataYear);
       });
   });   
 }
