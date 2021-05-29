@@ -15,7 +15,9 @@ const svgLegend = d3.select("#map-legend")
     .append("g")
     .attr("transform", "translate(" + margin_legend.left + "," + margin_legend.top + ")");  //padding
 
-function makeLegend(colorScale) {
+function makeLegend() {
+    const colorScale = controller.colorScale;
+    
     // legend setup
     const legend = d3.legendColor().scale(colorScale)
         .labelFormat(d3.format(".0f")).title(colorLabel).titleWidth(18);

@@ -19,10 +19,11 @@ const projection = d3.geoMercator()
   .translate([widthMap/2, heightMap/2]);
 
 
-function makeMap(colorScale) {
+function makeMap() {
   // setting parameters
   const dataYear = aggregateDataByCountryRadar(controller.dataAll);
   const dataFiltered = aggregateDataByCountry(controller.dataMapScatter);
+  const colorScale = controller.colorScale;
 
   // set data iterators
   const country = d => d.key
@@ -209,33 +210,19 @@ function makeMap(colorScale) {
   });   
 }
 
-// update data map
-controller.addListener('yearFiltered', function (e) {
-    
+
+////////////////////////// UPDATE FUNCTIONS //////////////////////////
+
+function updateMap() {
   map.selectAll('g')
-    .remove()
-    .exit();
-  
-    d3.select('#map-holder')
-    .selectAll('tooltip-scatter')
-    .remove()
-    .exit();
+  .remove()
+  .exit();
 
-  makeMap(controller.colorScale)
-});
+  d3.select('#map-holder')
+  .selectAll('tooltip-scatter')
+  .remove()
+  .exit();
 
+  makeMap()  
+}
 
-// update data map
-controller.addListener('sexFiltered', function (e) {
-    
-  map.selectAll('g')
-    .remove()
-    .exit();
-  
-    d3.select('#map-holder')
-    .selectAll('tooltip-scatter')
-    .remove()
-    .exit();
-
-  makeMap(controller.colorScale)
-});

@@ -1,4 +1,4 @@
-// data rows parser
+////////////////////////// CONTROLLER MISCELLANEOUS //////////////////////////
 const parseRow = (d) => {
   d.year = +d.year;
   d.suicides_no = +d.suicides_no;
@@ -11,40 +11,19 @@ const parseRow = (d) => {
 
 
 
-// format axis with 3 numbers and change bilions encoding
-const AxisTickFormat = number =>
-  	d3.format('.2s')(number).replace('G', 'B');
-
-// sum values inside set
-const sumSet = mySet => [...mySet].reduce((a,b) => a + b, 0)
-
-
+////////////////////////// INDEX FUNCTIONS //////////////////////////
 
 // year filter from header
 const yearSelected = () => {
     const yearSelector = document.getElementById("year-selector");
     const selectedYear = yearSelector.options[yearSelector.selectedIndex].value;
-    //console.log(selectedYear)
     controller.triggerYearFilterEvent(selectedYear);
 };
 
-// print applied filters
-const ReadAppliedFilters = () => {
-  let age = controller.ageFilter
-  if (controller.ageFilter.size > 0)
-    age.toString()
-  else 
-    age = 'nothing'
 
-  alert(
-    `GDP for year:  \n` +
-    `GDP per capita: \n` + 
-    `Sex: ${controller.sexFilter}\n` +
-    `Age: ${age}` 
-  );
-} 
 
-// data aggregators
+////////////////////////// DATA AGGREGATORS //////////////////////////
+
 const aggregateDataByCountryRadar = (dataIn) => {
   const data = d3.nest()
     .key( (d) => d.country)
@@ -93,6 +72,16 @@ const aggregateDataBySex = (dataIn) => {
   
 
 
+////////////////////////// MISCELLANEOUS //////////////////////////
+
+// format axis with 3 numbers and change bilions encoding
+const AxisTickFormat = number =>
+  	d3.format('.2s')(number).replace('G', 'B');
+
+// sum values inside set
+const sumSet = mySet => [...mySet].reduce((a,b) => a + b, 0)
+
+
 // functions to print avg lines
 const printAvgY = (svg, avg_value_y, avg_value_scaled_y, width) => {
   // add avg line y
@@ -135,7 +124,6 @@ const printAvgX = (svg, avg_value_x, avg_value_scaled_x, height) => {
       .attr("transform", `translate(${avg_value_scaled_x+25}, ${20})`) 
       .text(d3.format('.2s')(avg_value_x).replace('G', 'B'))
 }
-
 
 
 // functions to print avg lines

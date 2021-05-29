@@ -1,12 +1,12 @@
 Controller = function () {
     // events handlers
-    this.isYearFiltered = false;  //set true when visualization filters applied
-    this.listenersContainer = new EventTarget();
+    this.isYearFiltered = false;  //set true when year filter applied
     this.selectedCountries = []; // max three selected countries
 
     // applied filters
+    this.isScatterFiltered = false;
     this.scatterFilter = null;
-    this.sexFilter = 'all';
+    this.sexFilter = 'All';
     this.ageFilter = new Set();
 
     // data with different filters, one for each visualization
@@ -50,41 +50,44 @@ Controller.prototype.loadData = function () {
             .range(suicideColorScale)
 
         // draw graphs
-        makeMap(_obj.colorScale);
-        makeLegend(_obj.colorScale);
-        makeScatterPlot(_obj.colorScale);  
-        makeSexChart(_obj.colorScale);
-        makeAgeChart(_obj.colorScale);
+        makeMap();
+        makeLegend();
+        makeScatterPlot();  
+        makeSexChart();
+        makeAgeChart();
     });
 }
 
 
 
-// custom listener
-Controller.prototype.addListener = function (nameEvent, action) {
-    this.listenersContainer.addEventListener(nameEvent, action);
-}
+////////////////////////// COMPONENTS UPDATE //////////////////////////
 
-
-// events dispatch
 Controller.prototype.notifyYearFiltered = function () {
-    this.listenersContainer.dispatchEvent(new Event('yearFiltered'));
     //console.log('year changed!')
+    updateMap() 
+    updateSexChart()
+    updateAgeChart() 
+    updateScatterOut()
 }
 
 Controller.prototype.notifyScatterFiltered = function () {
-    this.listenersContainer.dispatchEvent(new Event('scatterFiltered'));
-    console.log('GPD filtered!')
+    //console.log('Scatter filtered!')
+    updateSexChart()
+    updateAgeChart() 
 }
 
 Controller.prototype.notifySexFiltered = function () {
-    this.listenersContainer.dispatchEvent(new Event('sexFiltered'));
     //console.log('sex filtered!')
+    updateMap() 
+    updateAgeChart() 
+    updateScatterOut()
 }
 
 Controller.prototype.notifyAgeFiltered = function () {
-    this.listenersContainer.dispatchEvent(new Event('ageFiltered'));
     //console.log('age filtered!')
+    updateMap() 
+    updateSexChart()
+    updateScatterOut()
 }
 
 
@@ -95,6 +98,7 @@ Controller.prototype.notifyAgeFiltered = function () {
 // filter by year
 Controller.prototype.triggerYearFilterEvent = function (selectedYear) {
 
+    // back to all, or get only selected year data
     if (isNaN(selectedYear)==true) {
         this.dataYear = this.dataAll;
         this.dataMapScatter = this.dataAll;
@@ -120,7 +124,6 @@ Controller.prototype.triggerScatterFilterEvent = function (selectedPoints) {
     this.scatterFilter = selectedPoints;
     this.globalFilter();
     this.notifyScatterFiltered();
-    console.log('daje')
 }
 
 // filter by sex
@@ -146,6 +149,12 @@ Controller.prototype.globalFilter = function () {
     let dataSex = this.dataYear;
     let dataAge = this.dataYear;
 
+    console.log(this.sexFilter)
+    console.log(this.ageFilter)
+    console.log(this.scatterFilter)
+    console.log(this.isScatterFiltered)
+    
+
     // filter scatter
     const scatterFilterArray = this.scatterFilter;
     if (scatterFilterArray != null) {
@@ -158,19 +167,20 @@ Controller.prototype.globalFilter = function () {
             });
         })
 
-        dataMapScatter = tmpData;  // no need update
+        if (this.isScatterFiltered == true)
+            dataMapScatter = tmpData;  // no need update
         dataAge = tmpData;
         dataSex = tmpData;
-        console.log(tmpData)
+        console.log(dataMapScatter)
     }
     
 
     // filter sex  (that is boolean) (not for dataSex)
     const sexFilter = this.sexFilter
-    if (sexFilter != 'all') {
+    if (sexFilter != 'All') {
         dataMapScatter = dataMapScatter.filter((d) => d.sex==sexFilter);
         dataAge = dataAge.filter((d) => d.sex==sexFilter);
-        dataSex = dataSex;    // do not delete other sex data!!
+        // dataSex = dataSex;    // do not delete other sex data!!
     }
 
 
@@ -178,26 +188,30 @@ Controller.prototype.globalFilter = function () {
     const ageFilterArray = this.ageFilter;
     if (ageFilterArray.size > 0) {
 
-        let tmpData = []
+        let tmpDataMapScatter = []
+        let tmpDataSex = []
         // for each age selected take all corresponding data d
         ageFilterArray.forEach((ageFilter) => {
-            dataMapScatter.forEach(d => {
-                if (d.age==ageFilter) tmpData.push(d);
+            dataMapScatter.forEach(d => {     
+                if (d.age==ageFilter) tmpDataMapScatter.push(d);
+            });
+
+            dataSex.forEach(d => {          
+                if (d.age==ageFilter) tmpDataSex.push(d);
             });
         })
         
-        dataMapScatter = tmpData;
-        dataSex = tmpData;
-        //dataAge = already updated sex    // do not delete other ages data!!
+        dataMapScatter = tmpDataMapScatter;
+        dataSex = tmpDataSex;
+        //dataAge = already updated sex    // do not delete other age data!!
     }
 
-    // put new values 
+    // update values
     this.dataMapScatter = dataMapScatter;
     this.dataSex = dataSex;
     this.dataAge = dataAge;
-
-    console.log(this.dataMapScatter)
 }
+
 
 
 ////////////////////////// INITIALIZE //////////////////////////

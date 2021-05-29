@@ -1,4 +1,4 @@
-function makeAgeChart(colorScale) {
+const makeAgeChart = () => {
 
   ////////////////////////// CALLBACK //////////////////////////
 
@@ -92,6 +92,7 @@ function makeAgeChart(colorScale) {
   // get data
   const dataAll = aggregateDataByAge(controller.dataAll);
   const dataFiltered = aggregateDataByAge(controller.dataAge);
+  const colorScale = controller.colorScale;
 
   // sort ages
   dataAll.sort((a, b) => d3.ascending(a.key, b.key));
@@ -194,7 +195,7 @@ function makeAgeChart(colorScale) {
   // for the bars animations
   barGroups.selectAll("rect")
     .transition()
-    .duration(controller.transitionTime)
+    .duration(controller.transitionTime/3)
     .attr('y', (d) =>  yScale(yValue(d)))
     .attr('height', (d) => height_ageChart - yScale(yValue(d)))
     .delay( (d,i) => i*controller.transitionTime*2)
@@ -209,7 +210,7 @@ function makeAgeChart(colorScale) {
     .attr('y', (d) => yScale(yValue(d)) + 30)
     .attr('text-anchor', 'middle')
     .transition()
-    .duration(controller.transitionTime*2)
+    .duration(controller.transitionTime)
     .text((d) => `${yValue(d)}`)
     .attr('opacity', 1)
 
@@ -222,7 +223,7 @@ function makeAgeChart(colorScale) {
 
 ////////////////////////// UPDATE FUNCTIONS //////////////////////////
 
-function updateAgeChart() {
+const updateAgeChart = () => {
   svgAge.selectAll('.ageBars-back').remove()
   svgAge.selectAll('.bar-value-age').remove()
 
@@ -231,28 +232,8 @@ function updateAgeChart() {
   // update bar vaues
   svgAge.selectAll('.avg-line').remove()
   svgAge.selectAll('.avg-label').remove()
-  makeAgeChart(controller.colorScale)
+  makeAgeChart()
   
 }
-
-
-controller.addListener('sexFiltered', function (e) {
-  updateAgeChart() 
-});
-
-controller.addListener('scatterFiltered', function (e) {
-  updateAgeChart() 
-});
-
-
-controller.addListener('yearFiltered', function (e) {
-  svgAge.selectAll('.ageBars-back').remove()
-  svgAge.selectAll('.bar-value-age').remove()
-  svgAge.selectAll('.ageBars-filtered').remove()
-  svgAge.selectAll('.avg-line').remove()
-  svgAge.selectAll('.avg-label').remove()
-  makeAgeChart(controller.colorScale)
-});
-
 
 
