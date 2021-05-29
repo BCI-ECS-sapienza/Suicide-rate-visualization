@@ -1,5 +1,7 @@
 function makeAgeChart(colorScale) {
 
+  ////////////////////////// CALLBACK //////////////////////////
+
   // callback for mouseover bar
   const mouseOver = function (actual, i) {
     // all original values on bars transparent
@@ -62,51 +64,30 @@ function makeAgeChart(colorScale) {
       selectedValues.delete(yValue(this.__data__))
     }
     
+    // thigger filter
     controller.triggerAgeFilterEvent(selectedBars);
 
     // remove old avg line for update
     svgAge.selectAll('.avg-line-selected').remove();
     svgAge.selectAll('.avg-label-selected').remove();
 
-    
+    // show avg line for only selected bars (if anything selected)
     if (selectedValues.size > 0){
       // remove basic avg
-      svgAge.selectAll('.avg-line').remove();
-      svgAge.selectAll('.avg-label').remove();
+      //svgAge.selectAll('.avg-line').remove();
+      //svgAge.selectAll('.avg-label').remove();
 
       // add avg line selected
-      const avg_value = Math.round(sumSet(selectedValues)/selectedValues.size *10) /10;
-      const avg_value_scaled = yScale(avg_value)
+      const avg_value_selected = Math.round(sumSet(selectedValues)/selectedValues.size *10) /10;
+      const avg_value_scaled_selected = yScale(avg_value_selected)
+      printAvgYonSelection(svgAge, avg_value_selected, avg_value_scaled_selected, width_ageChart)
 
-      svgAge
-        .append("line")
-        .attr('class', 'avg-line-selected')
-        .transition()
-        .duration(controller.transitionTime/2)
-        .attr("x1", 0)
-        .attr("x2", width_ageChart+2)
-        .attr("y1", avg_value_scaled)
-        .attr("y2", avg_value_scaled)
-      
-      // avg value print selected
-      svgAge.append("text")
-        .attr('class', 'avg-label-selected')
-        .transition()
-        .duration(controller.transitionTime/2)
-        .attr("text-anchor", "middle")
-        .attr("transform", `translate(${width_ageChart-20}, ${avg_value_scaled-10})`) 
-        .text(avg_value)
-
-    } else {
-
-      // get back basic avg
-      const avg_value = Math.round((d3.sum(dataFiltered, (d) => yValue(d))) / dataFiltered.length*10) /10;
-      const avg_value_scaled = yScale(avg_value)
-      printAvgY(svgAge, avg_value, avg_value_scaled, width_ageChart)
-    }
+    } 
   }
 
 
+
+  ////////////////////////// SETUP //////////////////////////
 
   // get data
   const dataAll = aggregateDataByAge(controller.dataAll);
@@ -147,6 +128,9 @@ function makeAgeChart(colorScale) {
   const avg_value = Math.round((d3.sum(dataFiltered, (d) => yValue(d))) / dataFiltered.length*10) /10;
   const avg_value_scaled = yScale(avg_value)
 
+
+
+  ////////////////////////// CALL COMPONENTS //////////////////////////
 
   // call X axis
   ageXAxisSvg.transition()
@@ -236,6 +220,7 @@ function makeAgeChart(colorScale) {
 
 
 
+////////////////////////// HELP FUNCTIONS //////////////////////////
 
 function updateChart() {
   svgAge.selectAll('.ageBars-back').remove()

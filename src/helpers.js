@@ -28,6 +28,22 @@ const yearSelected = () => {
     controller.triggerYearFilterEvent(selectedYear);
 };
 
+// print applied filters
+const ReadAppliedFilters = () => {
+  let age = controller.ageFilter
+  if (controller.ageFilter.size > 0)
+    age.toString()
+  else 
+    age = 'nothing'
+
+  alert(
+    `GDP for year:  \n` +
+    `GDP per capita: \n` + 
+    `Sex: ${controller.sexFilter}\n` +
+    `Age: ${age}` 
+  );
+} 
+
 
 
 // data aggregators

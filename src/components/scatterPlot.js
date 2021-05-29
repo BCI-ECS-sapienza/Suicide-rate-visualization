@@ -1,5 +1,7 @@
 makeScatterPlot = (colorScale) => {
 
+    ////////////////////////// CALLBACK //////////////////////////
+
     // callback for mouseover circles 
     const onPoint = function (d) {
         // highlight circle
@@ -14,8 +16,7 @@ makeScatterPlot = (colorScale) => {
             .style("fill", "rgb(131, 20, 131)");
     
         const gdp_year = d3.format('.2s')(xValue(d)).replace('G', 'B');
-        const gdp_capita = d3.format('.2s')(yValue(d)).replace('G', 'B');
-        
+        const gdp_capita = d3.format('.2s')(yValue(d)).replace('G', 'B');    
         
         // show tooltip
         tooltipScatter
@@ -70,7 +71,7 @@ makeScatterPlot = (colorScale) => {
 
 
     // brush callback
-    const updateChart = async () => {
+    const updateChart = () => {
         extent = d3.event.selection
         selectedPoints = []; // here we will have all the points in the selected region (or all the original points)
 
@@ -149,12 +150,9 @@ makeScatterPlot = (colorScale) => {
             .attr("r", scatter_circle_size)
             .delay( (d,i) => i*5)
 
-        // update avg lines
-        const avg_value_y = Math.round((d3.sum(dataFiltered, (d) => yValue(d))) / dataFiltered.length);
+        // update position avg lines (values need rescale)
         const avg_value_scaled_y = yScale(avg_value_y)
-        const avg_value_x = Math.round((d3.sum(dataFiltered, (d) => xValue(d))) / dataFiltered.length);
         const avg_value_scaled_x = xScale(avg_value_x)
-
         svgScatterPlot.selectAll('.avg-line').remove()
         svgScatterPlot.selectAll('.avg-label').remove()
         printAvgY(svgScatterPlot, avg_value_y, avg_value_scaled_y, width_scatterPlot)
@@ -163,6 +161,8 @@ makeScatterPlot = (colorScale) => {
     }
 
 
+
+    ////////////////////////// SETUP //////////////////////////
    
     // get data
     const dataFiltered = aggregateDataByCountry(controller.dataMapScatter);
@@ -180,17 +180,11 @@ makeScatterPlot = (colorScale) => {
 
     
     // add some padding on top xAxis (1/100 more than max between dataAll and dataFiltered)
-    //const max_val_year_x = d3.max(dataAll, xValue) 
     const max_val_filtered_x = d3.max(dataFiltered, xValue) 
-    //const max_val_x = (max_val_year_x >  max_val_filtered_x) ? max_val_year_x : max_val_filtered_x;
-    //const domain_max_x = parseInt(max_val_x) + parseInt(max_val_x/100) 
     const domain_max_x = parseInt(max_val_filtered_x) + parseInt(max_val_filtered_x/100)
 
     // add some padding on top yAxis (1/100 more than max between dataAll and dataFiltered)
-    //const max_val_year_y = d3.max(dataAll, yValue) 
     const max_val_filtered_y = d3.max(dataFiltered, yValue) 
-    //const max_val_y = (max_val_year_y >  max_val_filtered_y) ? max_val_year_y : max_val_filtered_y;
-    //const domain_max_y = parseInt(max_val_y) + parseInt(max_val_y/100) 
     const domain_max_y = parseInt(max_val_filtered_y) + parseInt(max_val_filtered_y/100)
 
     // set scales ranges
@@ -215,9 +209,12 @@ makeScatterPlot = (colorScale) => {
     const avg_value_x = Math.round((d3.sum(dataFiltered, (d) => xValue(d))) / dataFiltered.length);
     const avg_value_scaled_x = xScale(avg_value_x)
         
-    // brushing
+    // initialize brushing
     scatterBrush.on("end", updateChart) 
 
+
+
+    ////////////////////////// CALL COMPONENTS //////////////////////////
 
     // call x Axis
     scatterXAxisSvg.transition()
@@ -283,6 +280,9 @@ makeScatterPlot = (colorScale) => {
 }
 
 
+
+////////////////////////// HELP FUNCTIONS //////////////////////////
+
 // toggle brush when press button
 const toggleBrush = () => {
     if (scatter_toggle_brush ==  false) {
@@ -302,6 +302,7 @@ const toggleBrush = () => {
 }
 
 
+
 const updateChartOut = (colorScale) => {
     // get data
     const dataFiltered = aggregateDataByCountry(controller.dataScatter);
@@ -317,6 +318,7 @@ const updateChartOut = (colorScale) => {
 }
 
   
+
 // update data on year changed
 controller.addListener('yearFiltered', (e) => {
     svgScatterPlot.selectAll('.scatter-points').remove()

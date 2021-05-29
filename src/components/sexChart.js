@@ -194,6 +194,9 @@ function makeSexChart(colorScale) {
 }
 
 
+
+////////////////////////// HELP FUNCTIONS //////////////////////////
+
 // update data chart
 controller.addListener('yearFiltered', function (e) {
   svgSex.selectAll('.sexBars-back').remove()

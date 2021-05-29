@@ -5,9 +5,9 @@ Controller = function () {
     this.selectedCountries = []; // max three selected countries
 
     // applied filters
+    this.scatterFilter = [];
     this.sexFilter = 'all';
     this.ageFilter = new Set();
-    this.scatterFilter = [];
 
     // data with different filters, one for each visualization
     this.dataAll;
@@ -90,6 +90,7 @@ Controller.prototype.notifyAgeFiltered = function () {
 
 
 
+////////////////////////// TRIGGER FILTERS //////////////////////////
 
 // filter by year
 Controller.prototype.triggerYearFilterEvent = function (selectedYear) {
@@ -136,6 +137,7 @@ Controller.prototype.triggerAgeFilterEvent = function (selectedAge) {
 }
 
 
+////////////////////////// COMPUTE FILTERS //////////////////////////
 
 // global filter 
 Controller.prototype.globalFilter = function () {
@@ -183,6 +185,8 @@ Controller.prototype.globalFilter = function () {
     this.dataAge = dataAge;
 }
 
+
+////////////////////////// INITIALIZE //////////////////////////
 
 const controller = new Controller();
 controller.loadData();

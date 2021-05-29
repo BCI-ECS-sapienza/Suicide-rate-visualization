@@ -27,8 +27,8 @@ function makeLegend(colorScale) {
             .attr("class","axis-text");
 }
 
-// update data chart
-controller.addListener('yearChanged', function (e) {
-    svgLegend.selectAll('.legend').remove()
-    makeLegend(controller.colorScale)
-  });
+// // update data chart
+// controller.addListener('yearChanged', function (e) {
+//     svgLegend.selectAll('.legend').remove()
+//     makeLegend(controller.colorScale)
+//   });
