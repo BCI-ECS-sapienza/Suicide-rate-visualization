@@ -1,4 +1,4 @@
-function makeSexChart(colorScale) {
+const makeSexChart = () => {
 
   // callback for mouseover bar
   const mouseOver = function (actual, i) {
@@ -58,7 +58,7 @@ function makeSexChart(colorScale) {
       d3.select(this).classed("selected-bar", true)
     } else {
       d3.select(this).classed("selected-bar", false);
-      selection = 'all' // toggle agin => back to all
+      selection = 'All' // toggle agin => back to all
     }
 
     // apply filter
@@ -70,6 +70,7 @@ function makeSexChart(colorScale) {
   // get data
   const dataAll = aggregateDataBySex(controller.dataAll);
   const dataFiltered = aggregateDataBySex(controller.dataSex);
+  const colorScale = controller.colorScale;
 
   // sort classes
   dataAll.sort((a, b) => d3.descending(a.key, b.key));
@@ -168,7 +169,7 @@ function makeSexChart(colorScale) {
   // for the bars animations
   barGroups.selectAll("rect")
     .transition()
-    .duration(controller.transitionTime)
+    .duration(controller.transitionTime/3)
     .attr('y', (d) =>  yScale(yValue(d)))
     .attr('height', (d) => height_sexChart - yScale(yValue(d)))
     .delay( (d,i) => i*controller.transitionTime*2)
@@ -183,7 +184,7 @@ function makeSexChart(colorScale) {
     .attr('y', (d) => yScale(yValue(d)) + 30)
     .attr('text-anchor', 'middle')
     .transition()
-    .duration(controller.transitionTime*2)
+    .duration(controller.transitionTime)
     .text((d) => `${yValue(d)}`)
     .attr('opacity', 1)
 
@@ -197,32 +198,11 @@ function makeSexChart(colorScale) {
 
 ////////////////////////// UPDATE FUNCTIONS //////////////////////////
 
-function updateSexChart() {
+const updateSexChart = () => {
   svgSex.selectAll('.sexBars-back').remove()
   svgSex.selectAll('.sexBars-filtered').remove()
   svgSex.selectAll('.bar-value-sex').remove()
   svgSex.selectAll('.avg-line').remove()
   svgSex.selectAll('.avg-label').remove()
-  makeSexChart(controller.colorScale)
+  makeSexChart()
 }
-
-
-// update data chart
-controller.addListener('ageFiltered', function (e) {
-  updateSexChart() 
-});
-
-// update data chart
-controller.addListener('scatterFiltered', function (e) {
-  updateSexChart() 
-});
-
-
-controller.addListener('yearFiltered', function (e) {
-  svgSex.selectAll('.sexBars-back').remove()
-  svgSex.selectAll('.sexBars-filtered').remove()
-  svgSex.selectAll('.bar-value-sex').remove()
-  svgSex.selectAll('.avg-line').remove()
-  svgSex.selectAll('.avg-label').remove()
-  makeSexChart(controller.colorScale)
-});

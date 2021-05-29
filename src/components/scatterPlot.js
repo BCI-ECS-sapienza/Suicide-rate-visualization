@@ -1,4 +1,4 @@
-makeScatterPlot = (colorScale) => {
+const makeScatterPlot = () => {
 
     ////////////////////////// CALLBACK //////////////////////////
 
@@ -23,9 +23,10 @@ makeScatterPlot = (colorScale) => {
             .style("opacity", 1)
             .html(
                 '<b>Country:</b> ' + country(d) + 
-                '<br><b>GDP for year:' + avg_show + '</b> ' + gdp_year + 
-                '<br><b>Gdp per capita:' + avg_show + '</b> '  + gdp_capita + 
-                "<br><b>Suicide ratio:</b> " + d.value.suicides_pop)
+                `<br><b>GDP for year: ${avg_show} </b> ${gdp_year}` + 
+                `<br><b>Gdp per capita: ${avg_show} </b> ${gdp_capita}` + 
+                `<br><b>Suicide ratio:</b> ${d.value.suicides_pop}`)
+            .style("left", (d3.mouse(this)[0]+30) + widthMap + initial_width_legend + "px")   
             .style("left", (d3.mouse(this)[0]+30) + widthMap + initial_width_legend + "px")   
             .style("top", (d3.mouse(this)[1]) + "px") //heightMap + "px")
     }
@@ -40,9 +41,9 @@ makeScatterPlot = (colorScale) => {
             .style("opacity", 1)
             .html(
                 '<b>Country:</b> ' + country(d) + 
-                '<br><b>GDP for year:' + avg_show + '</b> ' + gdp_year + 
-                '<br><b>Gdp per capita:' + avg_show + '</b> '  + gdp_capita + 
-                "<br><b>Suicide ratio:</b> " + d.value.suicides_pop)
+                `<br><b>GDP for year: ${avg_show} </b> ${gdp_year}` + 
+                `<br><b>Gdp per capita: ${avg_show} </b> ${gdp_capita}` + 
+                `<br><b>Suicide ratio:</b> ${d.value.suicides_pop}`)
             .style("left", (d3.mouse(this)[0]+30) + widthMap + initial_width_legend + "px")   
             .style("top", (d3.mouse(this)[1]) + "px") //heightMap + "px")
     }
@@ -87,6 +88,7 @@ makeScatterPlot = (colorScale) => {
             selectedPoints = aggregateDataByCountry(controller.dataYear);
             
             // update filter
+            controller.isScatterFiltered = false;
             controller.triggerScatterFilterEvent(selectedPoints);
 
         } else {  
@@ -107,6 +109,7 @@ makeScatterPlot = (colorScale) => {
             })
 
             // update filter
+            controller.isScatterFiltered = true;
             controller.triggerScatterFilterEvent(selectedPoints);
 
             // to remove the grey brush area as soon as the selection has been done
@@ -166,6 +169,7 @@ makeScatterPlot = (colorScale) => {
    
     // get data
     const dataFiltered = aggregateDataByCountry(controller.dataMapScatter);
+    const colorScale = controller.colorScale;
 
     // set data iterators
     const country = d => d.key
@@ -303,50 +307,14 @@ const toggleBrush = () => {
 
 
 
-////////////////////////// UPDATE FUNCTIONS //////////////////////////
-
-const updateChartOut = (colorScale) => {
-    // get data
-    const dataFiltered = aggregateDataByCountry(controller.dataScatter);
-
-    const colorValue = d => d.value.suicides_pop;
-        
-    // update circles position
-    scatterArea
-        .selectAll("circle")
-        .transition()
-        .duration(controller.transitionTime)
-        .style("fill", (d) => colorScale(colorValue(d)))
-}
-
-  
-
 // update data on year changed
-controller.addListener('yearFiltered', (e) => {
+const updateScatterOut = () => {
     svgScatterPlot.selectAll('.scatter-points').remove()
     svgScatterPlot.selectAll('.avg-line').remove()
     svgScatterPlot.selectAll('.avg-label').remove()
-    makeScatterPlot(controller.colorScale);
-});
+    makeScatterPlot();
+};
 
-
-// update data on year changed
-controller.addListener('sexFiltered', (e) => {
-    svgScatterPlot.selectAll('.scatter-points').remove()
-    svgScatterPlot.selectAll('.avg-line').remove()
-    svgScatterPlot.selectAll('.avg-label').remove()
-    makeScatterPlot(controller.colorScale);
-    //updateChartOut(controller.colorScale)
-});
-
-// update data on year changed
-controller.addListener('ageFiltered', (e) => {
-    svgScatterPlot.selectAll('.scatter-points').remove()
-    svgScatterPlot.selectAll('.avg-line').remove()
-    svgScatterPlot.selectAll('.avg-label').remove()
-    makeScatterPlot(controller.colorScale);
-    //updateChartOut(controller.colorScale)
-});
 
 
 
