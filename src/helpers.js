@@ -44,9 +44,21 @@ const ReadAppliedFilters = () => {
   );
 } 
 
-
-
 // data aggregators
+const aggregateDataByCountryRadar = (dataIn) => {
+  const data = d3.nest()
+    .key( (d) => d.country)
+    .rollup( (d) =>  ({
+      suicides_pop: Math.round(d3.mean(d, (g) => g.suicides_pop)),
+      gdp_for_year: Math.round(d3.mean(d, (g) => g.gdp_for_year)),    
+      gdp_per_capita: Math.round(d3.mean(d, (g) => g.gdp_per_capita)),
+      suicides_no: Math.round(d3.mean(d,(g) => g.suicides_no)),
+      population: Math.round(d3.mean(d, (g) => g.population))
+    }))
+  .entries(dataIn)
+  return data;
+};
+
 const aggregateDataByCountry = (dataIn) => {
     const data = d3.nest()
       .key( (d) => d.country)
