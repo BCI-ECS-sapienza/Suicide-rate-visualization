@@ -29,7 +29,7 @@ function makeAgeChart(colorScale) {
         if (divergence > 0) text += '+'
         text += `${divergence}`
 
-        return idx !== i ? text : '';
+        return idx !== i ? text : `${actual.value.suicides_pop}`;
       })
 
   }
@@ -220,36 +220,39 @@ function makeAgeChart(colorScale) {
 
 
 
-////////////////////////// HELP FUNCTIONS //////////////////////////
+////////////////////////// UPDATE FUNCTIONS //////////////////////////
 
-function updateChart() {
+function updateAgeChart() {
   svgAge.selectAll('.ageBars-back').remove()
   svgAge.selectAll('.bar-value-age').remove()
 
   // update bar
   svgAge.selectAll('.ageBars-filtered').remove()
-
   // update bar vaues
-  
-
   svgAge.selectAll('.avg-line').remove()
-
   svgAge.selectAll('.avg-label').remove()
-
-  
   makeAgeChart(controller.colorScale)
   
 }
 
 
-// update data chart
-controller.addListener('yearFiltered', function (e) {
-  updateChart() 
-});
-
-
-// update data chart
 controller.addListener('sexFiltered', function (e) {
-  updateChart() 
+  updateAgeChart() 
 });
+
+controller.addListener('scatterFiltered', function (e) {
+  updateAgeChart() 
+});
+
+
+controller.addListener('yearFiltered', function (e) {
+  svgAge.selectAll('.ageBars-back').remove()
+  svgAge.selectAll('.bar-value-age').remove()
+  svgAge.selectAll('.ageBars-filtered').remove()
+  svgAge.selectAll('.avg-line').remove()
+  svgAge.selectAll('.avg-label').remove()
+  makeAgeChart(controller.colorScale)
+});
+
+
 
