@@ -5,7 +5,7 @@ Controller = function () {
     this.selectedCountries = []; // max three selected countries
 
     // applied filters
-    this.scatterFilter = [];
+    this.scatterFilter = null;
     this.sexFilter = 'all';
     this.ageFilter = new Set();
 
@@ -120,6 +120,7 @@ Controller.prototype.triggerScatterFilterEvent = function (selectedPoints) {
     this.scatterFilter = selectedPoints;
     this.globalFilter();
     this.notifyScatterFiltered();
+    console.log('daje')
 }
 
 // filter by sex
@@ -145,18 +146,33 @@ Controller.prototype.globalFilter = function () {
     let dataSex = this.dataYear;
     let dataAge = this.dataYear;
 
-    // put scatter
-    // if nothing selected (arr empty) return dataYear
-    // else get only points selected by scatter
-    console.log(this.scatterFilter)
+    // filter scatter
+    const scatterFilterArray = this.scatterFilter;
+    if (scatterFilterArray != null) {
+        
+        let tmpData = []
+        // for each age selected take all corresponding data d
+        scatterFilterArray.forEach((scatterFilter) => {
+            dataMapScatter.forEach(d => {
+                if (d.country==scatterFilter.key) tmpData.push(d);
+            });
+        })
+
+        dataMapScatter = tmpData;  // no need update
+        dataAge = tmpData;
+        dataSex = tmpData;
+        console.log(tmpData)
+    }
     
-    // filter sex first (that is boolean) (not for dataSex)
+
+    // filter sex  (that is boolean) (not for dataSex)
     const sexFilter = this.sexFilter
     if (sexFilter != 'all') {
-        dataMapScatter = this.dataYear.filter((d) => d.sex==sexFilter);
-        dataAge = this.dataYear.filter((d) => d.sex==sexFilter);
-        dataSex = this.dataYear;    // do not delete other sex data!!
+        dataMapScatter = dataMapScatter.filter((d) => d.sex==sexFilter);
+        dataAge = dataAge.filter((d) => d.sex==sexFilter);
+        dataSex = dataSex;    // do not delete other sex data!!
     }
+
 
     // filter age (not for dataAge)
     const ageFilterArray = this.ageFilter;
@@ -174,15 +190,13 @@ Controller.prototype.globalFilter = function () {
         dataSex = tmpData;
         //dataAge = already updated sex    // do not delete other ages data!!
     }
-    
- 
-    //console.log(sexFilter)
-    //console.log(ageFilterArray)
 
     // put new values 
     this.dataMapScatter = dataMapScatter;
     this.dataSex = dataSex;
     this.dataAge = dataAge;
+
+    console.log(this.dataMapScatter)
 }
 
 
