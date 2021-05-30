@@ -1,6 +1,5 @@
 Controller = function () {
     // events handlers
-    this.isYearFiltered = false;  //set true when year filter applied
     this.selectedCountries = []; // max three selected countries
 
     // applied filters
@@ -67,27 +66,29 @@ Controller.prototype.notifyYearFiltered = function () {
     updateMap() 
     updateSexChart()
     updateAgeChart() 
-    updateScatterOut()
+    updateScatter()
 }
 
 Controller.prototype.notifyScatterFiltered = function () {
     //console.log('Scatter filtered!')
+    updateMap()
     updateSexChart()
     updateAgeChart() 
+    //updateScatter()
 }
 
 Controller.prototype.notifySexFiltered = function () {
     //console.log('sex filtered!')
     updateMap() 
     updateAgeChart() 
-    updateScatterOut()
+    updateScatter()
 }
 
 Controller.prototype.notifyAgeFiltered = function () {
     //console.log('age filtered!')
     updateMap() 
     updateSexChart()
-    updateScatterOut()
+    updateScatter()
 }
 
 
@@ -149,10 +150,10 @@ Controller.prototype.globalFilter = function () {
     let dataSex = this.dataYear;
     let dataAge = this.dataYear;
 
-    console.log(this.sexFilter)
-    console.log(this.ageFilter)
-    console.log(this.scatterFilter)
-    console.log(this.isScatterFiltered)
+    // console.log(this.sexFilter)
+    // console.log(this.ageFilter)
+    // console.log(this.scatterFilter)
+    // console.log(this.isScatterFiltered)
     
 
     // filter scatter
@@ -171,7 +172,7 @@ Controller.prototype.globalFilter = function () {
             dataMapScatter = tmpData;  // no need update
         dataAge = tmpData;
         dataSex = tmpData;
-        console.log(dataMapScatter)
+        //console.log(dataMapScatter)
     }
     
 

@@ -4,9 +4,17 @@ const makeAgeChart = () => {
 
   // callback for mouseover bar
   const mouseOver = function (actual, i) {
-    // all original values on bars transparent
+    // show difference on bar insted of orignal value
     d3.selectAll('.bar-value-age')  
-      .attr('opacity', 0)
+    .text((d, idx) => {
+      const divergence = (yValueAge(d) - actual.value.suicides_pop).toFixed(1)
+      
+      let text = ''
+      if (divergence > 0) text += '+'
+      text += `${divergence}`
+
+      return idx !== i ? text : `${actual.value.suicides_pop}`;
+    })
 
     // enlarge bar
     d3.select(this)
@@ -15,30 +23,10 @@ const makeAgeChart = () => {
       .attr('x', (d) => xScaleAge(xValueAge(d)) - 5)
       .attr('width', xScaleAge.bandwidth() + 10)
       .style("cursor", "pointer");
-
-    // show value on bar
-    barGroups.append('text')
-      .attr('class', 'divergence-age')  //needed to remove on mouseleave
-      .attr('x', (d) => xScaleAge(xValueAge(d)) + xScaleAge.bandwidth() / 2)
-      .attr('y', (d) => yScaleAge(yValueAge(d)) + 30)
-      .attr('text-anchor', 'middle')
-      .text((d, idx) => {
-        const divergence = (yValueAge(d) - actual.value.suicides_pop).toFixed(1)
-        
-        let text = ''
-        if (divergence > 0) text += '+'
-        text += `${divergence}`
-
-        return idx !== i ? text : `${actual.value.suicides_pop}`;
-      })
-
   }
 
   // callback for mouseLeave bar
   const mouseLeave =  function () {
-    d3.selectAll('.bar-value-age')
-      .attr('opacity', 1)
-
     // bar to normal size
     d3.select(this)
       .transition()
@@ -46,8 +34,9 @@ const makeAgeChart = () => {
       .attr('x', (d) => xScaleAge(xValueAge(d)))
       .attr('width', xScaleAge.bandwidth())
 
-    // remove divergence value
-    svgAge.selectAll('.divergence-age').remove()
+    d3.selectAll('.bar-value-age')  
+      .text( (d) => yValueAge(d))
+    
   }
 
   // callback for mouseClick bar
