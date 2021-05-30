@@ -4,6 +4,8 @@ const heightMap = document.getElementById('map-holder').offsetHeight;
 const geoJsonUrl = "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson";
 const strokeColorMap = '#92c5de';
 const fillColorMap = '#0571b0';
+const maxOpacity = 1;
+const minOpacity = .8;
 const selectedColorsMap = ['#d01c8b',
     '#f1b6da',
     '#b8e186',
