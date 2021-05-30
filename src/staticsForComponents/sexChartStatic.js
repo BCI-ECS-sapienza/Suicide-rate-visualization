@@ -4,8 +4,8 @@ const initial_height_sexChart = document.getElementById('sexChart').offsetHeight
 const sex_xLabel = 'Sex';;
 const sex_yLabel = 'Suicides/100k pop';
 const sex_xPadding = 0.5;
-const sex_behindOpacity = 0.3;
-const sex_backOffset = 5;
+const sex_behindOpacity = 0.4;
+const sex_backOffset = 10;
 const sex_transition_time = 300;
 
 // set the dimensions and margins of the graph
@@ -13,6 +13,19 @@ const margin_sexChart = {top: 25, right: 30, bottom: 50, left: 70},
     width_sexChart = initial_width_sexChart - margin_sexChart.left - margin_sexChart.right,
     height_sexChart = initial_height_sexChart - margin_sexChart.top - margin_sexChart.bottom;
 
+
+// set data iterators
+const xValueSex = d => d.key;
+const yValueSex = d => d.value.suicides_pop;
+
+// set scales
+const xScaleSex = d3.scaleBand()
+  .range([ 0, width_sexChart ])
+  .padding(sex_xPadding);
+
+const yScaleSex = d3.scaleLinear()
+  .range([ height_sexChart, 0])
+  .nice();
 
 
 // append the svg object to the body of the page

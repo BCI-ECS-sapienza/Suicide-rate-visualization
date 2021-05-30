@@ -4,14 +4,31 @@ const initial_height_ageChart = document.getElementById('ageChart').offsetHeight
 const age_xLabel = 'Age';;
 const age_yLabel = 'Suicides/100k pop';
 const age_xPadding = 0.5;
-const age_behindOpacity = 0.3;
-const age_backOffset = 5;
+const age_behindOpacity = 0.4;
+const age_backOffset = 10;
+
+// sets for selection (filter)
+let selectedBarsAge = new Set();
+let selectedValuesAge = new Set();
 
 // set the dimensions and margins of the graph
 const margin_ageChart = {top: 25, right: 30, bottom: 50, left: 70},
     width_ageChart = initial_width_ageChart - margin_ageChart.left - margin_ageChart.right,
     height_ageChart = initial_height_ageChart - margin_ageChart.top - margin_ageChart.bottom;
 
+
+// set data iterators
+const xValueAge = d => d.key;
+const yValueAge = d => d.value.suicides_pop;
+
+// set scales
+const xScaleAge = d3.scaleBand()
+  .range([ 0, width_ageChart ])
+  .padding(age_xPadding);
+
+const yScaleAge = d3.scaleLinear()
+  .range([ height_ageChart, 0])
+  .nice();
 
 
 // append the svg object to the body of the page

@@ -1,5 +1,7 @@
 const makeSexChart = () => {
 
+  ////////////////////////// CALLBACK //////////////////////////
+
   // callback for mouseover bar
   const mouseOver = function (actual, i) {
     // all original values on bars transparent
@@ -10,18 +12,18 @@ const makeSexChart = () => {
     d3.select(this)
       .transition()
       .duration(sex_transition_time)
-      .attr('x', (d) => xScale(xValue(d)) - 5)
-      .attr('width', xScale.bandwidth() + 10)
+      .attr('x', (d) => xScaleSex(xValueSex(d)) - 5)
+      .attr('width', xScaleSex.bandwidth() + 10)
       .style("cursor", "pointer");
 
     // show value on bar
     barGroups.append('text')
       .attr('class', 'divergence-sex')  //needed to remove on mouseleave
-      .attr('x', (d) => xScale(xValue(d)) + xScale.bandwidth() / 2)
-      .attr('y', (d) => yScale(yValue(d)) + 30)
+      .attr('x', (d) => xScaleSex(xValueSex(d)) + xScaleSex.bandwidth() / 2)
+      .attr('y', (d) => yScaleSex(yValueSex(d)) + 30)
       .attr('text-anchor', 'middle')
       .text((d, idx) => {
-        const divergence = (yValue(d) - actual.value.suicides_pop).toFixed(1)
+        const divergence = (yValueSex(d) - actual.value.suicides_pop).toFixed(1)
         
         let text = ''
         if (divergence > 0) text += '+'
@@ -41,8 +43,8 @@ const makeSexChart = () => {
     d3.select(this)
       .transition()
       .duration(sex_transition_time)
-      .attr('x', (d) => xScale(xValue(d)))
-      .attr('width', xScale.bandwidth())
+      .attr('x', (d) => xScaleSex(xValueSex(d)))
+      .attr('width', xScaleSex.bandwidth())
 
     // remove divergence value
     svgSex.selectAll('.divergence-sex').remove()
@@ -50,7 +52,7 @@ const makeSexChart = () => {
 
   // callback for mouseClick bar
   const mouseClick = function (e) {
-    let selection = xValue(this.__data__)
+    let selection = xValueSex(this.__data__)
 
     // toggle bar selection highlight
     if (d3.select(this).classed("selected-bar") == false) {
@@ -67,6 +69,8 @@ const makeSexChart = () => {
 
 
 
+  ////////////////////////// SETUP //////////////////////////
+
   // get data
   const dataAll = aggregateDataBySex(controller.dataAll);
   const dataFiltered = aggregateDataBySex(controller.dataSex);
@@ -76,36 +80,27 @@ const makeSexChart = () => {
   dataAll.sort((a, b) => d3.descending(a.key, b.key));
   dataFiltered.sort((a, b) => d3.descending(a.key, b.key));
 
-  // set data iterators
-  const xValue = d => d.key;
-  const yValue = d => d.value.suicides_pop;
-
-
-  // add some padding on top yAxis (1/10 more than max between dataAll and dataFiltered)
-  const max_val_year = d3.max(dataAll, yValue) 
-  const max_val_filtered = d3.max(dataFiltered, yValue) 
+  // compute padding on top yAxis (1/10 more than max between dataAll and dataFiltered)
+  const max_val_year = d3.max(dataAll, yValueSex) 
+  const max_val_filtered = d3.max(dataFiltered, yValueSex) 
   const max_val = (max_val_year >  max_val_filtered) ? max_val_year : max_val_filtered;
   const domain_max = parseInt(max_val) + parseInt(max_val/10) 
 
-  // set scales
-  const xScale = d3.scaleBand()
-    .domain(dataAll.map(xValue))
-    .range([ 0, width_sexChart ])
-    .padding(sex_xPadding);
-
-  const yScale = d3.scaleLinear()
-    .domain([0, domain_max ])
-    .range([ height_sexChart, 0])
-    .nice();
+  // update axis domain
+  xScaleSex.domain(dataAll.map(xValueSex))
+  yScaleSex.domain([0, domain_max ])
 
   // axis setup
-  const xAxis = d3.axisBottom(xScale);
-  const yAxis = d3.axisLeft(yScale).tickFormat(AxisTickFormat);
+  const xAxis = d3.axisBottom(xScaleSex);
+  const yAxis = d3.axisLeft(yScaleSex).tickFormat(AxisTickFormat);
 
   // compute avg line
-  const avg_value = Math.round((d3.sum(dataFiltered, (d) => yValue(d))) / dataFiltered.length *10) /10;
-  const avg_value_scaled = yScale(avg_value)
+  const avg_value = Math.round((d3.sum(dataFiltered, (d) => yValueSex(d))) / dataFiltered.length *10) /10;
+  const avg_value_scaled = yScaleSex(avg_value)
 
+
+
+  ////////////////////////// CALL COMPONENTS //////////////////////////
 
   // call X axis
   sexXAxisSvg.transition()
@@ -125,7 +120,7 @@ const makeSexChart = () => {
   sexYGridSvg.transition()
     .duration(controller.transitionTime/2)
     .call(d3.axisLeft()
-      .scale(yScale)
+      .scale(yScaleSex)
       .tickSize(-width_sexChart, 0, 0)
       .tickFormat(''))
 
@@ -138,70 +133,69 @@ const makeSexChart = () => {
       .append('g')
       .append('rect')
       .attr('class', 'sexBars-back')
-      .attr('x', (d) => xScale(xValue(d)) + sex_backOffset)
-      .attr('y', (d) => yScale(yValue(d)))
-      .attr('height', (d) => height_sexChart - yScale(yValue(d)))
-      .attr('width', xScale.bandwidth() + sex_backOffset)
-      .style("fill",  (d) => colorScale(yValue(d)))
+      .attr('x', (d) => xScaleSex(xValueSex(d)) - sex_backOffset)
+      .attr('y', (d) => yScaleSex(yValueSex(d)))
+      .attr('height', (d) => height_sexChart - yScaleSex(yValueSex(d)))
+      .attr('width', xScaleSex.bandwidth()/8)
+      .style("fill",  (d) => colorScale(yValueSex(d)))
       .style("stroke", "black") 
       .attr('opacity', sex_behindOpacity)
   } 
 
 
-  // add filtered bars
-  const barGroups =  svgSex.selectAll()
+  // initialize bars and values
+  const barGroups =  svgSex.selectAll('rect')
     .data(dataFiltered)
-    .enter()
-    .append('g')
+
+  const barValues = svgSex.selectAll('.bar-value-sex')
+    .data(dataFiltered)
     
+
+  // add bars 
   barGroups
+    .enter()
     .append('rect')
+    .merge(barGroups)
     .on('mouseenter', mouseOver)
     .on('mouseleave', mouseLeave)
     .on('click', mouseClick)
-    .attr('class', 'sexBars-filtered')
-    .attr('x', (d) => xScale(xValue(d)))
-    .attr('y', (d) =>  yScale(0))
-    .attr('height', (d) => height_sexChart - yScale(0))
-    .attr('width', xScale.bandwidth())
-    .style("fill",  (d) => colorScale(yValue(d)))
-    
-  // for the bars animations
-  barGroups.selectAll("rect")
+    .classed('sexBars-filtered', true)
     .transition()
-    .duration(controller.transitionTime/3)
-    .attr('y', (d) =>  yScale(yValue(d)))
-    .attr('height', (d) => height_sexChart - yScale(yValue(d)))
-    .delay( (d,i) => i*controller.transitionTime*2)
+    .duration(controller.transitionTime/2)
+    .attr('x', (d) => xScaleSex(xValueSex(d)))
+    .attr('y', (d) =>  yScaleSex(yValueSex(d)))
+    .attr('height', (d) => height_sexChart - yScaleSex(yValueSex(d)))
+    .attr('width', xScaleSex.bandwidth())
+    .style("fill",  (d) => colorScale(yValueSex(d)))
     
 
-  // add values on bars
-  barGroups 
+  //add values on bars
+  barValues 
+    .enter()  
     .append('text')
+    .merge(barValues)
     .attr('opacity', 0)
     .attr('class', 'bar-value-sex')
-    .attr('x', (d) => xScale(xValue(d)) + xScale.bandwidth() / 2)
-    .attr('y', (d) => yScale(yValue(d)) + 30)
+    .attr('x', (d) => xScaleSex(xValueSex(d)) + xScaleSex.bandwidth() / 2)
+    .attr('y', (d) => yScaleSex(yValueSex(d)) + 30)
     .attr('text-anchor', 'middle')
     .transition()
     .duration(controller.transitionTime)
-    .text((d) => `${yValue(d)}`)
+    .text((d) => `${yValueSex(d)}`)
     .attr('opacity', 1)
 
 
-  // add avg line
+  // add avg line and label
   printAvgY(svgSex, avg_value, avg_value_scaled, width_sexChart)
 
 }
 
 
 
-////////////////////////// UPDATE FUNCTIONS //////////////////////////
+////////////////////////// UPDATE FUNCTION //////////////////////////
 
 const updateSexChart = () => {
   svgSex.selectAll('.sexBars-back').remove()
-  svgSex.selectAll('.sexBars-filtered').remove()
-  svgSex.selectAll('.bar-value-sex').remove()
   svgSex.selectAll('.avg-line').remove()
   svgSex.selectAll('.avg-label').remove()
   makeSexChart()
