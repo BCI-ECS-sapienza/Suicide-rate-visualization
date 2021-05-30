@@ -70,6 +70,24 @@ const makeMap = () => {
         }
       })
       .style('opacity', () => {
+        if(controller.selectedCountries.length != 0){
+          var flag = false;
+          for(var i = 0; i<selectedCountries.length; i++){
+            
+            if(selectedCountries[i].id == this.id)
+              flag = true;
+          }          
+          if(!flag){
+              return minOpacity;
+          }
+          else{
+            return maxOpacity;
+          }
+        }
+        else{
+          return maxOpacity;
+        }
+        /*
         var flag = false;
         for(var i = 0; i<selectedCountries.length; i++){
           
@@ -81,7 +99,7 @@ const makeMap = () => {
         }
         else{
           return maxOpacity;
-        }
+        }*/
       });
 
     tooltipMap
@@ -104,8 +122,8 @@ const makeMap = () => {
     if(selectedCountries.includes(this)){
       const index = selectedCountries.indexOf(this);
       d3.select(this)
-      .style("stroke", 'transparent')
-      .style('opacity', minOpacity);
+      .style("stroke", 'transparent');
+      //.style('opacity', minOpacity);
 
       if (index > -1) {
         selectedCountries.splice(index, 1);
@@ -114,6 +132,9 @@ const makeMap = () => {
       if(selectedCountries.length == 0){
         //svgPca
           //.attr("opacity", 1);
+        map
+          .selectAll('path')
+          .style('opacity', maxOpacity);
         svgRadar
           .attr("opacity", 0);
       }
@@ -132,6 +153,9 @@ const makeMap = () => {
       if(selectedCountries.length < 4){
         if(selectedCountries.length == 0){
           firstAdded = this;
+          map
+            .selectAll('path')
+            .style('opacity', minOpacity);
         }
         selectedCountries.push(this);
       }
@@ -164,8 +188,7 @@ const makeMap = () => {
           .style('opacity', maxOpacity);
       };
     }
-
-    drawRadar(dataYear);
+    drawRadar(dataYear);  
   }
 
 
@@ -224,7 +247,7 @@ const makeMap = () => {
       .style("stroke", "transparent")
       .attr("id", function(d){ return nameMap(d); })
       .attr("class", "Country")
-      .style("opacity", minOpacity)
+      .style("opacity", maxOpacity)
       .on("mouseover", mouseOver)
       .on("mousemove", mouseMove)
       .on("mouseout", mouseOut)
