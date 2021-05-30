@@ -98,7 +98,7 @@ const makeScatterPlot = () => {
             const y0 = yScale.invert(extent[1][1])
             const y1 = yScale.invert(extent[0][1])
 
-            // update axis scale
+            // update axis domain
             xScale.domain([ x0, x1 ])
             yScale.domain([ y0, y1 ])
 
@@ -206,12 +206,15 @@ const makeScatterPlot = () => {
     const yAxis = d3.axisLeft(yScale).tickFormat(AxisTickFormat);
 
     // compute avg line for y
-    const avg_value_y = Math.round((d3.sum(dataFiltered, (d) => yValue(d))) / dataFiltered.length);
+    const avg_value_y = Math.round((d3.sum(dataFiltered, (d) => yValue(d))) / dataFiltered.length *10) /10;
     const avg_value_scaled_y = yScale(avg_value_y)
 
     // compute avg line for x
-    const avg_value_x = Math.round((d3.sum(dataFiltered, (d) => xValue(d))) / dataFiltered.length);
+    const avg_value_x = Math.round((d3.sum(dataFiltered, (d) => xValue(d))) / dataFiltered.length *10) /10;
     const avg_value_scaled_x = xScale(avg_value_x)
+
+    // compute avg colorscale
+    const avg_value_color = Math.round((d3.sum(dataFiltered, (d) => colorValue(d))) / dataFiltered.length *10) /10;
         
     // initialize brushing
     scatterBrush.on("end", updateChart) 
@@ -281,6 +284,9 @@ const makeScatterPlot = () => {
     printAvgY(svgScatterPlot, avg_value_y, avg_value_scaled_y, width_scatterPlot)
     printAvgX(svgScatterPlot, avg_value_x, avg_value_scaled_x, height_scatterPlot)
 
+    // update svg colorScale
+    document.getElementById('avg-scatter').innerHTML = `&nbsp; Avg suicide/100k pop: ${avg_value_color}`
+    
 }
 
 
