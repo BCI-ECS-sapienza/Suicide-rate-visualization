@@ -6,16 +6,34 @@ const scatter_yLabel = 'GDP per capita';
 const scatter_circle_size = 5;
 const scatter_selected_circle_size = 10;
 const scatter_transition_time = 1000;
-let updateScatter;
-
-// needed for update
-var idleTimeout;
-const idled = () =>  idleTimeout = null; 
 
 // set the dimensions and margins of the graph
 const margin_scatterPlot = {top: 25, right: 25, bottom: 65, left: 80},
     width_scatterPlot = initial_width_scatterPlot - margin_scatterPlot.left - margin_scatterPlot.right,
     height_scatterPlot = initial_height_scatterPlot - margin_scatterPlot.top - margin_scatterPlot.bottom;
+
+// needed for update
+var idleTimeout;
+const idled = () =>  idleTimeout = null;
+
+// set data iterators
+const countryScatter = d => d.key
+const xValueScatter = d => d.value.gdp_for_year;
+const yValueScatter = d => d.value.gdp_per_capita;
+const colorValueScatter = d => d.value.suicides_pop;
+
+// if no filter applied then show avg in tooltip
+let avg_show_scatter = " (avg.)"
+if (controller.isYearFiltered == true) 
+    avg_show_scatter = ""
+
+// set scales ranges
+const xScaleScatter = d3.scaleLinear() 
+    .range([ 0, width_scatterPlot ])
+
+const yScaleScatter = d3.scaleLinear()
+    .range([ height_scatterPlot, 0])
+    .nice();
 
 // vars for brush
 let scatter_toggle_brush = false;
