@@ -5,7 +5,7 @@ const geoJsonUrl = "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/ma
 const strokeColorMap = '#92c5de';
 const fillColorMap = '#0571b0';
 const maxOpacity = 1;
-const minOpacity = .8;
+const minOpacity = .6;
 const selectedColorsMap = ['#d01c8b',
     '#f1b6da',
     '#b8e186',

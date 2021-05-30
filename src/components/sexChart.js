@@ -4,10 +4,7 @@ const makeSexChart = () => {
 
   // callback for mouseover bar
   const mouseOver = function (actual, i) {
-    // all original values on bars transparent
-    d3.selectAll('.bar-value-sex')  
-      .attr('opacity', 0)
-
+    
     // enlarge bar
     d3.select(this)
       .transition()
@@ -16,12 +13,8 @@ const makeSexChart = () => {
       .attr('width', xScaleSex.bandwidth() + 10)
       .style("cursor", "pointer");
 
-    // show value on bar
-    barGroups.append('text')
-      .attr('class', 'divergence-sex')  //needed to remove on mouseleave
-      .attr('x', (d) => xScaleSex(xValueSex(d)) + xScaleSex.bandwidth() / 2)
-      .attr('y', (d) => yScaleSex(yValueSex(d)) + 50)
-      .attr('text-anchor', 'middle')
+    // show difference on bar insted of orignal value
+    d3.selectAll('.bar-value-sex')  
       .text((d, idx) => {
         const divergence = (yValueSex(d) - actual.value.suicides_pop).toFixed(1)
         
@@ -31,13 +24,10 @@ const makeSexChart = () => {
 
         return idx !== i ? text : `${actual.value.suicides_pop}`;
       })
-
   }
 
   // callback for mouseLeave bar
   const mouseLeave = function () {
-    d3.selectAll('.bar-value-sex')
-      .attr('opacity', 1)
 
     // bar to normal size
     d3.select(this)
@@ -46,8 +36,8 @@ const makeSexChart = () => {
       .attr('x', (d) => xScaleSex(xValueSex(d)))
       .attr('width', xScaleSex.bandwidth())
 
-    // remove divergence value
-    svgSex.selectAll('.divergence-sex').remove()
+    d3.selectAll('.bar-value-sex')  
+      .text( (d) => yValueSex(d))
   }
 
   // callback for mouseClick bar
@@ -62,6 +52,7 @@ const makeSexChart = () => {
       d3.select(this).classed("selected-bar", false);
       selection = 'All' // toggle agin => back to all
     }
+     
 
     // apply filter
     controller.triggerSexFilterEvent(selection);

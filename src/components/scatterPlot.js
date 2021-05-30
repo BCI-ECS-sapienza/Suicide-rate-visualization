@@ -76,7 +76,8 @@ const makeScatterPlot = () => {
 
 
     // brush callback
-    const updateChart = () => {
+    const updateOnBrush = () => {
+        
         extent = d3.event.selection
         selectedPoints = []; // here we will have all the points in the selected region (or all the original points)
 
@@ -203,7 +204,7 @@ const makeScatterPlot = () => {
     const avg_value_color = Math.round((d3.sum(dataFiltered, (d) => colorValueScatter(d))) / dataFiltered.length *10) /10;
         
     // initialize brushing
-    scatterBrush.on("end", updateChart) 
+    scatterBrush.on("end", updateOnBrush) 
 
 
 
@@ -300,7 +301,7 @@ const toggleBrush = () => {
 
 
 // update data on year changed
-const updateScatterOut = () => {
+const updateScatter = () => {
     svgScatterPlot.selectAll('.scatter-points').remove()
     svgScatterPlot.selectAll('.avg-line').remove()
     svgScatterPlot.selectAll('.avg-label').remove()
