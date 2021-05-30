@@ -13,7 +13,7 @@ const makeScatterPlot = () => {
         // highlight state on map
         d3.select('#map-holder').select('#'+countryScatter(d))
             .classed('over-object', true)
-            .style("fill", "rgb(131, 20, 131)");
+            .style("fill", "lightblue");
     
         const gdp_year = d3.format('.2s')(xValueScatter(d)).replace('G', 'B');
         const gdp_capita = d3.format('.2s')(yValueScatter(d)).replace('G', 'B');  
@@ -198,9 +198,6 @@ const makeScatterPlot = () => {
     // compute avg line for x
     const avg_value_x = Math.round((d3.sum(dataFiltered, (d) => xValueScatter(d))) / dataFiltered.length *10) /10;
     const avg_value_scaled_x = xScaleScatter(avg_value_x)
-
-    // compute avg colorscale
-    const avg_value_color = Math.round((d3.sum(dataFiltered, (d) => colorValueScatter(d))) / dataFiltered.length *10) /10;
         
     // initialize brushing
     scatterBrush.on("end", updateOnBrush) 
@@ -269,9 +266,6 @@ const makeScatterPlot = () => {
     // add avg lines
     printAvgY(svgScatterPlot, avg_value_y, avg_value_scaled_y, width_scatterPlot)
     printAvgX(svgScatterPlot, avg_value_x, avg_value_scaled_x, height_scatterPlot)
-
-    // update svg colorScale
-    document.getElementById('avg-scatter').innerHTML = `&nbsp; Avg suicide/100k pop: ${avg_value_color}`
     
 }
 

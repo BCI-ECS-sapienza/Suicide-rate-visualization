@@ -45,11 +45,11 @@ const makeSexChart = () => {
     let selection = xValueSex(this.__data__)
 
     // toggle bar selection highlight
-    if (d3.select(this).classed("selected-bar") == false) {
-      d3.selectAll('.sexBars-filtered').classed("selected-bar", false) // so that the other get toggle
-      d3.select(this).classed("selected-bar", true)
+    if (d3.select(this).classed("selected-object") == false) {
+      d3.selectAll('.sexBars-filtered').classed("selected-object", false) // so that the other get toggle
+      d3.select(this).classed("selected-object", true)
     } else {
-      d3.select(this).classed("selected-bar", false);
+      d3.select(this).classed("selected-object", false);
       selection = 'All' // toggle agin => back to all
     }
      

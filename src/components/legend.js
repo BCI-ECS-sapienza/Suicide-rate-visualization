@@ -1,33 +1,6 @@
-// legend static params
-const initial_width_legend = document.getElementById('map-legend').offsetWidth;
-const initial_height_legend = document.getElementById('map-legend').offsetHeight;
-const colorLabel = 'Suicides/100k pop';
-const classesInterval = 10;
-
-// set the dimensions and margins of the graph
-const margin_legend = {top: 40, right: 10, bottom: 10, left: 8},
-    width_legend = initial_width_legend - margin_legend.left - margin_legend.right,
-    height_legend = initial_height_legend - margin_legend.top - margin_legend.bottom;
-
-
-const svgLegend = d3.select("#map-legend")
-    .attr('background', 'white')
-    .append("svg")
-        .attr("width", initial_width_legend)
-        .attr("height", initial_height_legend)
-    .append("g")
-        .attr("transform", "translate(" + margin_legend.left + "," + margin_legend.top + ")")
-
-const tooltipLegend = d3.select("#map-legend")
-    .append("div")
-    .style("opacity", 0)
-    .attr("class", "tooltip")
-
-
-
 const makeLegend = () => {
-    const keys = controller.colorKeys
-    const colorScale = controller.colorScale;
+
+    ////////////////////////// CALLBACK //////////////////////////
 
     const overLegend = function (d)  {
         d3.select(this)
@@ -36,8 +9,7 @@ const makeLegend = () => {
         // get all countries with suicide/100k pop inside the interval
         const start = +this.attributes.class.value
         const end = +this.attributes.class.value + classesInterval 
-        const countries = aggregateDataByCountry(controller.dataMapScatter)
-                            .filter(((d) => d.value.suicides_pop > start && d.value.suicides_pop < end))
+        const countries = dataFiltered.filter(((d) => d.value.suicides_pop > start && d.value.suicides_pop < end))
 
         // make a string iterating on filtered countries
         let string = ''
@@ -67,7 +39,7 @@ const makeLegend = () => {
 
     }    
 
-    const leaveLegend =  (d) => {	
+    const leaveLegend = function (d) {	
         tooltipLegend
             .style("opacity", 0)
     }
@@ -78,6 +50,36 @@ const makeLegend = () => {
         else
             return `80+`
     }
+
+    const getMeanSize = function (d) {
+        if (avg > d && avg < d+classesInterval) return scatter_circle_size*2
+        else return scatter_circle_size + 1
+    }
+
+    const getMeanStroke = function (d) {
+        if (avg > d && avg < d+classesInterval) return 'green'
+        else return null
+    }
+
+    const getMeanWidth = function (d) {
+        if (avg > d && avg < d+classesInterval) return 2
+    }
+
+
+
+    ////////////////////////// SETUP //////////////////////////
+
+    // get data
+    const keys = controller.colorKeys
+    const colorScale = controller.colorScale;
+    const dataFiltered = aggregateDataByCountry(controller.dataMapScatter);
+
+    // compute avg colorscale
+    const avg = Math.round((d3.sum(dataFiltered, (d) => colorValueScatter(d))) / dataFiltered.length *10) /10;
+
+
+
+    ////////////////////////// CALL COMPONENTS //////////////////////////
 
     svgLegend.append('text')
         .attr('class', 'axis-label')
@@ -94,11 +96,14 @@ const makeLegend = () => {
         .attr('class', (d) => d)
         .attr("cx", 10)
         .attr("cy", (d,i) =>  10 + i*26) 
-        .attr("r", scatter_circle_size+2)
+        .attr("r", getMeanSize)
         .style("fill", (d) => colorScale(d))
+        .style("stroke", getMeanStroke)
+        .style("stroke-width", getMeanWidth)
         .on("mouseover", overLegend)
         .on("mouseout", leaveLegend)
 
+        
     // Add one dot in the legend for each name.
     svgLegend.append('g')
         .attr("transform", `translate(${margin_legend.left+3}, ${margin_legend.right+5})`) 
@@ -117,7 +122,7 @@ const makeLegend = () => {
 
 
 const updateLegend = () => {
-    svgLegend.selectAll('.text').remove()
-    svgLegend.selectAll('.circle').remove()
-    makeAgeChart()
+    svgLegend.selectAll('text').remove()
+    svgLegend.selectAll('circle').remove()
+    makeLegend()
 }
