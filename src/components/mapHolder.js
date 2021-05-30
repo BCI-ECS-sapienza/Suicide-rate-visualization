@@ -216,19 +216,6 @@ const makeMap = () => {
   // add zoom
   d3.select('#map-holder').call(zoomMap);
 
-  // legend
-  /*const g = map.append("g")
-    .attr("class", "legendThreshold")
-    .attr("transform", "translate(20, 100)");
-  const legend = d3.legendColor().scale(colorScale)
-    .labelFormat(d3.format(".0f"))
-    .title(colorLabel);
-  map.select(".legendThreshold")
-    .call(legend)
-      .attr("class","axis-text");*/
-
-  
-
   ////////////////////////// INITIALIZE MAP //////////////////////////
 
   d3.json(geoJsonUrl, function(json) {

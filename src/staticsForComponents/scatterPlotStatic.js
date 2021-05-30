@@ -44,7 +44,7 @@ const scatterBrush = d3.brush()
 const tooltipScatter = d3.select("#scatterPlot")
     .append("div")
     .style("opacity", 0)
-    .attr("class", "tooltip-scatter")
+    .attr("class", "tooltip")
 
 // append the svg object to the body of the page
 const svgScatterPlot = d3.select("#scatterPlot")

@@ -30,8 +30,7 @@ const makeScatterPlot = () => {
                 `<br><b>GDP for year: ${avg_show_scatter} </b> ${gdp_year}` + 
                 `<br><b>Gdp per capita: ${avg_show_scatter} </b> ${gdp_capita}` + 
                 `<br><b>Suicide ratio:</b> ${d.value.suicides_pop}`)
-            .style("left", (d3.mouse(this)[0]+30) + widthMap + initial_width_legend + "px")   
-            .style("left", (d3.mouse(this)[0]+30) + widthMap + initial_width_legend + "px")   
+            .style("left", (d3.mouse(this)[0]+30) + widthMap + initial_width_legend + "px")    
             .style("top", (d3.mouse(this)[1]) + "px") //heightMap + "px")
     }
 
