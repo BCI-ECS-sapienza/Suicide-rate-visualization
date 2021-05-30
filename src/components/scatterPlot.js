@@ -11,12 +11,12 @@ const makeScatterPlot = () => {
             .classed('over-object', true)
     
         // highlight state on map
-        d3.select('#map-holder').select('#'+country(d))
+        d3.select('#map-holder').select('#'+countryScatter(d))
             .classed('over-object', true)
             .style("fill", "rgb(131, 20, 131)");
     
-        const gdp_year = d3.format('.2s')(xValue(d)).replace('G', 'B');
-        const gdp_capita = d3.format('.2s')(yValue(d)).replace('G', 'B');  
+        const gdp_year = d3.format('.2s')(xValueScatter(d)).replace('G', 'B');
+        const gdp_capita = d3.format('.2s')(yValueScatter(d)).replace('G', 'B');  
         
         tooltipScatter
             .transition()
@@ -26,9 +26,9 @@ const makeScatterPlot = () => {
         tooltipScatter
             .style("opacity", 1)
             .html(
-                '<b>Country:</b> ' + country(d) + 
-                `<br><b>GDP for year: ${avg_show} </b> ${gdp_year}` + 
-                `<br><b>Gdp per capita: ${avg_show} </b> ${gdp_capita}` + 
+                '<b>Country:</b> ' + countryScatter(d) + 
+                `<br><b>GDP for year: ${avg_show_scatter} </b> ${gdp_year}` + 
+                `<br><b>Gdp per capita: ${avg_show_scatter} </b> ${gdp_capita}` + 
                 `<br><b>Suicide ratio:</b> ${d.value.suicides_pop}`)
             .style("left", (d3.mouse(this)[0]+30) + widthMap + initial_width_legend + "px")   
             .style("left", (d3.mouse(this)[0]+30) + widthMap + initial_width_legend + "px")   
@@ -37,16 +37,16 @@ const makeScatterPlot = () => {
 
     // callback for mousemove circles 
     const moveOverPoint = function (d) {
-        const gdp_year = d3.format('.2s')(xValue(d)).replace('G', 'B');
-        const gdp_capita = d3.format('.2s')(yValue(d)).replace('G', 'B');
+        const gdp_year = d3.format('.2s')(xValueScatter(d)).replace('G', 'B');
+        const gdp_capita = d3.format('.2s')(yValueScatter(d)).replace('G', 'B');
         
         // show tooltip
         tooltipScatter
             .style("opacity", 1)
             .html(
-                '<b>Country:</b> ' + country(d) + 
-                `<br><b>GDP for year: ${avg_show} </b> ${gdp_year}` + 
-                `<br><b>Gdp per capita: ${avg_show} </b> ${gdp_capita}` + 
+                '<b>Country:</b> ' + countryScatter(d) + 
+                `<br><b>GDP for year: ${avg_show_scatter} </b> ${gdp_year}` + 
+                `<br><b>Gdp per capita: ${avg_show_scatter} </b> ${gdp_capita}` + 
                 `<br><b>Suicide ratio:</b> ${d.value.suicides_pop}`)
             .style("left", (d3.mouse(this)[0]+30) + widthMap + initial_width_legend + "px")   
             .style("top", (d3.mouse(this)[1]) + "px") //heightMap + "px")
@@ -60,7 +60,7 @@ const makeScatterPlot = () => {
             .classed('over-object', false)
     
         // remove highlight state on map
-        d3.select('#map-holder').select('#'+country(d))
+        d3.select('#map-holder').select('#'+countryScatter(d))
             .style("stroke", "transparent")
             .style("fill", (d)=>{
                 if(d.total === "Missing data") 
@@ -85,8 +85,8 @@ const makeScatterPlot = () => {
             if (!idleTimeout) return idleTimeout = setTimeout(idled, 350);
 
             // update axis scale
-            xScale.domain([0, domain_max_x ])
-            yScale.domain([0, domain_max_y ])
+            xScaleScatter.domain([0, domain_max_x ])
+            yScaleScatter.domain([0, domain_max_y ])
 
             // back to all the original points for this year
             selectedPoints = aggregateDataByCountry(controller.dataYear);
@@ -97,18 +97,18 @@ const makeScatterPlot = () => {
 
         } else {  
             // get back values in correct scale
-            const x0 = xScale.invert(extent[0][0])
-            const x1 = xScale.invert(extent[1][0])
-            const y0 = yScale.invert(extent[1][1])
-            const y1 = yScale.invert(extent[0][1])
+            const x0 = xScaleScatter.invert(extent[0][0])
+            const x1 = xScaleScatter.invert(extent[1][0])
+            const y0 = yScaleScatter.invert(extent[1][1])
+            const y1 = yScaleScatter.invert(extent[0][1])
 
             // update axis domain
-            xScale.domain([ x0, x1 ])
-            yScale.domain([ y0, y1 ])
+            xScaleScatter.domain([ x0, x1 ])
+            yScaleScatter.domain([ y0, y1 ])
 
             // get all the points in the region        
             dataFiltered.forEach(( point ) => {
-                if (xValue(point) > x0 && xValue(point) < x1 && yValue(point) > y0 && yValue(point) < y1) 
+                if (xValueScatter(point) > x0 && xValueScatter(point) < x1 && yValueScatter(point) > y0 && yValueScatter(point) < y1) 
                     selectedPoints.push(point);
             })
 
@@ -135,7 +135,7 @@ const makeScatterPlot = () => {
             .duration(controller.transitionTime)
             //.attr('transform', `translate(0, ${height_scatterPlot})`)
             .call(d3.axisBottom()
-                .scale(xScale)
+                .scale(xScaleScatter)
                 .tickSize(-height_scatterPlot, 0, 0)
                 .tickFormat(''))
 
@@ -143,7 +143,7 @@ const makeScatterPlot = () => {
             .transition()
             .duration(controller.transitionTime)
             .call(d3.axisLeft()
-                .scale(yScale)
+                .scale(yScaleScatter)
                 .tickSize(-width_scatterPlot, 0, 0)
                 .tickFormat(''))
             
@@ -152,14 +152,14 @@ const makeScatterPlot = () => {
             .selectAll("circle")
             .transition()
             .duration(controller.transitionTime)
-            .attr("cx", (d) => xScale(xValue(d)))
-            .attr("cy", (d) => yScale(yValue(d)))
+            .attr("cx", (d) => xScaleScatter(xValueScatter(d)))
+            .attr("cy", (d) => yScaleScatter(yValueScatter(d)))
             .attr("r", scatter_circle_size)
             .delay( (d,i) => i*5)
 
         // update position avg lines (values need rescale)
-        const avg_value_scaled_y = yScale(avg_value_y)
-        const avg_value_scaled_x = xScale(avg_value_x)
+        const avg_value_scaled_y = yScaleScatter(avg_value_y)
+        const avg_value_scaled_x = xScaleScatter(avg_value_x)
         svgScatterPlot.selectAll('.avg-line').remove()
         svgScatterPlot.selectAll('.avg-label').remove()
         printAvgY(svgScatterPlot, avg_value_y, avg_value_scaled_y, width_scatterPlot)
@@ -175,50 +175,32 @@ const makeScatterPlot = () => {
     const dataFiltered = aggregateDataByCountry(controller.dataMapScatter);
     const colorScale = controller.colorScale;
 
-    // set data iterators
-    const country = d => d.key
-    const xValue = d => d.value.gdp_for_year;
-    const yValue = d => d.value.gdp_per_capita;
-    const colorValue = d => d.value.suicides_pop;
-
-     // if no filter applied then show avg in tooltip
-     let avg_show = " (avg.)"
-     if (controller.isYearFiltered == true) 
-         avg_show = ""
-
-    
     // add some padding on top xAxis (1/100 more than max between dataAll and dataFiltered)
-    const max_val_filtered_x = d3.max(dataFiltered, xValue) 
+    const max_val_filtered_x = d3.max(dataFiltered, xValueScatter) 
     const domain_max_x = parseInt(max_val_filtered_x) + parseInt(max_val_filtered_x/100)
 
     // add some padding on top yAxis (1/100 more than max between dataAll and dataFiltered)
-    const max_val_filtered_y = d3.max(dataFiltered, yValue) 
+    const max_val_filtered_y = d3.max(dataFiltered, yValueScatter) 
     const domain_max_y = parseInt(max_val_filtered_y) + parseInt(max_val_filtered_y/100)
 
-    // set scales ranges
-    const xScale = d3.scaleLinear() 
-        .domain([0, domain_max_x ])
-        .range([ 0, width_scatterPlot ])
-
-    const yScale = d3.scaleLinear()
-        .domain([0, domain_max_y ])
-        .range([ height_scatterPlot, 0])
-        .nice();
+    // set domain ranges
+    xScaleScatter.domain([0, domain_max_x ])
+    yScaleScatter.domain([0, domain_max_y ])
 
     // axis setup
-    const xAxis = d3.axisBottom(xScale).tickFormat(AxisTickFormat);
-    const yAxis = d3.axisLeft(yScale).tickFormat(AxisTickFormat);
+    const xAxis = d3.axisBottom(xScaleScatter).tickFormat(AxisTickFormat);
+    const yAxis = d3.axisLeft(yScaleScatter).tickFormat(AxisTickFormat);
 
     // compute avg line for y
-    const avg_value_y = Math.round((d3.sum(dataFiltered, (d) => yValue(d))) / dataFiltered.length *10) /10;
-    const avg_value_scaled_y = yScale(avg_value_y)
+    const avg_value_y = Math.round((d3.sum(dataFiltered, (d) => yValueScatter(d))) / dataFiltered.length *10) /10;
+    const avg_value_scaled_y = yScaleScatter(avg_value_y)
 
     // compute avg line for x
-    const avg_value_x = Math.round((d3.sum(dataFiltered, (d) => xValue(d))) / dataFiltered.length *10) /10;
-    const avg_value_scaled_x = xScale(avg_value_x)
+    const avg_value_x = Math.round((d3.sum(dataFiltered, (d) => xValueScatter(d))) / dataFiltered.length *10) /10;
+    const avg_value_scaled_x = xScaleScatter(avg_value_x)
 
     // compute avg colorscale
-    const avg_value_color = Math.round((d3.sum(dataFiltered, (d) => colorValue(d))) / dataFiltered.length *10) /10;
+    const avg_value_color = Math.round((d3.sum(dataFiltered, (d) => colorValueScatter(d))) / dataFiltered.length *10) /10;
         
     // initialize brushing
     scatterBrush.on("end", updateChart) 
@@ -248,7 +230,7 @@ const makeScatterPlot = () => {
         .duration(controller.transitionTime/2)
         .attr('transform', `translate(0, ${height_scatterPlot})`)
         .call(d3.axisBottom()
-            .scale(xScale)
+            .scale(xScaleScatter)
             .tickSize(-height_scatterPlot, 0, 0)
             .tickFormat(''))
 
@@ -257,7 +239,7 @@ const makeScatterPlot = () => {
         .transition()
         .duration(controller.transitionTime/2)
         .call(d3.axisLeft()
-            .scale(yScale)
+            .scale(yScaleScatter)
             .tickSize(-width_scatterPlot, 0, 0)
             .tickFormat(''))
 
@@ -273,13 +255,13 @@ const makeScatterPlot = () => {
             .on("mousemove", moveOverPoint)
             .on("mouseout", leavePoint)
             .attr('class', 'scatter-points') 
-            .attr('id', (d) => country(d))
-            .style("fill", (d) => colorScale(colorValue(d)))
+            .attr('id', (d) => countryScatter(d))
+            .style("fill", (d) => colorScale(colorValueScatter(d)))
             .style("opacity", 1)
             .transition()
             .duration(controller.transitionTime/2)
-            .attr("cx", (d) => xScale(xValue(d)))
-            .attr("cy", (d) => yScale(yValue(d)))
+            .attr("cx", (d) => xScaleScatter(xValueScatter(d)))
+            .attr("cy", (d) => yScaleScatter(yValueScatter(d)))
             .attr("r", scatter_circle_size)
             .delay( (d,i) => (i*10))
           

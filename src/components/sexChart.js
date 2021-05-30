@@ -20,7 +20,7 @@ const makeSexChart = () => {
     barGroups.append('text')
       .attr('class', 'divergence-sex')  //needed to remove on mouseleave
       .attr('x', (d) => xScaleSex(xValueSex(d)) + xScaleSex.bandwidth() / 2)
-      .attr('y', (d) => yScaleSex(yValueSex(d)) + 30)
+      .attr('y', (d) => yScaleSex(yValueSex(d)) + 50)
       .attr('text-anchor', 'middle')
       .text((d, idx) => {
         const divergence = (yValueSex(d) - actual.value.suicides_pop).toFixed(1)
