@@ -20,6 +20,15 @@ const yearSelected = () => {
     controller.triggerYearFilterEvent(selectedYear);
 };
 
+// reload any time the window changes size
+let resizeTimeout;
+window.addEventListener('resize', function(event) {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(function(){
+    window.location.reload();
+  }, 100);
+});
+
 
 
 ////////////////////////// DATA AGGREGATORS //////////////////////////
