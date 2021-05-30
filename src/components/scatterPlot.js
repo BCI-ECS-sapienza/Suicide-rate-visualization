@@ -16,7 +16,11 @@ const makeScatterPlot = () => {
             .style("fill", "rgb(131, 20, 131)");
     
         const gdp_year = d3.format('.2s')(xValue(d)).replace('G', 'B');
-        const gdp_capita = d3.format('.2s')(yValue(d)).replace('G', 'B');    
+        const gdp_capita = d3.format('.2s')(yValue(d)).replace('G', 'B');  
+        
+        tooltipScatter
+            .transition()
+            .duration(controller.transitionTime/2)
         
         // show tooltip
         tooltipScatter
