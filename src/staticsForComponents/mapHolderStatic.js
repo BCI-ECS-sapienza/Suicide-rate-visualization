@@ -47,7 +47,7 @@ const projection = d3.geoMercator()
 const tooltipMap = d3.select("#map-holder")
   .append("div")
   .style("opacity", 0)
-  .attr("class", "tooltip-scatter");
+  .attr("class", "tooltip");
 
 
     

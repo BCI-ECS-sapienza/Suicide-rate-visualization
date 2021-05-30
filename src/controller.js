@@ -16,15 +16,15 @@ Controller = function () {
     this.dataAge;
     this.countryNames;
 
-    // help
-    this.colorScale;
+    // global static values
+    this.colorKeys = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90]
+    this.colorScale = ['#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026']; //all color scales from https://colorbrewer2.org/
     this.transitionTime = 1000;
 }
 
 
 Controller.prototype.loadData = function () {
     _obj = this;
-    suicideColorScale = ['#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026']; //all color scales from https://colorbrewer2.org/
 
     d3.csv("../data/data.csv", parseRow, function (data) {
         //console.log("data loading...")   
@@ -43,10 +43,10 @@ Controller.prototype.loadData = function () {
         _obj.countryNames = countries;
 
         // set suicide colorScale
-        const colorValueScale = d => d.suicides_pop;
+        // const colorValueScale = d => d.suicides_pop;
         _obj.colorScale = d3.scaleQuantile()
-            .domain([0, 10, 20, 30, 40, 50, 60, 70, 80, d3.max(data, colorValueScale)])
-            .range(suicideColorScale)
+            .domain(_obj.colorKeys)
+            .range(_obj.colorScale)
 
         // draw graphs
         makeMap();
@@ -63,6 +63,7 @@ Controller.prototype.loadData = function () {
 
 Controller.prototype.notifyYearFiltered = function () {
     //console.log('year changed!')
+    updateLegend()
     updateMap() 
     updateSexChart()
     updateAgeChart() 
@@ -71,14 +72,17 @@ Controller.prototype.notifyYearFiltered = function () {
 
 Controller.prototype.notifyScatterFiltered = function () {
     //console.log('Scatter filtered!')
+    updateLegend()
     updateMap()
     updateSexChart()
     updateAgeChart() 
+    
     //updateScatter()
 }
 
 Controller.prototype.notifySexFiltered = function () {
     //console.log('sex filtered!')
+    updateLegend()
     updateMap() 
     updateAgeChart() 
     updateScatter()
@@ -86,6 +90,7 @@ Controller.prototype.notifySexFiltered = function () {
 
 Controller.prototype.notifyAgeFiltered = function () {
     //console.log('age filtered!')
+    updateLegend()
     updateMap() 
     updateSexChart()
     updateScatter()

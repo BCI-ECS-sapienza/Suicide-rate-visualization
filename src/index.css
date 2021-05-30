@@ -159,6 +159,19 @@ html,body {
     stroke: rgb(131, 20, 131);  
     stroke-width: 2px;
 }
+.tooltip {
+    position: absolute;
+    padding: 7px;
+    font-size: 0.8em;
+    color: rgb(61, 61, 61);
+    pointer-events: none;
+    background: #fff;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 3px 3px 10px 0px rgba(0, 0, 0, 0.25);
+    max-width: 300px;
+    max-height: 500px;
+}
 
 
 
@@ -176,10 +189,6 @@ html,body {
     fill: none;
     stroke: #fff;
     stroke-linejoin: round;
-}
-.legendThreshold {
-    font-size: 12px;
-    font-family: sans-serif;
 }
 .caption {
     fill: black;
@@ -218,17 +227,6 @@ html,body {
 
 
 /* scatter Plot */
-.tooltip-scatter {
-    position: absolute;
-    padding: 7px;
-    font-size: 0.8em;
-    color: rgb(61, 61, 61);
-    pointer-events: none;
-    background: #fff;
-    border: 2px solid #ccc;
-    border-radius: 4px;
-    box-shadow: 3px 3px 10px 0px rgba(0, 0, 0, 0.25);
-}
 .avg-scatter {
     position: absolute;
     right: 30%;
