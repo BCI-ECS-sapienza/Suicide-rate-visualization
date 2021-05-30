@@ -42,13 +42,13 @@ const makeAgeChart = () => {
   // callback for mouseClick bar
   const mouseClick = function (e) {
     // toggle bar selection highlight and get class
-    if (d3.select(this).classed("selected-bar") == false) {
-      d3.select(this).classed("selected-bar", true)
+    if (d3.select(this).classed("selected-object") == false) {
+      d3.select(this).classed("selected-object", true)
       selectedBarsAge.add(xValueAge(this.__data__))
       selectedValuesAge.add(yValueAge(this.__data__))
 
     }  else {
-      d3.select(this).classed("selected-bar", false);
+      d3.select(this).classed("selected-object", false);
       selectedBarsAge.delete(xValueAge(this.__data__))
       selectedValuesAge.delete(yValueAge(this.__data__))
     }

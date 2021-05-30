@@ -85,6 +85,7 @@ html,body {
 }
 
 
+
 /* header */
 .title{
     text-align: center;
@@ -141,7 +142,7 @@ html,body {
 }
 .avg-line {
     stroke: lightgreen;
-    stroke-width: 1.5;
+    stroke-width: 2;
 }
 .avg-label {
     fill: lightgreen;
@@ -149,14 +150,15 @@ html,body {
 }
 .avg-line-selected {
     stroke: lightblue;
-    stroke-width: 1.5;
+    stroke-width: 2;
 }
 .avg-label-selected {
     fill: lightblue;
     font-size: 18px;
 }
 .over-object {
-    stroke: rgb(131, 20, 131);  
+    /*stroke: rgb(131, 20, 131);  */
+    stroke: lightblue;
     stroke-width: 2px;
 }
 .tooltip {
@@ -217,9 +219,9 @@ html,body {
     stroke: black;
     stroke-width: 1.5;
 }
-.selected-bar {
+.selected-object {
     stroke: lightblue;
-    stroke-width: 3;
+    stroke-width: 5;
 }
 
 
@@ -227,17 +229,6 @@ html,body {
 
 
 /* scatter Plot */
-.avg-scatter {
-    position: absolute;
-    right: 30%;
-    top: 51%;
-    font-size: 16px;
-    width: 210px;
-    color: black;
-    border-color: #394a6d;
-    border-width: 0 3px 0 3px;
-    background-color: rgb(231, 231, 231);
-}
 .button-brush {
     position: absolute;
     right: 1.5%;
