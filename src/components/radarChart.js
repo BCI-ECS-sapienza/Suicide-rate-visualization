@@ -58,7 +58,7 @@ function drawRadar(dataYear){
   generateAndDrawLines(sides);
   drawAxis(ticks, levels);
   data = getData(dataYear);
-  console.log(data);
+  //console.log(data);
   //drawData(data, sides);
 }
 

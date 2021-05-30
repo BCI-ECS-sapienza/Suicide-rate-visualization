@@ -33,6 +33,11 @@ function makeMap() {
   const suicides_no = d => d.value.suicides_no;
   const population = d => d.value.population;
 
+  const selectedColors = ['#d01c8b',
+    '#f1b6da',
+    '#b8e186',
+    '#4dac26'];
+
   const max_val_year_x = d3.max(dataYear, suicides_pop); 
   const max_val_filtered_x = d3.max(dataFiltered, suicides_pop); 
 
@@ -106,7 +111,22 @@ function makeMap() {
       .on("mouseover", function (d) {
         d3.select(this)
           .classed('over-object', true)
-          .style("fill", "rgb(131, 20, 131)")
+          //.style("fill", "rgb(131, 20, 131)")
+          .style("fill", (d)=>{ 
+            
+            var flag = false;
+            for(var i = 0; i<controller.selectedCountries.length; i++){
+          
+              if(controller.selectedCountries[i].id == this.id)
+                flag = true;
+            }          
+            if(!flag){
+              return 'rgb(131, 20, 131)';
+            }
+            else{
+              return this.style.fill;
+            }
+          })
           .style("cursor", "pointer");
         
         tooltip
@@ -141,11 +161,23 @@ function makeMap() {
       .on("mouseout", function(d){
         d3.select(this)
           .style("stroke", "transparent")
-          .style("fill", (d)=>{
-            if(d.total === "Missing data") 
-              return '#DCDCDC';
+          .style("fill", (d)=>{ 
+            
+            var flag = false;
+            for(var i = 0; i<controller.selectedCountries.length; i++){
+              
+              if(controller.selectedCountries[i].id == this.id)
+                flag = true;
+            }          
+            if(!flag){
+                if(d.total === "Missing data") 
+                return '#DCDCDC';
+              else{
+                return colorScale(d.total);
+              }
+            }
             else{
-              return colorScale(d.total);
+              return this.style.fill;
             }
           });
 
@@ -166,6 +198,13 @@ function makeMap() {
         
         if(controller.selectedCountries.includes(this)){
           const index = controller.selectedCountries.indexOf(this);
+          d3.select(this).style("fill", (d)=>{
+            if(d.total === "Missing data") 
+              return '#DCDCDC';
+            else{
+              return colorScale(d.total);
+            }
+          });
           if (index > -1) {
             controller.selectedCountries.splice(index, 1);
           } 
@@ -178,10 +217,16 @@ function makeMap() {
           }
           if(firstAdded === this && controller.selectedCountries.length != 0){
             firstAdded = controller.selectedCountries[0];
+
+            for(var i = 0; i<controller.selectedCountries.length; i++){
+              d3.select('#map-holder')
+                .select('#' + controller.selectedCountries[i].id)
+                .style('fill', selectedColors[i]);
+            };
           }
         }
         else{
-          if(controller.selectedCountries.length < 3){
+          if(controller.selectedCountries.length < 4){
             if(controller.selectedCountries.length == 0){
               firstAdded = this;
             }
@@ -192,18 +237,32 @@ function makeMap() {
             if (index > -1) {
               controller.selectedCountries.splice(index, 1);
             }
-            if(controller.selectedCountries.length != 0){
-              firstAdded = controller.selectedCountries[0];
-            }
-            else{
-              firstAdded = null;
-            }
+            
+            console.log(firstAdded.id);
+
+            d3.select('#map-holder')
+              .select('#' + firstAdded.id)
+              .style('fill', (d)=> {
+                if(typeof(data.get(firstAdded.id)) === "undefined"){
+                  return '#DCDCDC'; 
+                }
+                else{
+                  return colorScale(data.get(firstAdded.id));
+                }  
+              });
+            firstAdded = controller.selectedCountries[0];
+
             controller.selectedCountries.push(this);
           }          
           //svgPca
             //.attr("opacity", 0);  
           svgRadar
             .attr("opacity", 1);
+          for(var i = 0; i<controller.selectedCountries.length; i++){
+            d3.select('#map-holder')
+              .select('#' + controller.selectedCountries[i].id)
+              .style('fill', selectedColors[i]);
+          };
         }
         drawRadar(dataYear);
       });
