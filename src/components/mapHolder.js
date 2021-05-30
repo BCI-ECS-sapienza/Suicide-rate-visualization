@@ -21,7 +21,7 @@ const makeMap = () => {
     d3.select(this)
       .style("fill", fillColorMap)
       .style("cursor", "pointer")
-      .style('opacity', .9)
+      .style('opacity', maxOpacity)
       .style("cursor", "pointer");
     
     // show tooltip
@@ -48,7 +48,7 @@ const makeMap = () => {
   // callback for mouseMove country
   const mouseMove = function (d) {
     tooltipMap
-      .style("opacity", 1)
+      .style("opacity", maxOpacity)
       .html(
         '<b>Country:</b> ' + nameMap(d) + 
         '<br><b>Suicide ratio:</b> ' + totalMap(d))
@@ -77,10 +77,10 @@ const makeMap = () => {
             flag = true;
         }          
         if(!flag){
-            return 0.7;
+            return minOpacity;
         }
         else{
-          return 1;
+          return maxOpacity;
         }
       });
 
@@ -105,7 +105,7 @@ const makeMap = () => {
       const index = selectedCountries.indexOf(this);
       d3.select(this)
       .style("stroke", 'transparent')
-      .style('opacity', 0.7);
+      .style('opacity', minOpacity);
 
       if (index > -1) {
         selectedCountries.splice(index, 1);
@@ -124,7 +124,7 @@ const makeMap = () => {
           d3.select('#map-holder')
             .select('#' + selectedCountries[i].id)
             .style('stroke', strokeColorMap)
-            .style('opacity', 1);
+            .style('opacity', maxOpacity);
         };
       }
     }
@@ -146,7 +146,7 @@ const makeMap = () => {
         d3.select('#map-holder')
           .select('#' + firstAdded.id)
           .style('stroke', 'transparent')
-          .style('opacity', 0.7);
+          .style('opacity', minOpacity);
 
         firstAdded = selectedCountries[0];
 
@@ -161,7 +161,7 @@ const makeMap = () => {
         d3.select('#map-holder')
           .select('#' + selectedCountries[i].id)
           .style('stroke', strokeColorMap)
-          .style('opacity', 1);
+          .style('opacity', maxOpacity);
       };
     }
 
@@ -224,7 +224,7 @@ const makeMap = () => {
       .style("stroke", "transparent")
       .attr("id", function(d){ return nameMap(d); })
       .attr("class", "Country")
-      .style("opacity", .7)
+      .style("opacity", minOpacity)
       .on("mouseover", mouseOver)
       .on("mousemove", mouseMove)
       .on("mouseout", mouseOut)
