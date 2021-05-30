@@ -37,6 +37,8 @@ function makeMap() {
     '#f1b6da',
     '#b8e186',
     '#4dac26'];
+  const strokeColor = '#92c5de';
+  const fillColor = '#0571b0';
 
   const max_val_year_x = d3.max(dataYear, suicides_pop); 
   const max_val_filtered_x = d3.max(dataFiltered, suicides_pop); 
@@ -106,13 +108,18 @@ function makeMap() {
       .style("stroke", "transparent")
       .attr("id", function(d){ return d.properties.name; })
       .attr("class", function(d){ return "Country" } )
-      .style("opacity", .8)
+      .style("opacity", .7)
       // adding event on mouseover
       .on("mouseover", function (d) {
         d3.select(this)
           .classed('over-object', true)
-          //.style("fill", "rgb(131, 20, 131)")
-          .style("fill", (d)=>{ 
+          .style("fill", fillColor)
+          .style("cursor", "pointer")
+          .style('opacity', .9);
+
+        d3.select(this)
+          .classed('over-object', true)
+          .style("stroke", ()=>{ 
             
             var flag = false;
             for(var i = 0; i<controller.selectedCountries.length; i++){
@@ -121,10 +128,10 @@ function makeMap() {
                 flag = true;
             }          
             if(!flag){
-              return 'rgb(131, 20, 131)';
+              return 'transparent';
             }
             else{
-              return this.style.fill;
+              return this.style.stroke;
             }
           })
           .style("cursor", "pointer");
@@ -160,9 +167,7 @@ function makeMap() {
       // adding event on mouseout
       .on("mouseout", function(d){
         d3.select(this)
-          .style("stroke", "transparent")
-          .style("fill", (d)=>{ 
-            
+          .style("stroke", () => {
             var flag = false;
             for(var i = 0; i<controller.selectedCountries.length; i++){
               
@@ -170,14 +175,31 @@ function makeMap() {
                 flag = true;
             }          
             if(!flag){
-                if(d.total === "Missing data") 
-                return '#DCDCDC';
-              else{
-                return colorScale(d.total);
-              }
+                return 'transparent';
             }
             else{
-              return this.style.fill;
+              return this.style.stroke;
+            }
+          })
+          .style("fill", (d)=>{
+            if(d.total === "Missing data") 
+              return '#DCDCDC';
+            else{
+              return colorScale(d.total);
+            }
+          })
+          .style('opacity', () => {
+            var flag = false;
+            for(var i = 0; i<controller.selectedCountries.length; i++){
+              
+              if(controller.selectedCountries[i].id == this.id)
+                flag = true;
+            }          
+            if(!flag){
+                return 0.7;
+            }
+            else{
+              return 1;
             }
           });
 
@@ -198,13 +220,10 @@ function makeMap() {
         
         if(controller.selectedCountries.includes(this)){
           const index = controller.selectedCountries.indexOf(this);
-          d3.select(this).style("fill", (d)=>{
-            if(d.total === "Missing data") 
-              return '#DCDCDC';
-            else{
-              return colorScale(d.total);
-            }
-          });
+          d3.select(this)
+          .style("stroke", 'transparent')
+          .style('opacity', 0.7);
+
           if (index > -1) {
             controller.selectedCountries.splice(index, 1);
           } 
@@ -221,7 +240,8 @@ function makeMap() {
             for(var i = 0; i<controller.selectedCountries.length; i++){
               d3.select('#map-holder')
                 .select('#' + controller.selectedCountries[i].id)
-                .style('fill', selectedColors[i]);
+                .style('stroke', strokeColor)
+                .style('opacity', 1);
             };
           }
         }
@@ -242,14 +262,9 @@ function makeMap() {
 
             d3.select('#map-holder')
               .select('#' + firstAdded.id)
-              .style('fill', (d)=> {
-                if(typeof(data.get(firstAdded.id)) === "undefined"){
-                  return '#DCDCDC'; 
-                }
-                else{
-                  return colorScale(data.get(firstAdded.id));
-                }  
-              });
+              .style('stroke', 'transparent')
+              .style('opacity', 0.7);
+
             firstAdded = controller.selectedCountries[0];
 
             controller.selectedCountries.push(this);
@@ -261,7 +276,8 @@ function makeMap() {
           for(var i = 0; i<controller.selectedCountries.length; i++){
             d3.select('#map-holder')
               .select('#' + controller.selectedCountries[i].id)
-              .style('fill', selectedColors[i]);
+              .style('stroke', strokeColor)
+              .style('opacity', 1);
           };
         }
         drawRadar(dataYear);
