@@ -13,22 +13,17 @@ const makeLegend = () => {
 
         // make a string iterating on filtered countries
         let string = ''
-        if (countries.length == 0) {
-            string = 'None'
-        } else {
-            let count = 0
-            countries.forEach((element, i) => {
-                if (i == 0) string += `${element.key}` // to avoid , at the end
-
-                if (count < 10) {
-                    string += `, ${element.key}`
-                    count = 0
-                } else 
-                    string += `</br>`
-                
-                count += 1
-            });
-        }
+        let count = 0
+        countries.forEach((element, i) => {
+            if (count < 10) {
+                string += `${element.key}, `
+                count = 0
+            } else 
+                string += `</br>`
+            
+            count += 1
+        });
+        string += `<b>#Countries:</b> ${countries.length}`
         
         // show tooltip
         tooltipLegend
