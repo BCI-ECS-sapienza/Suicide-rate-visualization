@@ -188,7 +188,18 @@ const makeMap = () => {
           .style('opacity', maxOpacity);
       };
     }
+
     drawRadar(dataYear);  
+
+    
+    // trigger filter for bars values (if empty go back to all countries)
+    let selectedPoints = [];
+    if (selectedCountries.length > 0) 
+      selectedCountries.forEach((country) => selectedPoints.push({key: country.id} ));
+    else 
+      selectedPoints = aggregateDataByCountry(controller.dataYear);
+    
+    controller.triggerMapFilterEvent(selectedPoints);
   }
 
 

@@ -1,5 +1,6 @@
 Controller = function () {
     // events handlers
+    this.isYearFiltered = false;    // need for back-bars
     this.selectedCountries = []; // max three selected countries
 
     // applied filters
@@ -70,6 +71,15 @@ Controller.prototype.notifyYearFiltered = function () {
     updateScatter()
 }
 
+Controller.prototype.notifyMapFiltered = function () {
+    console.log('Map filtered!')
+    updateLegend()
+    updateSexChart()
+    updateAgeChart() 
+    
+    //updateScatter()
+}
+
 Controller.prototype.notifyScatterFiltered = function () {
     //console.log('Scatter filtered!')
     updateLegend()
@@ -112,6 +122,11 @@ Controller.prototype.triggerYearFilterEvent = function (selectedYear) {
         this.dataAge = this.dataAll;
         this.isYearFiltered = false;  
 
+        // to remove all selections on bars
+        d3.selectAll(".selected-object").classed("selected-object", false)
+        svgAge.selectAll('.avg-line-selected').remove()
+        svgAge.selectAll('.avg-label-selected').remove()
+
     } else {
         dataFiltered = this.dataAll.filter((d) => d.year==selectedYear); 
         this.dataYear = dataFiltered;
@@ -124,9 +139,16 @@ Controller.prototype.triggerYearFilterEvent = function (selectedYear) {
     this.notifyYearFiltered();
 }
 
+// filter by map
+Controller.prototype.triggerMapFilterEvent = function (selectedPoints) {
+    this.scatterFilter = selectedPoints;
+    this.globalFilter();
+    this.notifyMapFiltered();
+}
 
 // filter by scatter
 Controller.prototype.triggerScatterFilterEvent = function (selectedPoints) {
+    console.log(selectedPoints)
     this.scatterFilter = selectedPoints;
     this.globalFilter();
     this.notifyScatterFiltered();
