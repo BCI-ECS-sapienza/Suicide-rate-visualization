@@ -16,10 +16,9 @@ let center = {
   x: width/2,
   y: height/2
 }
-const selectedColors = ['#d01c8b',
-    '#f1b6da',
-    '#b8e186',
-    '#4dac26'];
+const selectedColors = ['#d8b365',
+  '#f5f5f5',
+  '#5ab4ac'];
 
 const ticks = generateTicks(levels);
 
@@ -69,6 +68,7 @@ function drawRadar(dataYear){
     .remove()
     .exit();
 
+  // draw radar
   let feature_scale = getMaxFeatures();
   drawPath(points, g);
   generateAndDrawLevels(levels, sides);
@@ -256,7 +256,7 @@ function drawAxis( ticks, levelsCount ){
     } );
 };
 
-// draw data
+// the following two functions draw data on the radar
 function drawCircles(points, color){
     g.append( "g" )
         .attr( "class", "indic" )
@@ -266,10 +266,19 @@ function drawCircles(points, color){
         .append( "circle" )
         .attr( "cx", d => d.x )
         .attr( "cy", d => d.y )
-        .attr( "r", 4 )
+        .attr( "r", 3 )
         .style('fill', color);
 };
 
+const mouseOver = function (d) {
+  console.log(d3.select(this));
+  d3.select(this)
+    .style('opacity', .7);
+}
+const mouseOut = function(d){
+  d3.select(this)
+    .style('opacity', .5);
+}
 function drawData(dataset, n, feature_scale){
 
   // loop on elements of array
@@ -278,7 +287,7 @@ function drawData(dataset, n, feature_scale){
     //console.log(dataset[el]);
     let points = [];
     let i = 0;
-    
+
     // loop on elements of dictionary
     for(let key in dataset[el]){
       //console.log(dataset[el][key]);
@@ -302,13 +311,16 @@ function drawData(dataset, n, feature_scale){
     
     points = points.concat(points[0]);
     
-    drawPath(points, group);
+    const lineGenerator = d3.line()
+      .x(d => d.x)
+      .y(d => d.y);
+  
+    group.append('path')
+      .attr('d', lineGenerator(points))
+      .attr('fill', selectedColors[el])
+      .style('opacity', .5)
+      .on('mouseover', mouseOver)
+      .on('mouseout', mouseOut);
     drawCircles(points, selectedColors[el]);
   }
-}
-
-function updateRadar(dataYear) {
-  svgRadar.selectAll('circle')
-  .remove()
-  .exit();
 }
