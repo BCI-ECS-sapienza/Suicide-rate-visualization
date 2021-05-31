@@ -87,19 +87,6 @@ const makeMap = () => {
         else{
           return maxOpacity;
         }
-        /*
-        var flag = false;
-        for(var i = 0; i<selectedCountries.length; i++){
-          
-          if(selectedCountries[i].id == this.id)
-            flag = true;
-        }          
-        if(!flag){
-            return minOpacity;
-        }
-        else{
-          return maxOpacity;
-        }*/
       });
 
     tooltipMap
@@ -188,7 +175,7 @@ const makeMap = () => {
           .style('opacity', maxOpacity);
       };
     }
-
+    
     drawRadar(dataYear);  
 
     
@@ -210,12 +197,6 @@ const makeMap = () => {
   const dataYear = aggregateDataByCountryRadar(controller.dataAll);
   const dataFiltered = aggregateDataByCountry(controller.dataMapScatter);
   const colorScale = controller.colorScale;
-
-  // mapping (country, #suicides) in data
-  /*const data = d3.map();
-  for (var i = 0; i<dataFiltered.length; i++){
-    data.set(dataFiltered[i].key, +dataFiltered[i].value.suicides_pop);
-  }*/
 
   // extract values for colorScale
   const data = d3.map();
