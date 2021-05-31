@@ -41,18 +41,42 @@ for (let vertex = 0; vertex<sides; vertex++){
 }
 points = points.concat(points[0]);
 
-
 // draw the graph with data
 function drawRadar(dataYear){
+  // remove old elements from the radar before adding new ones
+  svgRadar.selectAll('circle')
+      .remove()
+      .exit();
+  svgRadar.selectAll('.levels')
+    .remove()
+    .exit();
+  svgRadar.selectAll('.tick-lines')
+    .remove()
+    .exit();
+  svgRadar.selectAll('.grid-lines')
+    .remove()
+    .exit();
+  svgRadar.selectAll('.ticks')
+    .remove()
+    .exit();
+  svgRadar.selectAll('.shape')
+    .remove()
+    .exit();
+  svgRadar.selectAll('.indic')
+    .remove()
+    .exit();
+  svgRadar.selectAll('path')
+    .remove()
+    .exit();
 
-  const feature_scale = getMaxFeatures();
+  let feature_scale = getMaxFeatures();
   drawPath(points, g);
   generateAndDrawLevels(levels, sides);
   generateAndDrawLines(sides);
   drawAxis(ticks, levels);
   data = getData(dataYear);
-  myDrawData(data, sides, feature_scale);
-  //drawData(data, sides);
+  drawData(data, sides, feature_scale);
+  
 }
 
 // define functions called above
@@ -246,27 +270,7 @@ function drawCircles(points, color){
         .style('fill', color);
 };
 
-function drawData(dataset, n){
-    let points = [];
-    dataset.forEach( ( d, i ) => 
-    {
-        const len = scale( d.value );
-        const theta = i * ( 2 * Math.PI / n );
-
-        points.push(
-            {
-                ...generatePoint(len, theta),
-                value: d.value
-            } );
-    } );
-
-    let group = g.append( "g" ).attr( "class", "shape" );
-
-    drawPath( [ ...points, points[ 0 ] ], group );
-    drawCircles( points );
-};
-
-function myDrawData(dataset, n, feature_scale){
+function drawData(dataset, n, feature_scale){
 
   // loop on elements of array
   for(let el in dataset){
@@ -301,4 +305,10 @@ function myDrawData(dataset, n, feature_scale){
     drawPath(points, group);
     drawCircles(points, selectedColors[el]);
   }
+}
+
+function updateRadar(dataYear) {
+  svgRadar.selectAll('circle')
+  .remove()
+  .exit();
 }
