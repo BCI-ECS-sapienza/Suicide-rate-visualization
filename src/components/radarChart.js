@@ -1,9 +1,11 @@
 // define parameters
 const sides = 5;
 const levels = 4;
+const orizontal_margin = 40;
+const vertical_margin = 10;
 
-let width = document.getElementById('radar-pca').offsetWidth;
-let height = document.getElementById('radar-pca').offsetHeight;
+let width = document.getElementById('radar-pca').offsetWidth + orizontal_margin;
+let height = document.getElementById('radar-pca').offsetHeight + vertical_margin;
 
 let size = Math.min(width, height);
 
@@ -11,6 +13,13 @@ const offset = Math.PI;
 const polyangle = (Math.PI*2)/sides;
 let r = 0.8 * size;
 let r_0 = r/2;
+const features = [
+    'suicides_pop',
+    'suicides_no',
+    'population',
+    'gdp_for_year',
+    'gdp_per_capita'
+]
 
 let center = {
   x: width/2,
@@ -27,9 +36,22 @@ const svgRadar = d3.select('#radar-pca')
     .append('svg')
     .attr('opacity', 0)
     .attr('width', width)
-    .attr('height', height);
+    .attr('height', height)
+    .attr("transform", "translate(-" + 2*orizontal_margin + "," + vertical_margin + ")");
 
 const g = svgRadar.append('g');
+
+// countried legend heading
+const countriesGroup = svgRadar.append('g');
+countriesGroup
+  .append('text')
+  .attr('class', 'radar-heading-legend')
+  .attr("x", (width/2 + 150))
+  .attr("y", 20)
+  .text("Countries:")
+  .style("font-size", "15px")
+  .attr("alignment-baseline","middle")
+  .style('fill', 'white');
 
 // generate all the vertices of our polygon
 let points = [];
@@ -67,6 +89,12 @@ function drawRadar(dataYear){
   svgRadar.selectAll('path')
     .remove()
     .exit();
+  svgRadar.selectAll('.labels-radar')
+    .remove()
+    .exit();
+  svgRadar.selectAll('.radar-legend')
+    .remove()
+    .exit();
 
   // draw radar
   let feature_scale = getMaxFeatures();
@@ -76,7 +104,7 @@ function drawRadar(dataYear){
   drawAxis(ticks, levels);
   data = getData(dataYear);
   drawData(data, sides, feature_scale);
-  
+  drawLabels(data, sides);
 }
 
 // define functions called above
@@ -94,11 +122,11 @@ function getData(dataYear){
           if(countries.includes(dataYear[j].key)){
               data.push({
                   'country': dataYear[j].key, 
-                  'suicides ratio': dataYear[j].value.suicides_pop,
-                  '#suicides': dataYear[j].value.suicides_no,
+                  'suicides_pop': dataYear[j].value.suicides_pop,
+                  'suicides_no': dataYear[j].value.suicides_no,
                   'population': dataYear[j].value.population,
-                  'year_gdp': dataYear[j].value.gdp_for_year,
-                  'capita_gdp': dataYear[j].value.gdp_per_capita
+                  'gdp_for_year': dataYear[j].value.gdp_for_year,
+                  'gdp_per_capita': dataYear[j].value.gdp_per_capita
                 });
           }
       }
@@ -117,11 +145,11 @@ function getMaxFeatures(){
   const max_gdp_per_capita = d3.max(dataYear, d => d.value.gdp_per_capita);
 
   const feature_scale = {
-    'suicides ratio': max_suicides_pop,
-    '#suicides': max_suicides_no,
+    'suicides_pop': max_suicides_pop,
+    'suicides_no': max_suicides_no,
     'population': max_population,
-    'year_gdp': max_gdp_for_year,
-    'capita_gdp': max_gdp_per_capita
+    'gdp_for_year': max_gdp_for_year,
+    'gdp_per_capita': max_gdp_per_capita
   };
   return feature_scale;
 }
@@ -271,7 +299,6 @@ function drawCircles(points, color){
 };
 
 const mouseOver = function (d) {
-  console.log(d3.select(this));
   d3.select(this)
     .style('opacity', .7);
 }
@@ -306,6 +333,9 @@ function drawData(dataset, n, feature_scale){
               value: dataset[el][key]
           });
       }
+      else{
+        drawLegendCountries(dataset[el][key], selectedColors[el], parseInt(el)+1)
+      }
     }
     let group = g.append( "g" ).attr( "class", "shape" );
     
@@ -323,4 +353,37 @@ function drawData(dataset, n, feature_scale){
       .on('mouseout', mouseOut);
     drawCircles(points, selectedColors[el]);
   }
+}
+
+function drawLabels( dataset, sideCount ){
+    const groupL = g.append( "g" ).attr( "class", "labels-radar" );
+    for ( let vertex = 0; vertex < sideCount; vertex++ ){
+        const angle = vertex * polyangle;
+        const label = features[ vertex ];
+        const point = generatePoint(0.9 * ( size / 2 ), angle);
+
+        drawText( label, point, false, groupL );
+    }
+};
+
+// creating and drawing countries legend
+function drawLegendCountries(name, color, index){  
+  
+  countriesGroup
+    .append("circle")
+    .attr('class', 'radar-legend')
+    .attr("cx", width/2 + 155)
+    .attr("cy", 25 + 12*index)
+    .attr("r", 4)
+    .style("fill", color);
+
+  countriesGroup
+    .append('text')
+    .attr('class', 'radar-legend')
+    .attr("x", width/2 + 165)
+    .attr("y", 30 + 12*index)
+    .text(name)
+    .style("font-size", "12px")
+    .attr("alignment-baseline","middle")
+    .style('fill', 'white');
 }
