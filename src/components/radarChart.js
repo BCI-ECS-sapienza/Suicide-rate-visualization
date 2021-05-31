@@ -1,10 +1,10 @@
 // define parameters
 const sides = 5;
 const levels = 4;
-const orizontal_margin = 40;
+const horizontal_margin = 40;
 const vertical_margin = 10;
 
-let width = document.getElementById('radar-pca').offsetWidth + orizontal_margin;
+let width = document.getElementById('radar-pca').offsetWidth + horizontal_margin;
 let height = document.getElementById('radar-pca').offsetHeight + vertical_margin;
 
 let size = Math.min(width, height);
@@ -37,7 +37,7 @@ const svgRadar = d3.select('#radar-pca')
     .attr('opacity', 0)
     .attr('width', width)
     .attr('height', height)
-    .attr("transform", "translate(-" + 2*orizontal_margin + "," + vertical_margin + ")");
+    .attr("transform", "translate(-" + 2*horizontal_margin + "," + vertical_margin + ")");
 
 const g = svgRadar.append('g');
 
@@ -97,14 +97,15 @@ function drawRadar(dataYear){
     .exit();
 
   // draw radar
-  let feature_scale = getMaxFeatures();
+  let features_scale = getMaxFeatures();
   drawPath(points, g);
   generateAndDrawLevels(levels, sides);
   generateAndDrawLines(sides);
   drawAxis(ticks, levels);
   data = getData(dataYear);
-  drawData(data, sides, feature_scale);
+  drawData(data, sides, features_scale);
   drawLabels(data, sides);
+  drawLegendFeatures(features_scale);
 }
 
 // define functions called above
@@ -209,7 +210,10 @@ function generateAndDrawLines(sidesCount){
     drawPath([center, point], group);
   }
 }
-// NOTE: for now never called
+/////////////////////////////////////////////////////////
+//////////////// NEVER CALLED////////////////////////////
+/////////////////////////////////////////////////////////
+
 function generateTicks(){
   const ticks = [];
   const step = 100/levels;
@@ -386,4 +390,40 @@ function drawLegendCountries(name, color, index){
     .style("font-size", "12px")
     .attr("alignment-baseline","middle")
     .style('fill', 'white');
+}
+
+// creating and drawing features legend
+function drawLegendFeatures(features_scale){
+  const featuresGroup = svgRadar.append('g');
+  featuresGroup
+  .append('text')
+  .attr('class', 'radar-heading-legend')
+  .attr("x", (width/2 + 150))
+  .attr("y", height/2 - 15)
+  .text("Features max:")
+  .style("font-size", "15px")
+  .attr("alignment-baseline","middle")
+  .style('fill', 'white');
+
+  for( let el in features){
+    
+    featuresGroup
+      .append('text')
+      .attr('class', 'radar-legend')
+      .attr("x", width/2 + 150)
+      .text(features[el] + ': ' + features_scale[features[el]])
+      .attr("y", (height/2) + 12*el)
+      .style("font-size", "11px")
+      .attr("alignment-baseline","middle")
+      .style('fill', 'white');
+    /*featuresGroup
+      .append('text')
+      .attr('class', 'radar-legend')
+      .attr("x", width/2 + 200)
+      .text(features_scale[features[el]])
+      .attr("y", (height/2) + 12*el)
+      .style("font-size", "11px")
+      .attr("alignment-baseline","middle")
+      .style('fill', 'white');*/
+  }
 }
