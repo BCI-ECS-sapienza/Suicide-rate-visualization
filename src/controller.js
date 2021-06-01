@@ -1,5 +1,6 @@
 Controller = function () {
     // events handlers
+    this.isCountryMapSelected = false; // true when at least one country on the map is selected
     this.isYearFiltered = false;    // need for back-bars
     this.selectedCountries = []; // max three selected countries
 
@@ -113,6 +114,8 @@ Controller.prototype.notifyAgeFiltered = function () {
 
 // filter by year
 Controller.prototype.triggerYearFilterEvent = function (selectedYear) {
+    svgRadar.style('opacity', 0)
+    //svgPca.style('opacity', 1)
 
     // back to all, or get only selected year data
     if (isNaN(selectedYear)==true) {

@@ -5,7 +5,7 @@ const colorLabel = 'Suicides/100k pop';
 const classesInterval = 10;
 
 // set the dimensions and margins of the graph
-const margin_legend = {top: 40, right: 10, bottom: 10, left: 8},
+const margin_legend = {top: 10, right: 10, bottom: 10, left: 8},
     width_legend = initial_width_legend - margin_legend.left - margin_legend.right,
     height_legend = initial_height_legend - margin_legend.top - margin_legend.bottom;
 

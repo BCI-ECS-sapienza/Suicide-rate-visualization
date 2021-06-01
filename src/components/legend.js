@@ -76,14 +76,14 @@ const makeLegend = () => {
 
     ////////////////////////// CALL COMPONENTS //////////////////////////
 
-    svgLegend.append('text')
-        .attr('class', 'axis-label')
-        .attr("transform", `translate(${margin_legend.left}, 0)`) 
-        .text(colorLabel)
+    // svgLegend.append('text')
+    //     .attr('class', 'axis-label')
+    //     .attr("transform", `translate(${margin_legend.left}, 0)`) 
+    //     .text(colorLabel)
 
     // Add one dot in the legend for each name.
     svgLegend.append('g')
-        .attr("transform", `translate(${margin_legend.left+3}, ${margin_legend.right+5})`) 
+        .attr("transform", `translate(${margin_legend.left+3}, 0)`) 
         .selectAll("mydots")
         .data(keys)
         .enter()
@@ -101,7 +101,7 @@ const makeLegend = () => {
         
     // Add one dot in the legend for each name.
     svgLegend.append('g')
-        .attr("transform", `translate(${margin_legend.left+3}, ${margin_legend.right+5})`) 
+        .attr("transform", `translate(${margin_legend.left+3}, 0)`) 
         .selectAll("mylabels")
         .data(keys)
         .enter()

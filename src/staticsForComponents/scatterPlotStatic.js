@@ -8,7 +8,7 @@ const scatter_selected_circle_size = 10;
 const scatter_transition_time = 1000;
 
 // set the dimensions and margins of the graph
-const margin_scatterPlot = {top: 25, right: 25, bottom: 65, left: 80},
+const margin_scatterPlot = {top: 25, right: 0, bottom: 45, left: 80},
     width_scatterPlot = initial_width_scatterPlot - margin_scatterPlot.left - margin_scatterPlot.right,
     height_scatterPlot = initial_height_scatterPlot - margin_scatterPlot.top - margin_scatterPlot.bottom;
 
@@ -41,10 +41,7 @@ const scatterBrush = d3.brush()
     .extent( [ [0,0], [width_scatterPlot,height_scatterPlot] ] )
 
 
-const tooltipScatter = d3.select("#scatterPlot")
-    .append("div")
-    .style("opacity", 0)
-    .attr("class", "tooltip")
+console.log(initial_width_scatterPlot)
 
 // append the svg object to the body of the page
 const svgScatterPlot = d3.select("#scatterPlot")
@@ -67,7 +64,7 @@ svgScatterPlot.append('text')
 
 // add label bottom
 const scatter_bottom_label_x = width_scatterPlot/2;
-const scatter_bottom_label_y = height_scatterPlot + ((margin_scatterPlot.bottom/6)*4.5);
+const scatter_bottom_label_y = height_scatterPlot + ((margin_scatterPlot.bottom/4)*3)+8;
 svgScatterPlot.append('text')
     .attr('class', 'axis-label')
     .attr("text-anchor", "middle")
@@ -99,3 +96,9 @@ const scatterClip = svgScatterPlot.append("defs").append("svg:clipPath")
     // Create the scatter variable: where both the circles and the brush take place
 const scatterArea = svgScatterPlot.append('g')
     .attr("clip-path", "url(#clip)")
+
+
+const tooltipScatter = d3.select("#scatterPlot")
+    .append("div")
+    .style("opacity", 0)
+    .attr("class", "tooltip")
