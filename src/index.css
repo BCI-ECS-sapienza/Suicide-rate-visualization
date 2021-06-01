@@ -22,12 +22,12 @@ html,body {
     color:white;
 }
 .wrapper{
-    height: 98%;
-    max-width: 100%;
+    height: 97.5%;
+    max-width: 98%;
     display: grid;
     grid-template-columns: 20% 25% 10% auto;
     grid-template-rows: 7% 25% 23% auto;
-    grid-gap: 3px;
+    grid-gap: 4px;
 }
 .header{
     background-color: rgb(51, 51, 51);
@@ -54,10 +54,10 @@ html,body {
     grid-row-end: 4;
 }
 .scatterPlot{
-    margin-right: 3px;
+    margin-right: 8px;
     grid-column-start: 4;
     grid-column-end: 5;
-    grid-row-start: 2;
+    grid-row-start: 4;
     grid-row-end: 4;
 }
 .sexChart{
@@ -74,11 +74,11 @@ html,body {
     grid-row-end: -1;
 }
 .radar-pca{
-    margin-right: 3px;
+    margin-right: 8px;
     grid-column-start: 4;
     grid-column-end: 5;
-    grid-row-start: 4;
-    grid-row-end: -1;
+    grid-row-start: 2;
+    grid-row-end: 4;
 }
 .svg-container {
     display: inline-block;
@@ -179,10 +179,6 @@ html,body {
     fill: var(--selectionColor);
     font-size: var(--labelsFont);
 }
-.selected-object {
-    stroke: var(--selectionColor);
-    stroke-width: 5;
-}
 
 
 
@@ -206,6 +202,11 @@ html,body {
     text-anchor: start;
     font-weight: bold;
 }
+.legend-label {
+    font-size: var(--labelsFont);
+    margin-top: 12%;
+    margin-left: 8%;
+}
 
 
 
@@ -220,7 +221,10 @@ html,body {
     stroke: black;
     stroke-width: 1.5;
 }
-
+.selected-object {
+    stroke: var(--selectionColor);
+    stroke-width: 5;
+}
 
 
 
@@ -229,7 +233,7 @@ html,body {
 .button-brush {
     position: absolute;
     right: 1.5%;
-    top: 51%;
+    bottom: 2%;
     font-size: 14px;
     width: 120px;
     border-width: 0 3px 0 3px;
@@ -239,5 +243,5 @@ html,body {
     background-color: rgb(231, 231, 231);
 }
 .toggle-brush {
-    background-color: lightseagreen;
+    background-color: var(--selectionColor);
 }

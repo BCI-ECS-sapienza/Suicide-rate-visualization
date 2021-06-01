@@ -64,19 +64,21 @@
       </div> 
     </header>
 
-
     <div class='container map-holder svg-container' id='map-holder'></div>
-    <div class='container map-legend' id='map-legend'></div>
-    <div class='container scatterPlot' id='scatterPlot'>
-        <button class='button-brush' id='button-brush' onclick="toggleBrush()">Toggle brush</button>
+    <div class='container map-legend' id='map-legend'>
+      <div class='legend-label'>
+        Suicides/100k pop
+      </div> 
     </div>
+    <div class='container radar-pca' id='radar-pca'></div>
     <div class='container sexChart' id='sexChart'></div>
     <div class='container ageChart' id='ageChart'></div>
-    <div class='container radar-pca' id='radar-pca'></div>
-    
-
+    <div class='container scatterPlot' id='scatterPlot'>        
+      <button class='button-brush' id='button-brush' onclick="toggleBrush()">Toggle brush</button>
+    </div>
     
   </div>
+
   <script src="./helpers.js"></script>
   <script src="./controller.js"></script>
   <script src='./staticsForComponents/mapHolderStatic.js'></script>
