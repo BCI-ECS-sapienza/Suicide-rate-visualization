@@ -176,17 +176,14 @@ const makeMap = () => {
           .style('stroke', strokeColorMap)
           .style('opacity', maxOpacity);
       };
-    }
-    //console.log(controller.isCountryMapSelected);
-    drawRadar();  
-
+    } 
     
-    // trigger filter for bars values (if empty go back to all countries)
+    // trigger filter and draw Radar + Linechart 
     let selectedPoints = [];
     if (selectedCountries.length > 0) 
       selectedCountries.forEach((country) => selectedPoints.push({key: country.id} ));
     else 
-      selectedPoints = aggregateDataByCountry(controller.dataYear);
+      selectedPoints = aggregateDataByCountry(controller.dataYear); // if empty (deselect everythng) go back to all countries
     
     controller.triggerMapFilterEvent(selectedPoints);
   }
