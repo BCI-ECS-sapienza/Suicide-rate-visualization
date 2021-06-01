@@ -40,7 +40,7 @@ const makeSexChart = () => {
       .text( (d) => yValueSex(d))
   }
 
-  // callback for mouseClick bar
+  // callback for mouseClick bar (with all countries shown)
   const mouseClick = function (e) {
     let selection = xValueSex(this.__data__)
 
@@ -52,10 +52,12 @@ const makeSexChart = () => {
       d3.select(this).classed("selected-object", false);
       selection = 'All' // toggle agin => back to all
     }
-     
 
-    // apply filter
-    controller.triggerSexFilterEvent(selection);
+    // trigger filter
+    if (controller.selectedCountries == 0)  
+      controller.triggerSexFilterEvent(selection);
+    else 
+      controller.triggerSexFilterEventWithSelectedMap(selection);
   }
 
 
@@ -149,7 +151,7 @@ const makeSexChart = () => {
     .merge(barGroups)
     .on('mouseenter', mouseOver)
     .on('mouseleave', mouseLeave)
-    .on('click', mouseClick)
+    .on('click', mouseClick) 
     .classed('sexBars-filtered', true)
     .transition()
     .duration(controller.transitionTime/2)
@@ -183,7 +185,7 @@ const makeSexChart = () => {
 
 
 
-////////////////////////// UPDATE FUNCTION //////////////////////////
+////////////////////////// HELP FUNCTION //////////////////////////
 
 const updateSexChart = () => {
   svgSex.selectAll('.sexBars-back').remove()

@@ -226,7 +226,7 @@ const makeMap = () => {
       )
       .attr("fill", fillCountryColor)
       .style("stroke", "transparent")
-      .attr("id", function(d){ return nameMap(d); })
+      .attr("id", (d) => nameMap(d))
       .attr("class", "Country")
       .style("opacity", maxOpacity)
       .on("mouseover", mouseOver)
@@ -238,7 +238,7 @@ const makeMap = () => {
 }
 
 
-////////////////////////// UPDATE FUNCTIONS //////////////////////////
+////////////////////////// HELP FUNCTIONS //////////////////////////
 
 function updateMap() {
   map.selectAll('g')

@@ -39,7 +39,7 @@ const makeAgeChart = () => {
     
   }
 
-  // callback for mouseClick bar
+  // callback for mouseClick bar (with all countries shown)
   const mouseClick = function (e) {
     // toggle bar selection highlight and get class
     if (d3.select(this).classed("selected-object") == false) {
@@ -54,7 +54,10 @@ const makeAgeChart = () => {
     }
     
     // thigger filter
-    controller.triggerAgeFilterEvent(selectedBarsAge);
+    if (controller.selectedCountries == 0) 
+      controller.triggerAgeFilterEvent(selectedBarsAge);
+    else 
+      controller.triggerAgeFilterEventWithSelectedMap(selectedBarsAge);
 
     // remove old avg line for update
     svgAge.selectAll('.avg-line-selected').remove();
@@ -164,7 +167,7 @@ const makeAgeChart = () => {
     .merge(barGroups)
     .on('mouseenter', mouseOver)
     .on('mouseleave', mouseLeave)
-    .on('click', mouseClick)
+    .on('click', mouseClick) 
     .classed('ageBars-filtered', true)
     .transition()
     .duration(controller.transitionTime/2)
@@ -198,7 +201,7 @@ const makeAgeChart = () => {
 
 
 
-////////////////////////// UPDATE FUNCTIONS //////////////////////////
+////////////////////////// HELP FUNCTIONS //////////////////////////
 
 const updateAgeChart = () => {
   svgAge.selectAll('.ageBars-back').remove()
