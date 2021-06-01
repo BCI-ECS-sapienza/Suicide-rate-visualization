@@ -177,7 +177,7 @@ const makeMap = () => {
           .style('opacity', maxOpacity);
       };
     }
-    console.log(controller.isCountryMapSelected);
+    //console.log(controller.isCountryMapSelected);
     drawRadar(dataYear);  
 
     
