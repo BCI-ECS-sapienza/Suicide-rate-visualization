@@ -31,7 +31,7 @@ const makeScatterPlot = () => {
                 `<br><b>Gdp per capita: ${avg_show_scatter} </b> ${gdp_capita}` + 
                 `<br><b>Suicide ratio:</b> ${d.value.suicides_pop}`)
             .style("left", (d3.mouse(this)[0]+30) + widthMap + initial_width_legend + "px")    
-            .style("top", (d3.mouse(this)[1]) + "px") //heightMap + "px")
+            .style("top", (d3.mouse(this)[1]) + heightMap + "px") //heightMap + "px")
     }
 
     // callback for mousemove circles 
@@ -48,7 +48,7 @@ const makeScatterPlot = () => {
                 `<br><b>Gdp per capita: ${avg_show_scatter} </b> ${gdp_capita}` + 
                 `<br><b>Suicide ratio:</b> ${d.value.suicides_pop}`)
             .style("left", (d3.mouse(this)[0]+30) + widthMap + initial_width_legend + "px")   
-            .style("top", (d3.mouse(this)[1]) + "px") //heightMap + "px")
+            .style("top", (d3.mouse(this)[1]) +  heightMap + "px") //heightMap + "px")
     }
     
     // callback for mouseleave circles 
@@ -92,8 +92,12 @@ const makeScatterPlot = () => {
             selectedPoints = aggregateDataByCountry(controller.dataYear);
             
             // update filter
+            controller.isScatterFilteredByBars = false;
             controller.isScatterFiltered = false;
             controller.triggerScatterFilterEvent(selectedPoints);
+
+            // remake scatter to get all data
+            updateScatter();
 
         } else {  
             // get back values in correct scale
@@ -116,54 +120,70 @@ const makeScatterPlot = () => {
             controller.isScatterFiltered = true;
             controller.triggerScatterFilterEvent(selectedPoints);
 
+            // from here update all components
             // to remove the grey brush area as soon as the selection has been done
             scatterArea.select(".brush").call(scatterBrush.move, null) 
+
+            // update axis 
+            scatterXAxisSvg.transition().duration(1000).call(xAxis)
+                .selectAll("text") 
+                    .attr("class","axis-text");
+
+            scatterYAxisSvg.transition().duration(1000).call(yAxis)
+                .selectAll("text") 
+                    .attr("class","axis-text");
+
+            // update grid
+            scatterXGridSvg
+                .transition()
+                .duration(controller.transitionTime)
+                //.attr('transform', `translate(0, ${height_scatterPlot})`)
+                .call(d3.axisBottom()
+                    .scale(xScaleScatter)
+                    .tickSize(-height_scatterPlot, 0, 0)
+                    .tickFormat(''))
+
+            scatterYGridSvg 
+                .transition()
+                .duration(controller.transitionTime)
+                .call(d3.axisLeft()
+                    .scale(yScaleScatter)
+                    .tickSize(-width_scatterPlot, 0, 0)
+                    .tickFormat(''))
+                
+            // update circles position
+            scatterArea
+                .selectAll("circle")
+                .transition()
+                .duration(controller.transitionTime)
+                .attr("cx", (d) => xScaleScatter(xValueScatter(d)))
+                .attr("cy", (d) => yScaleScatter(yValueScatter(d)))
+                .attr("r", scatter_circle_size)
+                .delay( (d,i) => i*5)
+
+            // update position avg lines (values need rescale)
+            const avg_value_scaled_y = yScaleScatter(avg_value_y)
+            const avg_value_scaled_x = xScaleScatter(avg_value_x)
+            svgScatterPlot.selectAll('.avg-line').remove()
+            svgScatterPlot.selectAll('.avg-label').remove()
+            printAvgY(svgScatterPlot, avg_value_y, avg_value_scaled_y, width_scatterPlot)
+            printAvgX(svgScatterPlot, avg_value_x, avg_value_scaled_x, height_scatterPlot)
+
+            // compute avg selected line for y
+            // const avg_value_y_selected = Math.round((d3.sum(selectedPoints, (d) => xValueScatter(d))) / selectedPoints.length *10) /10;
+            // const avg_value_scaled_y_selected = xScaleScatter(avg_value_y_selected)
+
+            // // compute avg selected line for x
+            // const avg_value_x_selected = Math.round((d3.sum(selectedPoints, (d) => xValueScatter(d))) / selectedPoints.length *10) /10;
+            // const avg_value_scaled_x_selected = xScaleScatter(avg_value_x_selected)
+
+            // // add selection avg bar
+            // svgScatterPlot.selectAll('.avg-line-selected').remove()
+            // svgScatterPlot.selectAll('.avg-label-selected').remove()
+            // printAvgYonSelection(svgScatterPlot, avg_value_y_selected, avg_value_scaled_y_selected, width_scatterPlot)
+            // printAvgXonSelection(svgScatterPlot, avg_value_x_selected, avg_value_scaled_x_selected, height_scatterPlot)
+
         }
-
-        // update axis 
-        scatterXAxisSvg.transition().duration(1000).call(xAxis)
-            .selectAll("text") 
-                .attr("class","axis-text");
-
-        scatterYAxisSvg.transition().duration(1000).call(yAxis)
-            .selectAll("text") 
-                .attr("class","axis-text");
-
-        // update grid
-        scatterXGridSvg
-            .transition()
-            .duration(controller.transitionTime)
-            //.attr('transform', `translate(0, ${height_scatterPlot})`)
-            .call(d3.axisBottom()
-                .scale(xScaleScatter)
-                .tickSize(-height_scatterPlot, 0, 0)
-                .tickFormat(''))
-
-        scatterYGridSvg 
-            .transition()
-            .duration(controller.transitionTime)
-            .call(d3.axisLeft()
-                .scale(yScaleScatter)
-                .tickSize(-width_scatterPlot, 0, 0)
-                .tickFormat(''))
-            
-        // update circles position
-        scatterArea
-            .selectAll("circle")
-            .transition()
-            .duration(controller.transitionTime)
-            .attr("cx", (d) => xScaleScatter(xValueScatter(d)))
-            .attr("cy", (d) => yScaleScatter(yValueScatter(d)))
-            .attr("r", scatter_circle_size)
-            .delay( (d,i) => i*5)
-
-        // update position avg lines (values need rescale)
-        const avg_value_scaled_y = yScaleScatter(avg_value_y)
-        const avg_value_scaled_x = xScaleScatter(avg_value_x)
-        svgScatterPlot.selectAll('.avg-line').remove()
-        svgScatterPlot.selectAll('.avg-label').remove()
-        printAvgY(svgScatterPlot, avg_value_y, avg_value_scaled_y, width_scatterPlot)
-        printAvgX(svgScatterPlot, avg_value_x, avg_value_scaled_x, height_scatterPlot)
 
     }
 
@@ -175,17 +195,33 @@ const makeScatterPlot = () => {
     const dataFiltered = aggregateDataByCountry(controller.dataMapScatter);
     const colorScale = controller.colorScale;
 
-    // add some padding on top xAxis (1/100 more than max between dataAll and dataFiltered)
+    // compute axis domain (max+padding if back to full, only selected extent if filtered by bars)
+    let domain_min_x = 0;
+    let domain_min_y = 0
+    
+    if (controller.isScatterFilteredByBars == true) {
+        // add some padding on top xAxis (1/10 more than max between dataAll and dataFiltered)
+        const min_val_filtered_x = d3.min(dataFiltered, xValueScatter) 
+        domain_min_x = parseInt(min_val_filtered_x) - parseInt(min_val_filtered_x/10)
+
+        // add some padding on top yAxis (1/10 more than max between dataAll and dataFiltered)
+        const min_val_filtered_y = d3.min(dataFiltered, yValueScatter) 
+        domain_min_y = parseInt(min_val_filtered_y) - parseInt(min_val_filtered_y/10)
+    } 
+
+    // add some padding on top xAxis (1/10 more than max between dataAll and dataFiltered)
     const max_val_filtered_x = d3.max(dataFiltered, xValueScatter) 
-    const domain_max_x = parseInt(max_val_filtered_x) + parseInt(max_val_filtered_x/100)
+    const domain_max_x = parseInt(max_val_filtered_x) + parseInt(max_val_filtered_x/10)
 
-    // add some padding on top yAxis (1/100 more than max between dataAll and dataFiltered)
+    // add some padding on top yAxis (1/10 more than max between dataAll and dataFiltered)
     const max_val_filtered_y = d3.max(dataFiltered, yValueScatter) 
-    const domain_max_y = parseInt(max_val_filtered_y) + parseInt(max_val_filtered_y/100)
+    const domain_max_y = parseInt(max_val_filtered_y) + parseInt(max_val_filtered_y/10)
 
-    // set domain ranges
-    xScaleScatter.domain([0, domain_max_x ])
-    yScaleScatter.domain([0, domain_max_y ])
+    // set axis domain
+    xScaleScatter.domain([domain_min_x, domain_max_x ])
+    yScaleScatter.domain([domain_min_y, domain_max_y ])
+
+
 
     // axis setup
     const xAxis = d3.axisBottom(xScaleScatter).tickFormat(AxisTickFormat);
@@ -240,14 +276,16 @@ const makeScatterPlot = () => {
             .tickSize(-width_scatterPlot, 0, 0)
             .tickFormat(''))
 
-
+    
     // add circles
-    scatterArea
-        .append('g')
+    scatterCircles = scatterArea.append('g')
         .selectAll("circle")
         .data(dataFiltered)
+
+    scatterCircles
         .enter()
         .append("circle")
+        //.merge(scatterCircles)
             .on("mouseover", onPoint)
             .on("mousemove", moveOverPoint)
             .on("mouseout", leavePoint)
@@ -256,17 +294,17 @@ const makeScatterPlot = () => {
             .style("fill", (d) => colorScale(colorValueScatter(d)))
             .style("opacity", 1)
             .transition()
-            .duration(controller.transitionTime/2)
+            .duration(0)    // needed for delay
             .attr("cx", (d) => xScaleScatter(xValueScatter(d)))
             .attr("cy", (d) => yScaleScatter(yValueScatter(d)))
             .attr("r", scatter_circle_size)
-            .delay( (d,i) => (i*10))
+            .delay( (d,i) => (i*scatter_points_delay))
           
             
     // add avg lines
     printAvgY(svgScatterPlot, avg_value_y, avg_value_scaled_y, width_scatterPlot)
     printAvgX(svgScatterPlot, avg_value_x, avg_value_scaled_x, height_scatterPlot)
-    
+
 }
 
 
