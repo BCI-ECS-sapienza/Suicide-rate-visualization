@@ -40,7 +40,7 @@ const ticks = generateTicks(levels);
 const svgRadar = d3.select('#radar-pca')
     .append('svg')
     .attr('opacity', 0)
-    .attr('width', width)
+    .attr('width', width + 60)
     .attr('height', height)
     .attr("transform", "translate(-" + 2*horizontal_margin + "," + vertical_margin + ")");
 
@@ -51,10 +51,21 @@ const countriesGroup = svgRadar.append('g');
 countriesGroup
   .append('text')
   .attr('class', 'radar-heading-legend')
-  .attr("x", (width/2 + 150))
+  .attr("x", (width/2 + 180))
   .attr("y", 20)
   .text("Countries:")
-  .style("font-size", "15px")
+  .style("font-size", "18px")
+  .attr("alignment-baseline","middle")
+  .style('fill', 'white');
+
+const featuresGroup = svgRadar.append('g');
+  featuresGroup
+  .append('text')
+  .attr('class', 'radar-heading-legend')
+  .attr("x", offset_legend_width + 180)
+  .attr("y", offset_legend_height - 20)
+  .text("Features max:")
+  .style("font-size", "18px")
   .attr("alignment-baseline","middle")
   .style('fill', 'white');
 
@@ -103,7 +114,7 @@ function drawRadar(){
 
   // draw radar
   const dataFiltered = aggregateDataByCountryRadar(controller.dataMapScatter);
-  console.log(dataFiltered);
+  
   let features_scale = getMaxFeatures();
   drawPath(points, g);
   generateAndDrawLevels(levels, sides);
@@ -267,7 +278,7 @@ function drawText( text, point, isAxis, group ){
       const xSpacing = 10;
       group.append( "text" )
           .attr( "x", point.x - xSpacing )
-          .attr( "y", point.y - 3 )
+          .attr( "y", point.y +2 )
           .html( text )
           .style( "text-anchor", "middle" )
           .attr( "fill", "darkgrey" )
@@ -282,10 +293,10 @@ function drawText( text, point, isAxis, group ){
           .attr( "y", point.y )
           .html( text )
           .style( "text-anchor", "middle" )
-          .attr( "fill", "darkgrey" )
-          .style( "font-size", "12px" )
+          .attr( "fill", "white" )
+          .style( "font-size", "14px" )
           .style( "font-family", "sans-serif" )
-          .style('opacity', .7);
+          .style('opacity', 1);
   }
 
 };
@@ -403,44 +414,34 @@ function drawLegendCountries(name, color, index){
   countriesGroup
     .append("circle")
     .attr('class', 'radar-legend')
-    .attr("cx", offset_legend_width + 155)
-    .attr("cy", 25 + 12*index)
+    .attr("cx", offset_legend_width + 190)
+    .attr("cy", 25 + 17*index)
     .attr("r", 4)
     .style("fill", color);
 
   countriesGroup
     .append('text')
     .attr('class', 'radar-legend')
-    .attr("x", offset_legend_width + 165)
-    .attr("y", 30 + 12*index)
+    .attr("x", offset_legend_width + 200)
+    .attr("y", 30 + 17*index)
     .text(name)
-    .style("font-size", "12px")
+    .style("font-size", "15px")
     .attr("alignment-baseline","middle")
     .style('fill', 'white');
 }
 
 // creating and drawing features legend
 function drawLegendFeatures(features_scale){
-  const featuresGroup = svgRadar.append('g');
-  featuresGroup
-  .append('text')
-  .attr('class', 'radar-heading-legend')
-  .attr("x", offset_legend_width + 150)
-  .attr("y", offset_legend_height - 15)
-  .text("Features max:")
-  .style("font-size", "15px")
-  .attr("alignment-baseline","middle")
-  .style('fill', 'white');
 
   for( let el in features){
     
     featuresGroup
       .append('text')
       .attr('class', 'radar-legend')
-      .attr("x", offset_legend_width + 150)
-      .text(features[el] + ': ' + features_scale[features[el]])
-      .attr("y", offset_legend_height + 12*el)
-      .style("font-size", "11px")
+      .attr("x", offset_legend_width + 180)
+      .text('- ' + features[el] + ': ' + d3.format('.3s')(features_scale[features[el]]).replace('G', 'B'))
+      .attr("y", offset_legend_height + 17*el)
+      .style("font-size", "15px")
       .attr("alignment-baseline","middle")
       .style('fill', 'white');
   }
