@@ -119,7 +119,7 @@ function getData(dataYear){
   let data = [];  
   if(controller.selectedCountries.length > 0){
       countries = []
-      
+
       for(let i = 0; i<controller.selectedCountries.length; i++){
           countries.push(controller.selectedCountries[i].id)
       }
@@ -135,6 +135,28 @@ function getData(dataYear){
                   'gdp_per_capita': dataYear[j].value.gdp_per_capita
                 });
           }
+      }
+      // manage case in which one or more selected states have missing data
+      if(countries.length > data.length){
+        for( let el in countries){
+          let flag = false;
+          
+          for( let country in data){
+            
+            if(data[country]['country'] == countries[el])
+              flag = true;
+          }
+          if(!flag){
+            data.push({
+              'country': countries[el], 
+              'suicides_pop': 0,
+              'suicides_no': 0,
+              'population': 0,
+              'gdp_for_year': 0,
+              'gdp_per_capita': 0
+            });
+          }
+        }
       }
   } 
   return data;  
