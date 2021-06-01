@@ -123,7 +123,7 @@ const makeMap = () => {
           .selectAll('path')
           .style('opacity', maxOpacity);
         svgRadar
-          .attr("opacity", 0);
+          .style("opacity", 0);
         controller.isCountryMapSelected = false;
       }
       if(firstAdded === this && selectedCountries.length != 0){
@@ -153,7 +153,7 @@ const makeMap = () => {
           selectedCountries.splice(index, 1);
         }
         
-        console.log(firstAdded.id);
+        //console.log(firstAdded.id);
 
         d3.select('#map-holder')
           .select('#' + firstAdded.id)
@@ -167,7 +167,7 @@ const makeMap = () => {
       //svgPca
         //.attr("opacity", 0);  
       svgRadar
-        .attr("opacity", 1);
+        .style("opacity", 1);
       controller.isCountryMapSelected = true;
 
       for(var i = 0; i<selectedCountries.length; i++){
@@ -196,7 +196,7 @@ const makeMap = () => {
   ////////////////////////// SETUP //////////////////////////
 
   // get data
-  const dataYear = aggregateDataByCountryRadar(controller.dataAll);
+  const dataYear = aggregateDataByCountryRadar(controller.dataYear);
   const dataFiltered = aggregateDataByCountry(controller.dataMapScatter);
   const colorScale = controller.colorScale;
 
