@@ -11,8 +11,13 @@ let size = Math.min(width, height);
 
 const offset = Math.PI;
 const polyangle = (Math.PI*2)/sides;
-let r = 0.8 * size;
-let r_0 = r/2;
+
+const offset_legend_width = width/2;
+const offset_legend_height = height/2;
+
+const r = 0.8 * size;
+const r_0 = r/2;
+
 const features = [
     'suicides_pop',
     'suicides_no',
@@ -210,10 +215,8 @@ function generateAndDrawLines(sidesCount){
     drawPath([center, point], group);
   }
 }
-/////////////////////////////////////////////////////////
-//////////////// NEVER CALLED////////////////////////////
-/////////////////////////////////////////////////////////
 
+//function to generate ticks
 function generateTicks(){
   const ticks = [];
   const step = 100/levels;
@@ -376,7 +379,7 @@ function drawLegendCountries(name, color, index){
   countriesGroup
     .append("circle")
     .attr('class', 'radar-legend')
-    .attr("cx", width/2 + 155)
+    .attr("cx", offset_legend_width + 155)
     .attr("cy", 25 + 12*index)
     .attr("r", 4)
     .style("fill", color);
@@ -384,7 +387,7 @@ function drawLegendCountries(name, color, index){
   countriesGroup
     .append('text')
     .attr('class', 'radar-legend')
-    .attr("x", width/2 + 165)
+    .attr("x", offset_legend_width + 165)
     .attr("y", 30 + 12*index)
     .text(name)
     .style("font-size", "12px")
@@ -398,8 +401,8 @@ function drawLegendFeatures(features_scale){
   featuresGroup
   .append('text')
   .attr('class', 'radar-heading-legend')
-  .attr("x", (width/2 + 150))
-  .attr("y", height/2 - 15)
+  .attr("x", offset_legend_width + 150)
+  .attr("y", offset_legend_height - 15)
   .text("Features max:")
   .style("font-size", "15px")
   .attr("alignment-baseline","middle")
@@ -410,20 +413,11 @@ function drawLegendFeatures(features_scale){
     featuresGroup
       .append('text')
       .attr('class', 'radar-legend')
-      .attr("x", width/2 + 150)
+      .attr("x", offset_legend_width + 150)
       .text(features[el] + ': ' + features_scale[features[el]])
-      .attr("y", (height/2) + 12*el)
+      .attr("y", offset_legend_height + 12*el)
       .style("font-size", "11px")
       .attr("alignment-baseline","middle")
       .style('fill', 'white');
-    /*featuresGroup
-      .append('text')
-      .attr('class', 'radar-legend')
-      .attr("x", width/2 + 200)
-      .text(features_scale[features[el]])
-      .attr("y", (height/2) + 12*el)
-      .style("font-size", "11px")
-      .attr("alignment-baseline","middle")
-      .style('fill', 'white');*/
   }
 }
