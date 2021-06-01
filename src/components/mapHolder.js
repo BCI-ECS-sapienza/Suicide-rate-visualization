@@ -178,7 +178,7 @@ const makeMap = () => {
       };
     }
     //console.log(controller.isCountryMapSelected);
-    drawRadar(dataYear);  
+    drawRadar();  
 
     
     // trigger filter for bars values (if empty go back to all countries)

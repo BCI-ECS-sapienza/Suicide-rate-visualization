@@ -68,7 +68,7 @@ for (let vertex = 0; vertex<sides; vertex++){
 points = points.concat(points[0]);
 
 // draw the graph with data
-function drawRadar(dataYear){
+function drawRadar(){
   // remove old elements from the radar before adding new ones
   svgRadar.selectAll('circle')
       .remove()
@@ -102,13 +102,14 @@ function drawRadar(dataYear){
     .exit();
 
   // draw radar
-  console.log('RADAR');
+  const dataFiltered = aggregateDataByCountryRadar(controller.dataMapScatter);
+  console.log(dataFiltered);
   let features_scale = getMaxFeatures();
   drawPath(points, g);
   generateAndDrawLevels(levels, sides);
   generateAndDrawLines(sides);
   drawAxis(ticks, levels);
-  data = getData(dataYear);
+  data = getData(dataFiltered);
   drawData(data, sides, features_scale);
   drawLabels(data, sides);
   drawLegendFeatures(features_scale);
