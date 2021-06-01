@@ -117,7 +117,7 @@ function drawRadar(){
 
 // define functions called above
 // function to get data
-function getData(dataYear){ 
+function getData(dataFiltered){ 
   let data = [];  
   if(controller.selectedCountries.length > 0){
       countries = []
@@ -126,15 +126,15 @@ function getData(dataYear){
           countries.push(controller.selectedCountries[i].id)
       }
       
-      for (let j = 0; j<dataYear.length; j++){
-          if(countries.includes(dataYear[j].key)){
+      for (let j = 0; j<dataFiltered.length; j++){
+          if(countries.includes(dataFiltered[j].key)){
               data.push({
-                  'country': dataYear[j].key, 
-                  'suicides_pop': dataYear[j].value.suicides_pop,
-                  'suicides_no': dataYear[j].value.suicides_no,
-                  'population': dataYear[j].value.population,
-                  'gdp_for_year': dataYear[j].value.gdp_for_year,
-                  'gdp_per_capita': dataYear[j].value.gdp_per_capita
+                  'country': dataFiltered[j].key, 
+                  'suicides_pop': dataFiltered[j].value.suicides_pop,
+                  'suicides_no': dataFiltered[j].value.suicides_no,
+                  'population': dataFiltered[j].value.population,
+                  'gdp_for_year': dataFiltered[j].value.gdp_for_year,
+                  'gdp_per_capita': dataFiltered[j].value.gdp_per_capita
                 });
           }
       }
@@ -166,13 +166,13 @@ function getData(dataYear){
 
 // extracting max value for each feature in the selected data
 function getMaxFeatures(){
-  const dataYear = aggregateDataByCountryRadar(controller.dataAll);
+  const dataFiltered = aggregateDataByCountryRadar(controller.dataMapScatter);
   
-  const max_suicides_pop = d3.max(dataYear, d => d.value.suicides_pop );
-  const max_suicides_no = d3.max(dataYear, d => d.value.suicides_no);
-  const max_population = d3.max(dataYear, d => d.value.population);
-  const max_gdp_for_year = d3.max(dataYear, d => d.value.gdp_for_year);
-  const max_gdp_per_capita = d3.max(dataYear, d => d.value.gdp_per_capita);
+  const max_suicides_pop = d3.max(dataFiltered, d => d.value.suicides_pop );
+  const max_suicides_no = d3.max(dataFiltered, d => d.value.suicides_no);
+  const max_population = d3.max(dataFiltered, d => d.value.population);
+  const max_gdp_for_year = d3.max(dataFiltered, d => d.value.gdp_for_year);
+  const max_gdp_per_capita = d3.max(dataFiltered, d => d.value.gdp_per_capita);
 
   const feature_scale = {
     'suicides_pop': max_suicides_pop,
