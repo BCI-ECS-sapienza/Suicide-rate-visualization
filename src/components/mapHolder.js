@@ -124,6 +124,7 @@ const makeMap = () => {
           .style('opacity', maxOpacity);
         svgRadar
           .attr("opacity", 0);
+        controller.isCountryMapSelected = false;
       }
       if(firstAdded === this && selectedCountries.length != 0){
         firstAdded = selectedCountries[0];
@@ -167,6 +168,7 @@ const makeMap = () => {
         //.attr("opacity", 0);  
       svgRadar
         .attr("opacity", 1);
+      controller.isCountryMapSelected = true;
 
       for(var i = 0; i<selectedCountries.length; i++){
         d3.select('#map-holder')
@@ -175,7 +177,7 @@ const makeMap = () => {
           .style('opacity', maxOpacity);
       };
     }
-    
+    console.log(controller.isCountryMapSelected);
     drawRadar(dataYear);  
 
     
