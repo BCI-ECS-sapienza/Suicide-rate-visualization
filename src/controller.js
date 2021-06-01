@@ -1,14 +1,13 @@
 Controller = function () {
     // events handlers
-    this.isYearFiltered = false;    // need for back-bars
-    this.isCountryMapSelected = false; // true when at least one country on the map is selected
-    this.isScatterFiltered = false; // needed to avoid scatter go back when bar filtered
-    this.isScatterFilteredByBars = false // set to true when bars filtered, back to false on brush back to full size
+    this.isYearFiltered = false;            // need for back-bars
+    this.isCountryMapSelected = false;      // true when at least one country on the map is selected
+    this.isScatterFiltered = false;         // needed to avoid scatter go back when bar filtered
+    this.isScatterFilteredByBars = false    // set to true when bars filtered, back to false on brush back to full size
     
 
     // applied filters
-    
-    this.selectedCountries = []; // max three selected countries
+    this.selectedCountries = [];            // max three selected countries
     this.scatterFilter = null;
     this.sexFilter = 'All';
     this.ageFilter = new Set();
@@ -74,8 +73,8 @@ Controller.prototype.notifyYearFiltered = function () {
     updateAgeChart() 
     updateScatter()
 
-    //svgRadar.style('opacity', 0)
-    //svgPca.style('opacity', 1)
+    // radarChart() !!!!!!!!
+    // lineChart()  !!!!!!!!
 }
 
 Controller.prototype.notifyMapFiltered = function () {
@@ -91,7 +90,6 @@ Controller.prototype.notifyScatterFiltered = function () {
     updateMap()
     updateSexChart()
     updateAgeChart() 
-    this.isScatterFilteredByBars = true; //!!
 }
 
 Controller.prototype.notifySexFiltered = function () {
@@ -100,7 +98,7 @@ Controller.prototype.notifySexFiltered = function () {
     updateMap() 
     updateAgeChart() 
     updateScatter()
-    this.isScatterFilteredByBars = true; //!!
+    this.isScatterFilteredByBars = true; 
 }
 
 Controller.prototype.notifyAgeFiltered = function () {
@@ -109,6 +107,24 @@ Controller.prototype.notifyAgeFiltered = function () {
     updateMap() 
     updateSexChart()
     updateScatter()
+    this.isScatterFilteredByBars = true; 
+}
+
+Controller.prototype.notifySexFilteredWithSelectedMap = function () {   //!!!!!!!!!!!!
+    //console.log('sex filtered!')
+    // updateRadar
+    // updateLineChart
+    this.isScatterFilteredByBars = true; 
+    // console.log('country selcted on map')
+}
+
+Controller.prototype.notifyAgeFilteredWithSelectedMap = function () {   //!!!!!!!!!!!!!!
+    //console.log('age filtered!')
+    
+    // updateRadar
+    // updateLineChart
+    this.isScatterFilteredByBars = true; 
+    // console.log('country selcted on map')
 }
 
 
@@ -117,9 +133,20 @@ Controller.prototype.notifyAgeFiltered = function () {
 ////////////////////////// TRIGGER FILTERS //////////////////////////
 
 // filter by year
-Controller.prototype.triggerYearFilterEvent = function (selectedYear) {    
+Controller.prototype.triggerYearFilterEvent = function (selectedYear) {   
+    // to remove all selections on bars
+    d3.selectAll(".selected-object").classed("selected-object", false)
+    svgAge.selectAll('.avg-line-selected').remove()
+    svgAge.selectAll('.avg-label-selected').remove()
 
-    // back to all, or get only selected year data
+    // radar and lineChart are replaced by scatter and pca
+    this.selectedCountries = [];
+    svgRadar.style('opacity', 0)            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //svgLineChart.style('opacity', 0)
+    svgScatterPlot.style('opacity', 1)
+    //svgPca.style('opacity', 1)            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    // year filter: back to all, or get only selected year data
     if (isNaN(selectedYear)==true) {
         this.dataYear = this.dataAll;
         this.dataMapScatter = this.dataAll;
@@ -135,25 +162,30 @@ Controller.prototype.triggerYearFilterEvent = function (selectedYear) {
         this.dataAge = dataFiltered
         this.isYearFiltered = true; 
     }
-
-    // to remove all selections on bars
-    d3.selectAll(".selected-object").classed("selected-object", false)
-    svgAge.selectAll('.avg-line-selected').remove()
-    svgAge.selectAll('.avg-label-selected').remove()
         
     this.notifyYearFiltered();
 }
 
+
 // filter by map
 Controller.prototype.triggerMapFilterEvent = function (selectedPoints) {
+    // put bar filters to initial status
+    this.sexFilter = 'All';
+    this.ageFilter = new Set();
+
+     // to remove all selections on bars
+     d3.selectAll(".selected-object").classed("selected-object", false)
+     svgAge.selectAll('.avg-line-selected').remove()
+     svgAge.selectAll('.avg-label-selected').remove()
+
     this.scatterFilter = selectedPoints;
     this.globalFilter();
     this.notifyMapFiltered();
 }
 
+
 // filter by scatter
 Controller.prototype.triggerScatterFilterEvent = function (selectedPoints) {
-    console.log(selectedPoints)
     this.scatterFilter = selectedPoints;
     this.globalFilter();
     this.notifyScatterFiltered();
@@ -173,19 +205,35 @@ Controller.prototype.triggerAgeFilterEvent = function (selectedAge) {
     this.notifyAgeFiltered();
 }
 
+// filter by sex when map selected
+Controller.prototype.triggerSexFilterEventWithSelectedMap = function (selectedSex) {
+    this.sexFilter = selectedSex;
+    this.globalFilter();
+    this.notifyAgeFilteredWithSelectedMap();
+}
+
+// filter by age when map selected
+Controller.prototype.triggerAgeFilterEventWithSelectedMap = function (selectedAge) {
+    this.ageFilter = selectedAge;
+    this.globalFilter();
+    this.notifySexFilteredWithSelectedMap();
+}
+
+
 
 ////////////////////////// COMPUTE FILTERS //////////////////////////
 
 // global filter 
 Controller.prototype.globalFilter = function () {
+    // initialize data for each visualization
     let dataMapScatter = this.dataYear;
     let dataSex = this.dataYear;
     let dataAge = this.dataYear;
 
-    console.log(this.sexFilter)
-    console.log(this.ageFilter)
-    console.log(this.scatterFilter)
-    console.log(this.isScatterFiltered)
+    // console.log(this.sexFilter)
+    // console.log(this.ageFilter)
+    // console.log(this.scatterFilter)
+    // console.log(this.isScatterFiltered)
     
 
     // filter scatter
