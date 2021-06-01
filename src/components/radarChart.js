@@ -102,6 +102,7 @@ function drawRadar(dataYear){
     .exit();
 
   // draw radar
+  console.log('RADAR');
   let features_scale = getMaxFeatures();
   drawPath(points, g);
   generateAndDrawLevels(levels, sides);
