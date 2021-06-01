@@ -3,9 +3,10 @@ const initial_width_scatterPlot = document.getElementById('scatterPlot').offsetW
 const initial_height_scatterPlot = document.getElementById('scatterPlot').offsetHeight;
 const scatter_xLabel = 'GDP for year';;
 const scatter_yLabel = 'GDP per capita';
-const scatter_circle_size = 5;
+const scatter_circle_size = 6;
 const scatter_selected_circle_size = 10;
 const scatter_transition_time = 1000;
+const scatter_points_delay = 12;
 
 // set the dimensions and margins of the graph
 const margin_scatterPlot = {top: 25, right: 0, bottom: 45, left: 80},
@@ -39,9 +40,6 @@ const yScaleScatter = d3.scaleLinear()
 let scatter_toggle_brush = false;
 const scatterBrush = d3.brush()                 
     .extent( [ [0,0], [width_scatterPlot,height_scatterPlot] ] )
-
-
-console.log(initial_width_scatterPlot)
 
 // append the svg object to the body of the page
 const svgScatterPlot = d3.select("#scatterPlot")
