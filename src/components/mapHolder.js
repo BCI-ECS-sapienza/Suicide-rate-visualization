@@ -65,12 +65,10 @@ const makeMap = () => {
       .style("fill", (d)=>{
         if(controller.selectedCountries.length != 0){
           let flag = false;
-          let index = 0;
           for(var i = 0; i<selectedCountries.length; i++){
             
             if(selectedCountries[i].id == this.id){
               flag = true;
-              index = i;
             }  
           }          
           if(!flag){
@@ -80,7 +78,7 @@ const makeMap = () => {
               return colorScale(d.total);
           }
           else{
-            return selectedColors[index];// fillColorMap;
+            return svgRadar.select('#' + this.id).style('fill');// fillColorMap;
           }
         }
       })
@@ -125,8 +123,16 @@ const makeMap = () => {
     if(selectedCountries.includes(this)){
       const index = selectedCountries.indexOf(this);
       d3.select(this)
-      .style("stroke", 'transparent')
-      .style('fill', fillCountryColor);
+        .style("stroke", 'transparent')
+        .style('fill', (d) => {
+          if(d.total === "Missing data"){
+            return '#DCDCDC';
+          }
+          else{
+            return colorScale(d.total);
+          }
+        });
+      //.style('fill', fillCountryColor);
       //.style('opacity', minOpacity);
 
       if (index > -1) {
@@ -171,6 +177,14 @@ const makeMap = () => {
         d3.select('#map-holder')
           .select('#' + firstAdded.id)
           .style('stroke', 'transparent')
+          .style('fill', (d) => {
+            if(d.total === "Missing data"){
+              return '#DCDCDC';
+            }
+            else{
+              return colorScale(d.total);
+            }
+          })
           .style('opacity', minOpacity);
 
         firstAdded = selectedCountries[0];
@@ -183,7 +197,6 @@ const makeMap = () => {
         d3.select('#map-holder')
           .select('#' + selectedCountries[i].id)
           .style('stroke', strokeColorMap)
-          .style('fill', selectedColors[i])
           .style('opacity', maxOpacity);
       };
     } 
@@ -263,4 +276,3 @@ function updateMap() {
 
   makeMap()  
 }
-
