@@ -420,9 +420,6 @@ function drawData(dataset, n, feature_scale){
   }
   for( let i = 0; i<controller.selectedCountries.length; i++){
     //console.log(svgRadar.select('#' + controller.selectedCountries[i].id));
-    console.log(controller.selectedCountries[i].id);
-    console.log(svgRadar.select('#' + controller.selectedCountries[i].id).style('fill'));
-    console.log(map.select('#' + controller.selectedCountries[i].id));
     map
       .select('#' + controller.selectedCountries[i].id)
       .style('fill', svgRadar.select('#' + controller.selectedCountries[i].id).style('fill'));
