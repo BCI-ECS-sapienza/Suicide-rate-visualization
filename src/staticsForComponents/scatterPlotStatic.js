@@ -9,7 +9,7 @@ const scatter_transition_time = 1000;
 const scatter_points_delay = 12;
 
 // set the dimensions and margins of the graph
-const margin_scatterPlot = {top: 25, right: 0, bottom: 45, left: 80},
+const margin_scatterPlot = {top: 25, right: 30, bottom: 55, left: 80},
     width_scatterPlot = initial_width_scatterPlot - margin_scatterPlot.left - margin_scatterPlot.right,
     height_scatterPlot = initial_height_scatterPlot - margin_scatterPlot.top - margin_scatterPlot.bottom;
 
@@ -62,7 +62,7 @@ svgScatterPlot.append('text')
 
 // add label bottom
 const scatter_bottom_label_x = width_scatterPlot/2;
-const scatter_bottom_label_y = height_scatterPlot + ((margin_scatterPlot.bottom/4)*3)+8;
+const scatter_bottom_label_y = height_scatterPlot + ((margin_scatterPlot.bottom/6)*5);
 svgScatterPlot.append('text')
     .attr('class', 'axis-label')
     .attr("text-anchor", "middle")

@@ -65,7 +65,7 @@ Controller.prototype.loadData = function () {
 ////////////////////////// COMPONENTS UPDATE //////////////////////////
 
 Controller.prototype.notifyYearFiltered = function () {
-    //console.log('year changed!')
+    //console.log('year changed!')  // needs complete reload
     updateLegend()
     updateMap() 
     updateSexChart()
@@ -74,12 +74,15 @@ Controller.prototype.notifyYearFiltered = function () {
 }
 
 Controller.prototype.notifyMapFiltered = function () {
-    //console.log('Map filtered!')
+    //console.log('Map filtered!')  // needs complete reload
     updateLegend()
+    updateMap()      // => see why opacity on other states + select back countries !!!!!!!!!!!!!!
     updateSexChart()
     updateAgeChart() 
+    updateScatter()
     drawRadar(); 
     // lineChart()  !!!!!!!!
+    
 }
 
 Controller.prototype.notifyScatterFiltered = function () {
@@ -112,8 +115,10 @@ Controller.prototype.notifySexFilteredWithSelectedMap = function () {   //!!!!!!
     //console.log('sex filtered!')
     
     updateAgeChart()
+    updateMap()      // => see why opacity on other states + select back countries
     drawRadar()
     // updateLineChart
+    // updateMap => with the selected countries
     this.isScatterFilteredByBars = true; 
     // console.log('country selcted on map')
 }
@@ -122,8 +127,10 @@ Controller.prototype.notifyAgeFilteredWithSelectedMap = function () {   //!!!!!!
     //console.log('age filtered!')
     
     updateSexChart()
+    updateMap()      // => see why opacity on other states + select back countries  !!!!!!!!!!
     drawRadar()
     // updateLineChart
+    // updateMap => with the selected countries
     this.isScatterFilteredByBars = true; 
     // console.log('country selcted on map')
 }
@@ -142,10 +149,7 @@ Controller.prototype.triggerYearFilterEvent = function (selectedYear) {
 
     // radar and lineChart are replaced by scatter and pca
     this.selectedCountries = [];
-    svgRadar.style('opacity', 0)            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    //svgLineChart.style('opacity', 0)
-    svgScatterPlot.style('opacity', 1)
-    //svgPca.style('opacity', 1)            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    switchVisualizationSet();
     
     this.yearFilter(selectedYear);
     this.notifyYearFiltered();

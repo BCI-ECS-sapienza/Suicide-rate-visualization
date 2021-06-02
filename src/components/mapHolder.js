@@ -117,13 +117,9 @@ const makeMap = () => {
       } 
       
       if(selectedCountries.length == 0){
-        //svgPca
-          //.attr("opacity", 1);
         map
           .selectAll('path')
           .style('opacity', maxOpacity);
-        svgRadar
-          .style("opacity", 0);
         controller.isCountryMapSelected = false;
       }
       if(firstAdded === this && selectedCountries.length != 0){
@@ -164,10 +160,6 @@ const makeMap = () => {
 
         selectedCountries.push(this);
       }          
-      //svgPca
-        //.attr("opacity", 0);  
-      svgRadar
-        .style("opacity", 1);
       controller.isCountryMapSelected = true;
 
       for(var i = 0; i<selectedCountries.length; i++){
@@ -177,6 +169,7 @@ const makeMap = () => {
           .style('opacity', maxOpacity);
       };
     } 
+
     
     // trigger filter and draw Radar + Linechart 
     let selectedPoints = [];
@@ -186,6 +179,9 @@ const makeMap = () => {
       selectedPoints = aggregateDataByCountry(controller.dataYear); // if empty (deselect everythng) go back to all countries
     
     controller.triggerMapFilterEvent(selectedPoints);
+
+    // from radar-line to scatter-pca and back
+    switchVisualizationSet()
   }
 
 

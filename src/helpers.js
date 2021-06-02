@@ -20,6 +20,25 @@ const yearSelected = () => {
     controller.triggerYearFilterEvent(selectedYear);
 };
 
+
+// year filter from header
+const switchVisualizationSet = () => {
+  if (controller.selectedCountries.length == 0) {
+    svgRadar.style('opacity', 0)            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //svgLineChart.style('opacity', 0)
+    svgScatterPlot.style('opacity', 1)
+    //svgPca.style('opacity', 1)            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    d3.select('#button-brush').style('opacity', 1)
+  } else {
+    svgRadar.style('opacity', 1)            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //svgLineChart.style('opacity', 1)
+    svgScatterPlot.style('opacity', 0)
+    //svgPca.style('opacity', 0)            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    d3.select('#button-brush').style('opacity', 0)
+  }
+  
+};
+
 // reload any time the window changes size
 let resizeTimeout;
 window.addEventListener('resize', function(event) {
