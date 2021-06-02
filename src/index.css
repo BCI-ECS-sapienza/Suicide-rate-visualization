@@ -22,11 +22,11 @@ html,body {
     color:white;
 }
 .wrapper{
-    height: 97.5%;
-    max-width: 98%;
+    height: 96%;
+    max-width: 99%;
     display: grid;
-    grid-template-columns: 20% 25% 10% auto;
-    grid-template-rows: 7% 25% 23% auto;
+    grid-template-columns: 20% 25% 10% 45.5%;
+    grid-template-rows: 7% 25% 23% 45%;
     grid-gap: 4px;
 }
 .header{
@@ -233,7 +233,7 @@ html,body {
 .button-brush {
     position: absolute;
     right: 1.5%;
-    bottom: 2%;
+    bottom: 3.4%;
     font-size: 14px;
     width: 120px;
     border-width: 0 3px 0 3px;

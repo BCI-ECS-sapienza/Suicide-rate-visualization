@@ -4,8 +4,8 @@ const levels = 4;
 const horizontal_margin = 40;
 const vertical_margin = 10;
 
-let width = document.getElementById('radar-pca').offsetWidth + horizontal_margin;
-let height = document.getElementById('radar-pca').offsetHeight + vertical_margin;
+let width = document.getElementById('radar-pca').offsetWidth //+ horizontal_margin; GET error
+let height = document.getElementById('radar-pca').offsetHeight //+ vertical_margin;
 
 let size = Math.min(width, height);
 

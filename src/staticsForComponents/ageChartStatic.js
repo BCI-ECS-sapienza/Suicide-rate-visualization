@@ -12,7 +12,7 @@ let selectedBarsAge = new Set();
 let selectedValuesAge = new Set();
 
 // set the dimensions and margins of the graph
-const margin_ageChart = {top: 25, right: 30, bottom: 50, left: 70},
+const margin_ageChart = {top: 25, right: 30, bottom: 55, left: 70},
     width_ageChart = initial_width_ageChart - margin_ageChart.left - margin_ageChart.right,
     height_ageChart = initial_height_ageChart - margin_ageChart.top - margin_ageChart.bottom;
 
