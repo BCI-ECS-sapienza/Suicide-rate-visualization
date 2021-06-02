@@ -63,15 +63,31 @@ const makeMap = () => {
     d3.select(this)
       .classed('over-object', false)
       .style("fill", (d)=>{
-        if(d.total === "Missing data") 
-          return '#DCDCDC';
-        else{
-          return colorScale(d.total);
+        if(controller.selectedCountries.length != 0){
+          let flag = false;
+          let index = 0;
+          for(var i = 0; i<selectedCountries.length; i++){
+            
+            if(selectedCountries[i].id == this.id){
+              flag = true;
+              index = i;
+            }  
+          }          
+          if(!flag){
+            if(d.total === "Missing data") 
+              return '#DCDCDC';
+            else
+              return colorScale(d.total);
+          }
+          else{
+            return selectedColors[index];// fillColorMap;
+          }
         }
       })
       .style('opacity', () => {
         if(controller.selectedCountries.length != 0){
-          var flag = false;
+          let flag = false;
+
           for(var i = 0; i<selectedCountries.length; i++){
             
             if(selectedCountries[i].id == this.id)
@@ -109,7 +125,8 @@ const makeMap = () => {
     if(selectedCountries.includes(this)){
       const index = selectedCountries.indexOf(this);
       d3.select(this)
-      .style("stroke", 'transparent');
+      .style("stroke", 'transparent')
+      .style('fill', fillCountryColor);
       //.style('opacity', minOpacity);
 
       if (index > -1) {
@@ -166,6 +183,7 @@ const makeMap = () => {
         d3.select('#map-holder')
           .select('#' + selectedCountries[i].id)
           .style('stroke', strokeColorMap)
+          .style('fill', selectedColors[i])
           .style('opacity', maxOpacity);
       };
     } 

@@ -76,7 +76,7 @@ Controller.prototype.notifyYearFiltered = function () {
 Controller.prototype.notifyMapFiltered = function () {
     //console.log('Map filtered!')  // needs complete reload
     updateLegend()
-    updateMap()      // => see why opacity on other states + select back countries !!!!!!!!!!!!!!
+    //updateMap()      // => see why opacity on other states + select back countries !!!!!!!!!!!!!!
     updateSexChart()
     updateAgeChart() 
     updateScatter()
@@ -115,7 +115,7 @@ Controller.prototype.notifySexFilteredWithSelectedMap = function () {   //!!!!!!
     //console.log('sex filtered!')
     
     updateAgeChart()
-    updateMap()      // => see why opacity on other states + select back countries
+    //updateMap()      // => see why opacity on other states + select back countries
     drawRadar()
     // updateLineChart
     // updateMap => with the selected countries
@@ -127,7 +127,7 @@ Controller.prototype.notifyAgeFilteredWithSelectedMap = function () {   //!!!!!!
     //console.log('age filtered!')
     
     updateSexChart()
-    updateMap()      // => see why opacity on other states + select back countries  !!!!!!!!!!
+    //updateMap()      // => see why opacity on other states + select back countries  !!!!!!!!!!
     drawRadar()
     // updateLineChart
     // updateMap => with the selected countries

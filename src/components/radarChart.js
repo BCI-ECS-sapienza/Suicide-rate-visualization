@@ -30,9 +30,9 @@ let center = {
   x: width/2,
   y: height/2
 }
-const selectedColors = ['#d8b365',
-  '#f5f5f5',
-  '#5ab4ac'];
+const selectedColors = ['#af8dc3',
+  '#f7f7f7',
+  '#7fbf7b'];
 
 const ticks = generateTicks(levels);
 
@@ -242,7 +242,7 @@ function generateAndDrawLevels(levelsCount, sidesCount){
 function generateAndDrawLines(sidesCount){
   const group = g.append('g')
     .attr('class', 'grid-lines')
-    .attr('stroke', 'lightgreen');
+    .attr('stroke', '#377eb8');
   
   for(let vertex = 1; vertex<=sidesCount; vertex++){
     const theta = vertex * polyangle;
@@ -384,26 +384,11 @@ function drawData(dataset, n, feature_scale){
         drawLegendCountries(dataset[el][key], selectedColors[el], parseInt(el)+1)
       }
     }
-    
     drawCircles(points, selectedColors[el]);
     
     // draw shapes
     let group = g.append( "g" ).attr( "class", "shape" );
     points = points.concat(points[0]);
-    
-    /*const lineGenerator = d3.line()
-      .x(d => d.x)
-      .y(d => d.y);
-    console.log(lineGenerator(points))
-    const shape = group.append('path')
-      .attr('d', lineGenerator(points))
-      .attr('fill', selectedColors[el])
-      .style('opacity', .5)
-    
-    shape
-      
-      .on('mouseover', mouseOver)
-      .on('mouseout', mouseOut);*/
 
     const areaGenerator = d3.area();
       
