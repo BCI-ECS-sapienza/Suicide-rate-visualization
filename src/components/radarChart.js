@@ -334,10 +334,15 @@ function drawCircles(points, color){
         .data( points )
         .enter()
         .append( "circle" )
-        .attr( "cx", d => d.x )
-        .attr( "cy", d => d.y )
+        .attr( "cx", center.x)
+        .attr("cy", center.y)
         .attr( "r", 3 )
-        .style('fill', color);
+        .style('fill', color)
+        .transition()
+        .duration(700)
+        .ease(d3.easeLinear)
+        .attr( "cx", d => d.x )
+        .attr( "cy", d => d.y );
 };
 
 const mouseOver = function (d) {
@@ -379,21 +384,52 @@ function drawData(dataset, n, feature_scale){
         drawLegendCountries(dataset[el][key], selectedColors[el], parseInt(el)+1)
       }
     }
-    let group = g.append( "g" ).attr( "class", "shape" );
     
+    drawCircles(points, selectedColors[el]);
+    
+    // draw shapes
+    let group = g.append( "g" ).attr( "class", "shape" );
     points = points.concat(points[0]);
     
-    const lineGenerator = d3.line()
+    /*const lineGenerator = d3.line()
       .x(d => d.x)
       .y(d => d.y);
-  
-    group.append('path')
+    console.log(lineGenerator(points))
+    const shape = group.append('path')
       .attr('d', lineGenerator(points))
       .attr('fill', selectedColors[el])
       .style('opacity', .5)
+    
+    shape
+      
       .on('mouseover', mouseOver)
-      .on('mouseout', mouseOut);
-    drawCircles(points, selectedColors[el]);
+      .on('mouseout', mouseOut);*/
+
+    const areaGenerator = d3.area();
+      
+    const coordinates = [];
+    points.forEach((d)=>{
+      coordinates.push([d.x, d.y]);
+    })
+    const zero_coordinates = [];
+    points.forEach((d) => {
+      zero_coordinates.push([center.x, center.y]);
+    })
+    
+    const zero_pathArea = areaGenerator(zero_coordinates);
+    const pathArea = areaGenerator(coordinates);
+    
+    group.append('path')
+      .attr('d',zero_pathArea)
+      .attr('fill', selectedColors[el])
+      .style('opacity', .5)
+      .on('mouseover', mouseOver)
+      .on('mouseout', mouseOut)
+      .transition()
+      .duration(700)
+      
+      .attr('d', pathArea);
+         
   }
 }
 
