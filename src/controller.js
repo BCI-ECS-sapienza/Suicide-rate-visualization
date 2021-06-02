@@ -81,7 +81,7 @@ Controller.prototype.notifyMapFiltered = function () {
     updateAgeChart() 
     updateScatter()
     drawRadar(); 
-    // lineChart()  !!!!!!!!
+    makeLineChart(); // !!!!!!!!!!!!!!!
     
 }
 
@@ -117,6 +117,7 @@ Controller.prototype.notifySexFilteredWithSelectedMap = function () {   //!!!!!!
     updateAgeChart()
     //updateMap()      // => see why opacity on other states + select back countries
     drawRadar()
+    // makeLineChart() // !!!!!!!!!!!!!!!!!!!!!!!!!!
     // updateLineChart
     // updateMap => with the selected countries
     this.isScatterFilteredByBars = true; 
