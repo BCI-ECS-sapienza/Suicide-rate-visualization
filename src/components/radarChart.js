@@ -361,7 +361,7 @@ function drawData(dataset, n, feature_scale){
     //console.log(dataset[el]);
     let points = [];
     let i = 0;
-
+    let name = '';
     // loop on elements of dictionary
     for(let key in dataset[el]){
       //console.log(dataset[el][key]);
@@ -382,6 +382,7 @@ function drawData(dataset, n, feature_scale){
       }
       else{
         drawLegendCountries(dataset[el][key], selectedColors[el], parseInt(el)+1)
+        name = dataset[el][key];
       }
     }
     drawCircles(points, selectedColors[el]);
@@ -405,16 +406,26 @@ function drawData(dataset, n, feature_scale){
     const pathArea = areaGenerator(coordinates);
     
     group.append('path')
+      .attr('id', name)
+      .attr('class', 'country')
       .attr('d',zero_pathArea)
-      .attr('fill', selectedColors[el])
+      .style('fill', selectedColors[el])
       .style('opacity', .5)
       .on('mouseover', mouseOver)
       .on('mouseout', mouseOut)
       .transition()
       .duration(700)
-      
       .attr('d', pathArea);
          
+  }
+  for( let i = 0; i<controller.selectedCountries.length; i++){
+    //console.log(svgRadar.select('#' + controller.selectedCountries[i].id));
+    console.log(controller.selectedCountries[i].id);
+    console.log(svgRadar.select('#' + controller.selectedCountries[i].id).style('fill'));
+    console.log(map.select('#' + controller.selectedCountries[i].id));
+    map
+      .select('#' + controller.selectedCountries[i].id)
+      .style('fill', svgRadar.select('#' + controller.selectedCountries[i].id).style('fill'));
   }
 }
 
