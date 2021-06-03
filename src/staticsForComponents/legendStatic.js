@@ -4,7 +4,7 @@ const initial_height_legend = document.getElementById('map-legend').offsetHeight
 const colorLabel = 'Suicides/100k pop';
 const classesInterval = 10;
 const namesPerRowTooltip = 10;
-const opacityNotOver = 0.3;
+const opacityNotOver = 0.5;
 
 
 // set the dimensions and margins of the graph
