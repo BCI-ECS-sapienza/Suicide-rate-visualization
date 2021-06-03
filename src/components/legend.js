@@ -52,12 +52,12 @@ const makeLegend = () => {
     }
 
     const getMeanStroke = function (d) {
-        if (avg > d && avg < d+classesInterval) return 'green'
+        if (avg > d && avg < d+classesInterval) return '#80cdc1'
         else return null
     }
 
     const getMeanWidth = function (d) {
-        if (avg > d && avg < d+classesInterval) return 2
+        if (avg > d && avg < d+classesInterval) return 3
     }
 
 
