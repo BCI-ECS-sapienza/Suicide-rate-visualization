@@ -191,25 +191,11 @@ const makeScatterPlot = () => {
         // for each selected bar, add the value inside the array
         arraySelectedBars = svgAge.selectAll('.selected-object')._groups[0]
         arraySelectedBars.forEach(element => {
-        selectedValuesAge.add( yValueAge(element.__data__) )
+            selectedValuesAge.add( yValueAge(element.__data__) )
         });
 
-        console.log(selectedValuesAge)
-
-        // remove old avg line for update
-        svgAge.selectAll('.avg-line-selected').remove();
-        svgAge.selectAll('.avg-label-selected').remove();
-
-        // show avg line for only selected bars (if anything selected)
-        if (selectedValuesAge.size > 0){
-
-        // add avg line selected
-        const avg_value_selected = Math.round(sumSet(selectedValuesAge)/selectedValuesAge.size *10) /10;
-        const avg_value_scaled_selected = yScaleAge(avg_value_selected)
-        printAvgYonSelection(svgAge, avg_value_selected, avg_value_scaled_selected, width_ageChart)
-
-        } 
-
+        // function inside helper
+        updateAvgAgeBar()
     }
 
 
