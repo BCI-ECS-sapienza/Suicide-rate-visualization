@@ -1,14 +1,6 @@
 const widthLineChart = document.getElementById('lineChart').offsetWidth;
 const heightLineChart = document.getElementById('lineChart').offsetHeight;
 
-// this line is only to work on lineChart
-//////////////////////////////////////////
-//////////////////////////////////////////
-//svgScatterPlot
-    //.style('opacity', 0);
-//////////////////////////////////////////
-//////////////////////////////////////////
-
 function createDictionary(country, aggregate){
     let res = '{"key": "' + country + '",';
     let year = 1985;
