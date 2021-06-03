@@ -41,6 +41,15 @@ const makeLegend = () => {
                     return opacityNotOver 
             })
 
+        // change opacity not over on scatter
+        map.selectAll('path')
+            .style('opacity', (d) => {
+                if (d.total> start && d.total < end)
+                    return 1
+                else 
+                    return opacityNotOver 
+            })
+
     }    
 
     const leaveLegend = function (d) {	
@@ -49,6 +58,9 @@ const makeLegend = () => {
 
         svgScatterPlot.selectAll('circle')
             .style('opacity',  1)
+        
+        map.selectAll('path')
+        .style('opacity', 1)
     }
 
     const labelSet = (d) => {
