@@ -4,31 +4,41 @@ const makeSexChart = () => {
 
   // callback for mouseover bar
   const mouseOver = function (actual, i) {
-    
-    // enlarge bar
-    d3.select(this)
-      .transition()
-      .duration(sex_transition_time)
-      .attr('x', (d) => xScaleSex(xValueSex(d)) - 5)
-      .attr('width', xScaleSex.bandwidth() + 10)
-      .style("cursor", "pointer");
+    // check needed to avoid bug floating bars
+    const nowSize = +this.attributes.y.value
+    const finalSize = yScaleSex(this.__data__.value.suicides_pop)
 
-    // show difference on bar insted of orignal value
-    d3.selectAll('.bar-value-sex')  
-      .text((d, idx) => {
-        const divergence = (yValueSex(d) - actual.value.suicides_pop).toFixed(1)
-        
-        let text = ''
-        if (divergence > 0) text += '+'
-        text += `${divergence}`
+    if (+nowSize == finalSize){
+      // enlarge bar
+      d3.select(this)
+        .transition()
+        .duration(sex_transition_time)
+        .attr('x', (d) => xScaleSex(xValueSex(d)) - 5)
+        .attr('width', xScaleSex.bandwidth() + 10)
+        .style("cursor", "pointer");
 
-        return idx !== i ? text : `${actual.value.suicides_pop}`;
-      })
+      // show difference on bar insted of orignal value
+      d3.selectAll('.bar-value-sex')  
+        .text((d, idx) => {
+          const divergence = (yValueSex(d) - actual.value.suicides_pop).toFixed(1)
+          
+          let text = ''
+          if (divergence > 0) text += '+'
+          text += `${divergence}`
+
+          return idx !== i ? text : `${actual.value.suicides_pop}`;
+        })
+      }
   }
+
 
   // callback for mouseLeave bar
   const mouseLeave = function () {
+    // check needed to avoid bug floating bars
+    const nowSize = +this.attributes.y.value
+    const finalSize = yScaleSex(this.__data__.value.suicides_pop)
 
+    if (+nowSize == finalSize){
     // bar to normal size
     d3.select(this)
       .transition()
@@ -38,7 +48,9 @@ const makeSexChart = () => {
 
     d3.selectAll('.bar-value-sex')  
       .text( (d) => yValueSex(d))
+    }
   }
+
 
   // callback for mouseClick bar (with all countries shown)
   const mouseClick = function (e) {
@@ -68,21 +80,8 @@ const makeSexChart = () => {
       selectedValuesAge.add( yValueAge(element.__data__) )
     });
 
-    console.log(selectedValuesAge)
-
-    // remove old avg line for update
-    svgAge.selectAll('.avg-line-selected').remove();
-    svgAge.selectAll('.avg-label-selected').remove();
-
-    // show avg line for only selected bars (if anything selected)
-    if (selectedValuesAge.size > 0){
-
-      // add avg line selected
-      const avg_value_selected = Math.round(sumSet(selectedValuesAge)/selectedValuesAge.size *10) /10;
-      const avg_value_scaled_selected = yScaleAge(avg_value_selected)
-      printAvgYonSelection(svgAge, avg_value_selected, avg_value_scaled_selected, width_ageChart)
-
-    } 
+    // function inside helper
+    updateAvgAgeBar()
   }
 
 

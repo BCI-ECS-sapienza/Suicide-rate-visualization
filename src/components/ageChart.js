@@ -4,29 +4,41 @@ const makeAgeChart = () => {
 
   // callback for mouseover bar
   const mouseOver = function (actual, i) {
-    // show difference on bar insted of orignal value
-    d3.selectAll('.bar-value-age')  
-    .text((d, idx) => {
-      const divergence = (yValueAge(d) - actual.value.suicides_pop).toFixed(1)
-      
-      let text = ''
-      if (divergence > 0) text += '+'
-      text += `${divergence}`
+    // check needed to avoid bug floating bars
+    const nowSize = +this.attributes.y.value
+    const finalSize = yScaleAge(this.__data__.value.suicides_pop)
 
-      return idx !== i ? text : `${actual.value.suicides_pop}`;
-    })
+    if (+nowSize == finalSize){
+      // show difference on bar insted of orignal value
+      d3.selectAll('.bar-value-age')  
+      .text((d, idx) => {
+        const divergence = (yValueAge(d) - actual.value.suicides_pop).toFixed(1)
+        
+        let text = ''
+        if (divergence > 0) text += '+'
+        text += `${divergence}`
 
-    // enlarge bar
-    d3.select(this)
+        return idx !== i ? text : `${actual.value.suicides_pop}`;
+      })
+  
+      // enlarge bar
+      d3.select(this)
       .transition()
       .duration(300)
       .attr('x', (d) => xScaleAge(xValueAge(d)) - 5)
       .attr('width', xScaleAge.bandwidth() + 10)
       .style("cursor", "pointer");
+    }
   }
+
 
   // callback for mouseLeave bar
   const mouseLeave =  function () {
+    // check needed to avoid bug floating bars
+    const nowSize = +this.attributes.y.value
+    const finalSize = yScaleAge(this.__data__.value.suicides_pop)
+
+    if (+nowSize == finalSize){
     // bar to normal size
     d3.select(this)
       .transition()
@@ -36,8 +48,10 @@ const makeAgeChart = () => {
 
     d3.selectAll('.bar-value-age')  
       .text( (d) => yValueAge(d))
+    }
     
   }
+
 
   // callback for mouseClick bar (with all countries shown)
   const mouseClick = function (e) {
@@ -59,21 +73,8 @@ const makeAgeChart = () => {
     else 
       controller.triggerAgeFilterEventWithSelectedMap(selectedBarsAge);
 
-      console.log(selectedValuesAge)
-
-    // remove old avg line for update
-    svgAge.selectAll('.avg-line-selected').remove();
-    svgAge.selectAll('.avg-label-selected').remove();
-
-    // show avg line for only selected bars (if anything selected)
-    if (selectedValuesAge.size > 0){
-
-      // add avg line selected
-      const avg_value_selected = Math.round(sumSet(selectedValuesAge)/selectedValuesAge.size *10) /10;
-      const avg_value_scaled_selected = yScaleAge(avg_value_selected)
-      printAvgYonSelection(svgAge, avg_value_selected, avg_value_scaled_selected, width_ageChart)
-
-    } 
+    // function inside helper
+    updateAvgAgeBar()
   }
 
 
@@ -171,7 +172,7 @@ const makeAgeChart = () => {
     .transition()
     .duration(controller.transitionTime/2)
     .attr('x', (d) => xScaleAge(xValueAge(d)))
-    .attr('y', (d) =>  yScaleAge(yValueAge(d)))
+    .attr('y', (d) => yScaleAge(yValueAge(d)))
     .attr('height', (d) => height_ageChart - yScaleAge(yValueAge(d)))
     .attr('width', xScaleAge.bandwidth())
     .style("fill",  (d) => colorScale(yValueAge(d)))

@@ -119,6 +119,22 @@ const AxisTickFormat = number =>
 // sum values inside set
 const sumSet = mySet => [...mySet].reduce((a,b) => a + b, 0)
 
+const updateAvgAgeBar = function () {
+  // remove old avg line for update
+  svgAge.selectAll('.avg-line-selected').remove();
+  svgAge.selectAll('.avg-label-selected').remove();
+
+  // show avg line for only selected bars (if anything selected)
+  if (selectedValuesAge.size > 0){
+
+    // add avg line selected
+    const avg_value_selected = Math.round(sumSet(selectedValuesAge)/selectedValuesAge.size *10) /10;
+    const avg_value_scaled_selected = yScaleAge(avg_value_selected)
+    printAvgYonSelection(svgAge, avg_value_selected, avg_value_scaled_selected, width_ageChart)
+
+  } 
+}
+
 
 // functions to print avg lines
 const printAvgY = (svg, avg_value_y, avg_value_scaled_y, width) => {
