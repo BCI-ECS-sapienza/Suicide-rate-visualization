@@ -81,7 +81,7 @@ const makeMap = () => {
             return svgRadar.select('#' + this.id).style('fill');// fillColorMap;
           }
         }
-        else{
+        /*else{
           const newData = aggregateDataByCountry(controller.dataMapScatter);
           for( let j = 0; j<newData.length; j++){
             if(this.id === newData[j].key){
@@ -91,7 +91,7 @@ const makeMap = () => {
               return colorScale(newData[j].value.suicides_pop);
             }
           }
-        }
+        }*/
       })
       .style('opacity', () => {
         if(controller.selectedCountries.length != 0){
@@ -137,20 +137,20 @@ const makeMap = () => {
       d3.select(this)
         .style("stroke", 'transparent')
         .style('fill', (d) => {
-          /*if(d.total === "Missing data"){
+          if(d.total === "Missing data"){
             return '#DCDCDC';
           }
           else{
             return colorScale(d.total);
-          }*/
-          for( let j = 0; j<newData.length; j++){
+          }
+          /*for( let j = 0; j<newData.length; j++){
             if(this.id === newData[j].key){
               if(newData[j].value.suicides_pop === "Missing data") 
               return '#DCDCDC';
             else
               return colorScale(newData[j].value.suicides_pop);
             }
-          }
+          }*/
         });
 
       if (index > -1) {
@@ -189,8 +189,6 @@ const makeMap = () => {
         if (index > -1) {
           selectedCountries.splice(index, 1);
         }
-        
-        //console.log(firstAdded.id);
 
         d3.select('#map-holder')
           .select('#' + firstAdded.id)
