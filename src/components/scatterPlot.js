@@ -324,7 +324,7 @@ const makeScatterPlot = () => {
 
 // toggle brush when press button
 const toggleBrush = () => {
-    if (scatter_toggle_brush ==  false) {
+    if (scatter_toggle_brush == false) {
         // add brushing
         scatterArea
             .append("g")

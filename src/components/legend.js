@@ -9,13 +9,13 @@ const makeLegend = () => {
         // get all countries with suicide/100k pop inside the interval
         const start = +this.attributes.class.value
         const end = +this.attributes.class.value + classesInterval 
-        const countries = dataFiltered.filter(((d) => d.value.suicides_pop > start && d.value.suicides_pop < end))
+        const countries = dataFiltered.filter(((d) => colorValueScatter(d) > start && colorValueScatter(d) < end))
 
         // make a string iterating on filtered countries
         let string = ''
         let count = 0
         countries.forEach((element, i) => {
-            if (count < 10) {
+            if (count < namesPerRowTooltip) {
                 string += `${element.key}, `
                 count = 0
             } else 
@@ -32,11 +32,23 @@ const makeLegend = () => {
             .style("left", (d3.mouse(this)[0] + 40) + widthMap + "px")   
             .style("top", (d3.mouse(this)[1]) + 90 + "px") //heightMap + "px")
 
+        // change opacity not over on scatter
+        svgScatterPlot.selectAll('circle')
+            .style('opacity', (d) => {
+                if (colorValueScatter(d) > start && colorValueScatter(d) < end)
+                    return 1
+                else 
+                    return opacityNotOver 
+            })
+
     }    
 
     const leaveLegend = function (d) {	
         tooltipLegend
             .style("opacity", 0)
+
+        svgScatterPlot.selectAll('circle')
+            .style('opacity',  1)
     }
 
     const labelSet = (d) => {
