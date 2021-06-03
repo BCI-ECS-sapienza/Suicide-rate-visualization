@@ -59,15 +59,14 @@ const makeAgeChart = () => {
     else 
       controller.triggerAgeFilterEventWithSelectedMap(selectedBarsAge);
 
+      console.log(selectedValuesAge)
+
     // remove old avg line for update
     svgAge.selectAll('.avg-line-selected').remove();
     svgAge.selectAll('.avg-label-selected').remove();
 
     // show avg line for only selected bars (if anything selected)
     if (selectedValuesAge.size > 0){
-      // remove basic avg
-      //svgAge.selectAll('.avg-line').remove();
-      //svgAge.selectAll('.avg-label').remove();
 
       // add avg line selected
       const avg_value_selected = Math.round(sumSet(selectedValuesAge)/selectedValuesAge.size *10) /10;
