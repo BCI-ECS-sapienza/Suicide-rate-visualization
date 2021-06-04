@@ -1,5 +1,140 @@
-const widthLineChart = document.getElementById('lineChart').offsetWidth;
-const heightLineChart = document.getElementById('lineChart').offsetHeight;
+const initial_width_LineChart = document.getElementById('scatterPlot').offsetWidth;
+const initial_height_LineChart = document.getElementById('scatterPlot').offsetHeight;
+
+// set the dimensions and margins of the graph
+const margin_LineChart = {top: 25, right: 40, bottom: 55, left: 5},
+    width_LineChart = initial_width_LineChart - margin_LineChart.left - margin_LineChart.right,
+    height_LineChart = initial_height_LineChart - margin_LineChart.top - margin_LineChart.bottom;
+
+const lineChart_xLabel = 'Years';
+const lineChart_yLabel = 'Suicides_pop';
+
+// append the svg object to the body of the page
+var svgLine = d3.select("#scatterPlot")
+    .append("svg")
+    .attr('opacity', 0)
+    .attr("width", width_LineChart)
+    .attr("height", height_LineChart)
+    //.attr("transform", "translate(" + 20 + "," + 30 + ")")
+    ;
+
+function makeLineChart(){
+    svgLine
+        .attr('opacity', 1);
+    //const data = getLineChartData();
+
+    // set scales ranges 
+    const xScaleLineChart = d3.scaleLinear() 
+    .range([ 0, width_LineChart])
+
+    const yScaleLineChart = d3.scaleLinear()
+        .range([ height_LineChart, 0])
+        .nice();
+
+    // set and compute axis domain   
+    const domain_min_x = 1985;
+    const domain_max_x = 2016;
+    const domain_min_y = 0;
+
+
+    const yData = controller.dataAll;
+    const scale = [0, 0, 0];
+    const yValueScatter = d => d.value.suicides_pop;
+    let domain_max_y = 0;
+
+    for( let i = 0; i<controller.selectedCountries.length; i++){
+        const country = controller.selectedCountries[i].id;
+        const dataFiltered = yData.filter(d => d.country == country);
+        
+        if(dataFiltered.length > 0){
+            const aggregate = aggregateDataByYearLineChart(dataFiltered);
+            const max_val_aggregate_y = d3.max(aggregate, yValueScatter)
+            scale[i] = max_val_aggregate_y;
+        }
+    }
+
+    domain_max_y = d3.max(scale); 
+    
+    if(domain_max_y < 30){
+        domain_max_y = 30;
+    }
+    else{
+        domain_max_y = parseInt(domain_max_y) + parseInt(domain_max_y/10)
+    } 
+    
+    // set axis domain
+    xScaleScatter.domain([domain_min_x, domain_max_x ]);
+    yScaleScatter.domain([domain_min_y, domain_max_y ]);
+
+    // axis setup
+    const xAxis = d3.axisBottom(xScaleScatter).tickFormat(AxisTickFormat);
+    const yAxis = d3.axisLeft(yScaleScatter).tickFormat(AxisTickFormat);
+
+    // add label left
+    const lineChart_left_label_x = ((margin_LineChart.left/5) * 3) +3;
+    const lineChart_left_label_y = (height_LineChart/2);
+    svgLine.append('text')
+        .attr('class', 'axis-label')
+        .attr("text-anchor", "middle")
+        .attr("transform", `translate(${-lineChart_left_label_x}, ${lineChart_left_label_y}), rotate(-90)`) 
+        .text(lineChart_yLabel)
+
+
+    // add label bottom
+    const lineChart_bottom_label_x = width_LineChart/2;
+    const lineChart_bottom_label_y = height_LineChart + ((margin_LineChart.bottom/6)*5);
+    svgLine.append('text')
+        .attr('class', 'axis-label')
+        .attr("text-anchor", "middle")
+        .attr("transform", `translate(${lineChart_bottom_label_x},${lineChart_bottom_label_y})`) //to put on bottom
+        .text(lineChart_xLabel)
+
+    // add X axis
+    const lineChartXAxisSvg = svgLine.append("g")
+    .attr("transform", "translate(0," + height_LineChart + ")"); //to put on bottom
+
+    // add Y axis
+    const lineChartYAxisSvg = svgLine.append("g");
+
+    // add Grids
+    const lineChartXGridSvg = svgLine.append('g').attr('class', 'grid-scatter');
+    const lineChartYGridSvg = svgLine.append('g').attr('class', 'grid-scatter');
+
+
+    // call x Axis
+    lineChartXAxisSvg.transition()
+        .duration(controller.transitionTime/2)
+        .call(xAxis)
+            .selectAll("text")  //text color
+                .attr("class","axis-text");
+
+    // call Y axis
+    lineChartYAxisSvg.transition()
+        .duration(controller.transitionTime/2)
+        .call(yAxis)
+        .selectAll("text")
+            .attr("class","axis-text");
+
+            
+    // call Grid veritcal
+    lineChartXGridSvg
+        .transition()
+        .duration(controller.transitionTime/2)
+        .attr('transform', `translate(0, ${height_LineChart})`)
+        .call(d3.axisBottom()
+            .scale(xScaleLineChart)
+            .tickSize(-height_LineChart, 0, 0)
+            .tickFormat(''))
+
+    // call Grid oriziontal
+    lineChartYGridSvg 
+        .transition()
+        .duration(controller.transitionTime/2)
+        .call(d3.axisLeft()
+            .scale(yScaleLineChart)
+            .tickSize(-width_LineChart, 0, 0)
+            .tickFormat(''))
+}
 
 function createDictionary(country, aggregate){
     let res = '{"key": "' + country + '",';
@@ -44,7 +179,7 @@ function createDictionary(country, aggregate){
     return res;
 }
 
-function makeLineChart(){
+function getLineChartData(){
     const data = controller.dataAll;
     
     let dataLine = [];
@@ -98,5 +233,5 @@ function makeLineChart(){
             });
         }
     }
+    return dataLine;
 }
-
