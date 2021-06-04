@@ -414,7 +414,7 @@ function drawData(dataset, n, feature_scale){
       .on('mouseover', mouseOver)
       .on('mouseout', mouseOut)
       .transition()
-      .duration(700)
+      .duration(900)
       .attr('d', pathArea);
          
   }
