@@ -17,6 +17,9 @@ let firstAdded = null; // used to save the oldest between selected states
 const nameMap = (d) => d.properties.name; 
 const totalMap = (d) =>  d.total;
 
+const countryMap = (d) => d.key
+const suicidesValue = (d) => d.value.suicides_pop;
+
 // zoom and pan
 let zoomMap = d3.zoom()
     .scaleExtent([1, 2.5])

@@ -4,16 +4,19 @@ const makeMap = () => {
 
   // initial fill color for country
   const fillCountryColor = function (d) {
-    for(let el in data){
-      if(data[el].key == nameMap(d)){
-        return colorScale(data[el].suicides_pop);
-      }
+    if(typeof(data.get(nameMap(d))) === "undefined"){
+      d.total = 'Missing data';
+      return '#DCDCDC'; 
     }
-    return '#DCDCDC';     
+    else{
+      d.total = data.get(nameMap(d));
+      return colorScale(d.total);
+    }        
   }
 
   // callback for mouseover country
   const mouseOver = function (d) {
+    const selectedCountries = controller.selectedCountries;
 
     d3.select(this)
       .style("fill", fillColorMap)
@@ -64,38 +67,39 @@ const makeMap = () => {
           let flag = false;
           for(var i = 0; i<selectedCountries.length; i++){
             
-            if(selectedCountries[i].id == nameMap(d)){
+            if(selectedCountries[i].id == this.id){
               flag = true;
             }  
-          } 
+          }          
           if(!flag){
-            for(let el in data){
-              if(data[el].key == nameMap(d)){
-                return colorScale(data[el].suicides_pop);
-              }
+            if(d.total === "Missing data") 
+              return '#DCDCDC';
+            else{
+              d.total = data.get(nameMap(d));
+              return colorScale(d.total);
             }
-            return '#DCDCDC';
+              
           }
           else{
-            return svgRadar.select('#' + nameMap(d)).style('fill');
+            return svgRadar.select('#' + this.id).style('fill');// fillColorMap;
           }
         }
         else{
-          for(let el in data){
-            if(data[el].key == nameMap(d)){
-              return colorScale(data[el].suicides_pop);
+          if(d.total === "Missing data") 
+              return '#DCDCDC';
+            else{
+              d.total = data.get(nameMap(d));
+              return colorScale(d.total);
             }
-          }
-          return '#DCDCDC';
         }
       })
-      .style('opacity', (d) => {
+      .style('opacity', () => {
         if(controller.selectedCountries.length != 0){
           let flag = false;
 
           for(var i = 0; i<selectedCountries.length; i++){
             
-            if(selectedCountries[i].id == nameMap(d))
+            if(selectedCountries[i].id == this.id)
               flag = true;
           }          
           if(!flag){
@@ -129,17 +133,17 @@ const makeMap = () => {
         
     if(selectedCountries.includes(this)){
       const index = selectedCountries.indexOf(this);
-      const newData = aggregateDataByCountry(controller.dataMapScatter);
+      const newData = aggregateDataByCountry(controller.dataYear);
       d3.select(this)
         .style("stroke", 'transparent')
         .style('fill', (d) => {
-          for(let el in data){
-            if(data[el].key == nameMap(d)){
-              console.log('Here');
-              return colorScale(data[el].suicides_pop);
-            }
+          if(d.total === "Missing data"){
+            return '#DCDCDC';
           }
-          return '#DCDCDC';
+          else{
+            d.total = data.get(nameMap(d));
+            return colorScale(d.total);
+          }
         });
 
       if (index > -1) {
@@ -183,12 +187,13 @@ const makeMap = () => {
           .select('#' + firstAdded.id)
           .style('stroke', 'transparent')
           .style('fill', (d) => {
-            for(let el in data){
-              if(data[el].key == nameMap(d)){
-                return colorScale(data[el].suicides_pop);
-              }
+            if(d.total === "Missing data"){
+              return '#DCDCDC';
             }
-            return '#DCDCDC';
+            else{
+              d.total = data.get(nameMap(d));
+              return colorScale(d.total);
+            }
           })
           .style('opacity', minOpacity);
 
@@ -200,28 +205,23 @@ const makeMap = () => {
       
       if(selectedCountries.length === 1){
         const newData = aggregateDataByCountry(controller.dataYear);
-        for(let item in newData){
-          for(let el in data){
-            if(data[el].key == newData[item].key){
-              data[el].suicides_pop = newData[item].value.suicides_pop;
+        for( let j = 0; j<newData.length; j++){
+          data.set(newData[j].key, +newData[j].value.suicides_pop);
+          
+          d3.select('#map-holder')
+          .select('#' + newData[j].key)
+          .style('stroke', 'transparent')
+          .style('fill', (d) => {
+            if(newData[j].value.suicides_pop === "Missing data"){
+              return '#DCDCDC';
             }
-          }
+            else{
+              d.total = data.get(nameMap(d));
+              return colorScale(newData[j].value.suicides_pop);
+            }
+          })
+          .style('opacity', minOpacity);
         }
-        
-        d3.select('#map-holder')
-        .select('#' + nameMap(d))
-        .style('stroke', 'transparent')
-        .style('fill', (d) => {
-          
-          
-          for(let el in data){
-            if(data[el].key == nameMap(d)){
-              return colorScale(data[el].suicides_pop);
-            }
-          }
-          return '#DCDCDC';
-        })
-        .style('opacity', minOpacity);
       }
 
       for(var i = 0; i<selectedCountries.length; i++){
@@ -257,10 +257,11 @@ const makeMap = () => {
   const colorScale = controller.colorScale;
 
   // extract values for colorScale
-  let data = [];
+  const data = d3.map();
   for (var i = 0; i<dataFiltered.length; i++){
-    data.push({'key': dataFiltered[i].key, 'suicides_pop': dataFiltered[i].value.suicides_pop});
-  } 
+    data.set(dataFiltered[i].key, +dataFiltered[i].value.suicides_pop);
+  }   
+  //console.log(data);
 
   // add zoom
   d3.select('#map-holder').call(zoomMap);
@@ -279,9 +280,9 @@ const makeMap = () => {
       .attr("d", d3.geoPath()
         .projection(projection)
       )
-      .attr("id", (d) => nameMap(d))
-      .style("fill", fillCountryColor)
+      .attr("fill", fillCountryColor)
       .style("stroke", "transparent")
+      .attr("id", (d) => nameMap(d))
       .attr("class", "Country")
       .style("opacity", maxOpacity)
       .on("mouseover", mouseOver)
