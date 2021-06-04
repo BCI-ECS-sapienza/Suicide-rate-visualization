@@ -117,7 +117,7 @@ Controller.prototype.notifySexFilteredWithSelectedMap = function () {   //!!!!!!
     updateAgeChart()
     //updateMap()      // => see why opacity on other states + select back countries
     drawRadar()
-    // makeLineChart() // !!!!!!!!!!!!!!!!!!!!!!!!!!
+    makeLineChart() // !!!!!!!!!!!!!!!!!!!!!!!!!!
     // updateLineChart
     // updateMap => with the selected countries
     this.isScatterFilteredByBars = true; 
@@ -130,6 +130,7 @@ Controller.prototype.notifyAgeFilteredWithSelectedMap = function () {   //!!!!!!
     updateSexChart()
     //updateMap()      // => see why opacity on other states + select back countries  !!!!!!!!!!
     drawRadar()
+    makeLineChart()   // !!!!!!!!!!!!!!!!!!!!!!!!!!
     // updateLineChart
     // updateMap => with the selected countries
     this.isScatterFilteredByBars = true; 
@@ -223,12 +224,6 @@ Controller.prototype.yearFilter = function (selectedYear) {
         this.dataAge = this.dataAll;
         this.isYearFiltered = false;  
 
-        // set all filters to initial status
-        this.selectedCountries = [];            
-        this.scatterFilter = null;
-        this.sexFilter = 'All';
-        this.ageFilter = new Set();
-
     } else {
         dataFiltered = this.dataAll.filter((d) => d.year==selectedYear); 
         this.dataYear = dataFiltered;
@@ -237,6 +232,12 @@ Controller.prototype.yearFilter = function (selectedYear) {
         this.dataAge = dataFiltered
         this.isYearFiltered = true; 
     }
+    
+    // set all filters to initial status
+    this.selectedCountries = [];            
+    this.scatterFilter = null;
+    this.sexFilter = 'All';
+    this.ageFilter = new Set();
 }
 
 
