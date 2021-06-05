@@ -24,17 +24,25 @@ const yearSelected = () => {
 // year filter from header
 const switchVisualizationSet = () => {
   if (controller.selectedCountries.length == 0) {
-    svgRadar.style('opacity', 0)            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //svgRadar.style('opacity', 0)            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    document.getElementById('radar').style.display = 'none';
+    document.getElementById('lineChart').style.display = 'none';
     //svgLineChart.style('opacity', 0)
-    svgScatterPlot.style('opacity', 1)
+    //svgScatterPlot.style('opacity', 1)
+    document.getElementById('scatterPlot').style.display = 'block';
+    document.getElementById('pca').style.display = 'block';
     //svgPca.style('opacity', 1)            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    d3.select('#button-brush').style('opacity', 1)
+    //d3.select('#button-brush').style('opacity', 1)
   } else {
-    svgRadar.style('opacity', 1)            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //svgRadar.style('opacity', 1)            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    document.getElementById('radar').style.display = 'block';
+    document.getElementById('lineChart').style.display = 'block';
+    document.getElementById('scatterPlot').style.display = 'none';
+    document.getElementById('pca').style.display = 'none';
     //svgLineChart.style('opacity', 1)
-    svgScatterPlot.style('opacity', 0)
+    //svgScatterPlot.style('opacity', 0)
     //svgPca.style('opacity', 0)            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    d3.select('#button-brush').style('opacity', 0)
+    //d3.select('#button-brush').style('opacity', 0)
   }
   
 };

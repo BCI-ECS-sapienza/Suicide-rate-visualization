@@ -38,7 +38,7 @@ const makeMap = () => {
       .style("top", (d3.mouse(this)[1]) + "px");
 
     // manage circles on scatterPlot
-    const id = '#' + nameMap(d);
+    const id = `#${nameMap(d)}`;
     d3.select('#scatterPlot')
       .select(id)
       .attr("r", scatter_selected_circle_size )
@@ -81,7 +81,7 @@ const makeMap = () => {
               
           }
           else{
-            return svgRadar.select('#' + this.id).style('fill');// fillColorMap;
+            return svgRadar.select(`#${this.id}`).style('fill');
           }
         }
         else{
@@ -120,7 +120,7 @@ const makeMap = () => {
       .style("opacity", 0);
 
     // manage circles on scatterPlot
-    const id = '#' + nameMap(d);
+    const id = `#${nameMap(d)}`;
     d3.select('#scatterPlot')
       .select(id)
       .attr("r", scatter_circle_size )
@@ -161,7 +161,7 @@ const makeMap = () => {
 
         for(var i = 0; i<selectedCountries.length; i++){
           d3.select('#map-holder')
-            .select('#' + selectedCountries[i].id)
+            .select(`#${selectedCountries[i].id}`)
             .style('stroke', strokeColorMap)
             .style('opacity', maxOpacity);
         };
@@ -184,7 +184,7 @@ const makeMap = () => {
         }
 
         d3.select('#map-holder')
-          .select('#' + firstAdded.id)
+          .select(`#${firstAdded.id}`)
           .style('stroke', 'transparent')
           .style('fill', (d) => {
             if(d.total === "Missing data"){
@@ -207,9 +207,9 @@ const makeMap = () => {
         const newData = aggregateDataByCountry(controller.dataYear);
         for( let j = 0; j<newData.length; j++){
           data.set(newData[j].key, +newData[j].value.suicides_pop);
-          
+         
           d3.select('#map-holder')
-          .select('#' + newData[j].key)
+          .select(`#${newData[j].key}`) //+ newData[j].key)
           .style('stroke', 'transparent')
           .style('fill', (d) => {
             if(newData[j].value.suicides_pop === "Missing data"){
@@ -217,16 +217,17 @@ const makeMap = () => {
             }
             else{
               d.total = data.get(nameMap(d));
-              return colorScale(newData[j].value.suicides_pop);
+              return colorScale(d.total);
             }
           })
           .style('opacity', minOpacity);
         }
+        //console.log(data);
       }
 
       for(var i = 0; i<selectedCountries.length; i++){
         d3.select('#map-holder')
-          .select('#' + selectedCountries[i].id)
+          .select(`#${selectedCountries[i].id}`)
           .style('stroke', strokeColorMap)
           .style('opacity', maxOpacity);
       };
