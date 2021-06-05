@@ -4,8 +4,8 @@ const levels = 4;
 const horizontal_margin = 40;
 const vertical_margin = 10;
 
-let width = document.getElementById('radar-pca').offsetWidth //+ horizontal_margin; GET error
-let height = document.getElementById('radar-pca').offsetHeight //+ vertical_margin;
+let width = document.getElementById('pca').offsetWidth //+ horizontal_margin; GET error
+let height = document.getElementById('pca').offsetHeight //+ vertical_margin;
 
 let size = Math.min(width, height);
 
@@ -37,9 +37,9 @@ const selectedColors = ['#af8dc3',
 const ticks = generateTicks(levels);
 
 // define svg 
-const svgRadar = d3.select('#radar-pca')
+const svgRadar = d3.select('#radar')
     .append('svg')
-    .attr('opacity', 0)
+    //.attr('opacity', 0)
     .attr('width', width + 60)
     .attr('height', height)
     .attr("transform", "translate(-" + 2*horizontal_margin + "," + vertical_margin + ")");

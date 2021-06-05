@@ -2,7 +2,7 @@ const initial_width_LineChart = document.getElementById('scatterPlot').offsetWid
 const initial_height_LineChart = document.getElementById('scatterPlot').offsetHeight;
 
 // set the dimensions and margins of the graph
-const margin_LineChart = {top: 25, right: 40, bottom: 55, left: 5},
+const margin_LineChart = {top: 25, right: 30, bottom: 55, left: 80},
     width_LineChart = initial_width_LineChart - margin_LineChart.left - margin_LineChart.right,
     height_LineChart = initial_height_LineChart - margin_LineChart.top - margin_LineChart.bottom;
 
@@ -10,17 +10,16 @@ const lineChart_xLabel = 'Years';
 const lineChart_yLabel = 'Suicides_pop';
 
 // append the svg object to the body of the page
-var svgLine = d3.select("#scatterPlot")
+var svgLine = d3.select("#lineChart")
     .append("svg")
-    .attr('opacity', 0)
-    .attr("width", width_LineChart)
-    .attr("height", height_LineChart)
-    //.attr("transform", "translate(" + 20 + "," + 30 + ")")
-    ;
+    //.attr('opacity', 0)
+    .attr("width", initial_width_LineChart)
+    .attr("height", initial_height_LineChart)
+    .append("g")
+        .attr("transform", "translate(" + margin_scatterPlot.left + "," + margin_scatterPlot.top + ")");
 
 function makeLineChart(){
-    svgLine
-        .attr('opacity', 1);
+
     //const data = getLineChartData();
 
     // set scales ranges 
