@@ -423,6 +423,12 @@ function drawData(dataset, n, feature_scale){
     map
       .select('#' + controller.selectedCountries[i].id)
       .style('fill', svgRadar.select('#' + controller.selectedCountries[i].id).style('fill'));
+    svgLine
+      .selectAll('#' + controller.selectedCountries[i].id)
+      .style('fill', svgRadar.select('#' + controller.selectedCountries[i].id).style('fill'));
+    svgLine
+      .selectAll('#' + controller.selectedCountries[i].id + '-line')
+      .style('stroke', svgRadar.select('#' + controller.selectedCountries[i].id).style('fill'));
   }
 }
 

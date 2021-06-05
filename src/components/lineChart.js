@@ -64,15 +64,22 @@ const lineChartYGridSvg = svgLine.append('g').attr('class', 'grid-lineChart');
 
 
 function makeLineChart(){
+    svgLine
+        .selectAll('.dot')
+        .remove()
+        .exit();
+    svgLine
+        .selectAll('.line-path')
+        .remove()
+        .exit();
 
     const data = getLineChartData();
-    console.log(data);
 
     
     // compute and set domain_max_y for y Axis
     const yData = controller.dataAll;
     const scale = [0, 0, 0];
-    const yValueScatter = d => d.value.suicides_pop;
+    const yValueLineChart = d => d.value.suicides_pop;
     let domain_max_y = 0;
 
     for( let i = 0; i<controller.selectedCountries.length; i++){
@@ -81,7 +88,7 @@ function makeLineChart(){
         
         if(dataFiltered.length > 0){
             const aggregate = aggregateDataByYearLineChart(dataFiltered);
-            const max_val_aggregate_y = d3.max(aggregate, yValueScatter)
+            const max_val_aggregate_y = d3.max(aggregate, yValueLineChart)
             scale[i] = max_val_aggregate_y;
         }
     }
@@ -96,12 +103,15 @@ function makeLineChart(){
     } 
     
     // set axis domain
-    xScaleScatter.domain([domain_min_x, domain_max_x ]);
-    yScaleScatter.domain([domain_min_y, domain_max_y ]);
+    xScaleLineChart.domain([domain_min_x, domain_max_x ]);
+    yScaleLineChart.domain([domain_min_y, domain_max_y ]);
 
     // axis setup
-    const xAxis = d3.axisBottom(xScaleScatter).tickFormat(AxisTickFormat);
-    const yAxis = d3.axisLeft(yScaleScatter).tickFormat(AxisTickFormat);
+    const customTickFormat = number => {
+        return "'" + number.toString().substr(-2);
+    } 
+    const xAxis = d3.axisBottom(xScaleLineChart).tickFormat(customTickFormat);
+    const yAxis = d3.axisLeft(yScaleLineChart);
 
 
     // call x Axis
@@ -138,9 +148,23 @@ function makeLineChart(){
             .tickSize(-width_LineChart, 0, 0)
             .tickFormat(''))
 
+    
+    for( let i=0; i<data.length; i++){
+        
+        const year = '1985' 
+        const country_points = []
+        for( let j=1985; j<2017; j++){
+            drawPoint(j, data[i][j], data[i].key);
+            if(data[i][j] != 0)
+                country_points.push({x: xScaleLineChart(j), y: yScaleLineChart(data[i][j])})
+        }
+        if(country_points.length != 0)
+            drawLine(country_points, data[i].key);
+    }
+    
     // Add the line
     /*
-    svg.append("path")
+    svgLine.append("path")
       .datum(data)
       .attr("fill", "none")
       .attr("stroke", "#69b3a2")
@@ -148,19 +172,7 @@ function makeLineChart(){
       .attr("d", d3.line()
         .x(function(d) { return x(d.date) })
         .y(function(d) { return y(d.value) })
-        )
-    // Add the points
-    svg
-      .append("g")
-      .selectAll("dot")
-      .data(data)
-      .enter()
-      .append("circle")
-        .attr("cx", function(d) { return x(d.date) } )
-        .attr("cy", function(d) { return y(d.value) } )
-        .attr("r", 5)
-        .attr("fill", "#69b3a2")
-    */
+        )*/
 }
 
 function createDictionary(country, aggregate){
@@ -265,4 +277,36 @@ function getLineChartData(){
         }
     }
     return dataLine;
+}
+
+function drawPoint(year, value, country, points){
+    if(value != 0){
+        svgLine
+            .append("g")
+            .append("circle")
+                .attr('id', country)
+                .attr('class', 'dot')
+                .attr("cx", xScaleLineChart(year))
+                .attr("cy", yScaleLineChart(value))
+                .attr("r", 5);
+                //.attr("fill", "#69b3a2");
+    }    
+}
+
+function drawLine(points, country){
+    
+    
+    svgLine.append("path")
+        .attr('id', country+'-line')
+        .attr('class', 'line-path')
+        .datum(points)
+        .attr("stroke", "#69b3a2")
+        .attr("stroke-width", 1.5)
+        .attr("d", d3.line()
+          .x(function(d) { return d.x })
+          .y(function(d) { return d.y })
+          )
+        .style("fill", "none");
+        
+
 }
