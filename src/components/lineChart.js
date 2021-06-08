@@ -7,7 +7,7 @@ const margin_LineChart = {top: 25, right: 30, bottom: 55, left: 80},
     height_LineChart = initial_height_LineChart - margin_LineChart.top - margin_LineChart.bottom;
 
 const lineChart_xLabel = 'Years';
-const lineChart_yLabel = 'Suicides_pop';
+const lineChart_yLabel = 'Suicides/100k pop';
 
 // append the svg object to the body of the page
 var svgLine = d3.select("#lineChart")
@@ -223,7 +223,7 @@ function createDictionary(country, aggregate){
 }
 
 function getLineChartData(){
-    const data = controller.dataAll;
+    const data = controller.dataLineChart;
     
     let dataLine = [];
     
