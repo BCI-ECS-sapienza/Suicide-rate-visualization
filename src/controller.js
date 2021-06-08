@@ -17,6 +17,7 @@ Controller = function () {
     this.dataMapScatter;
     this.dataSex;
     this.dataAge;
+    this.dataLineChart;
     this.countryNames;
 
     // global static values
@@ -43,6 +44,7 @@ Controller.prototype.loadData = function () {
         _obj.dataMapScatter = data;
         _obj.dataSex = data;
         _obj.dataAge = data;
+        _obj.dataLineChart = data;
         _obj.countryNames = countries;
 
         // set suicide colorScale
@@ -76,11 +78,10 @@ Controller.prototype.notifyYearFiltered = function () {
 Controller.prototype.notifyMapFiltered = function () {
     //console.log('Map filtered!')  // needs complete reload
     updateLegend()
-    //updateMap()      // => see why opacity on other states + select back countries !!!!!!!!!!!!!!
     updateSexChart()
     updateAgeChart() 
     updateScatter()
-    makeLineChart(); // !!!!!!!!!!!!!!!
+    makeLineChart(); 
     drawRadar(); 
     
 }
@@ -115,28 +116,18 @@ Controller.prototype.notifySexFilteredWithSelectedMap = function () {   //!!!!!!
     //console.log('sex filtered!')
     
     updateAgeChart()
-    //updateMap()      // => see why opacity on other states + select back countries
     makeLineChart() // !!!!!!!!!!!!!!!!!!!!!!!!!!
     drawRadar()
-    
-    // updateLineChart
-    // updateMap => with the selected countries
     this.isScatterFilteredByBars = true; 
-    // console.log('country selcted on map')
 }
 
 Controller.prototype.notifyAgeFilteredWithSelectedMap = function () {   //!!!!!!!!!!!!!!
     //console.log('age filtered!')
     
     updateSexChart()
-    //updateMap()      // => see why opacity on other states + select back countries  !!!!!!!!!!
     makeLineChart()   // !!!!!!!!!!!!!!!!!!!!!!!!!!
     drawRadar()
-    
-    // updateLineChart
-    // updateMap => with the selected countries
     this.isScatterFilteredByBars = true; 
-    // console.log('country selcted on map')
 }
 
 
@@ -198,18 +189,21 @@ Controller.prototype.triggerAgeFilterEvent = function (selectedAge) {
     this.notifyAgeFiltered();
 }
 
+
 // filter by sex when map selected
 Controller.prototype.triggerSexFilterEventWithSelectedMap = function (selectedSex) {
     this.sexFilter = selectedSex;
     this.globalFilter();
-    this.notifyAgeFilteredWithSelectedMap();
+    this.lineChartFilter(); // linechart takes data from all the years!
+    this.notifySexFilteredWithSelectedMap();
 }
 
 // filter by age when map selected
 Controller.prototype.triggerAgeFilterEventWithSelectedMap = function (selectedAge) {
     this.ageFilter = selectedAge;
     this.globalFilter();
-    this.notifySexFilteredWithSelectedMap();
+    this.lineChartFilter(); // linechart takes data from all the years!
+    this.notifyAgeFilteredWithSelectedMap();
 }
 
 
@@ -311,6 +305,38 @@ Controller.prototype.globalFilter = function () {
     this.dataMapScatter = dataMapScatter;
     this.dataSex = dataSex;
     this.dataAge = dataAge;
+}
+
+
+// line chart filter (data on more years)
+Controller.prototype.lineChartFilter = function () {
+    // initialize data for each visualization
+    let dataLineChart =  this.dataAll;
+
+    // filter sex  (that is boolean) (not for dataSex)
+    const sexFilter = this.sexFilter
+    if (sexFilter != 'All') {
+        dataLineChart = dataLineChart.filter((d) => d.sex==sexFilter);
+    }
+
+
+    // filter age (not for dataAge)
+    const ageFilterArray = this.ageFilter;
+    if (ageFilterArray.size > 0) {
+
+        let tmpData = []
+        // for each age selected take all corresponding data d
+        ageFilterArray.forEach((ageFilter) => {
+            dataLineChart.forEach(d => {     
+                if (d.age==ageFilter) tmpData.push(d);
+            });
+        })
+        
+        dataLineChart = tmpData;
+    }
+
+    // update values
+    this.dataLineChart = dataLineChart;
 }
 
 

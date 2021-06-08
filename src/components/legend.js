@@ -32,23 +32,26 @@ const makeLegend = () => {
             .style("left", (d3.mouse(this)[0] + 40) + widthMap + "px")   
             .style("top", (d3.mouse(this)[1]) + 90 + "px") //heightMap + "px")
 
-        // change opacity not over on scatter
-        svgScatterPlot.selectAll('circle')
-            .style('opacity', (d) => {
-                if (colorValueScatter(d) > start && colorValueScatter(d) < end)
-                    return 1
-                else 
-                    return opacityNotOver 
-            })
 
-        // change opacity not over on scatter
-        map.selectAll('path')
-            .style('opacity', (d) => {
-                if (d.total> start && d.total < end)
-                    return 1
-                else 
-                    return opacityNotOver 
-            })
+        if (controller.selectedCountries.length == 0) {
+            // change opacity not over on scatter
+            svgScatterPlot.selectAll('circle')
+                .style('opacity', (d) => {
+                    if (colorValueScatter(d) > start && colorValueScatter(d) < end)
+                        return 1
+                    else 
+                        return opacityNotOver 
+                })
+
+            // change opacity not over on scatter
+            map.selectAll('path')
+                .style('opacity', (d) => {
+                    if (d.total> start && d.total < end)
+                        return 1
+                    else 
+                        return opacityNotOver 
+                })
+        }
 
     }    
 
@@ -56,11 +59,13 @@ const makeLegend = () => {
         tooltipLegend
             .style("opacity", 0)
 
-        svgScatterPlot.selectAll('circle')
-            .style('opacity',  1)
-        
-        map.selectAll('path')
-        .style('opacity', 1)
+        if (controller.selectedCountries.length == 0) {
+            svgScatterPlot.selectAll('circle')
+                .style('opacity',  1)
+            
+            map.selectAll('path')
+                .style('opacity', 1)
+        }
     }
 
     const labelSet = (d) => {
