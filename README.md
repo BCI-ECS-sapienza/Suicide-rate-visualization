@@ -54,11 +54,12 @@ Moreover, the **interactive legend** shows has the following features:
 
 
 
-Finally, an **year selector** is used to filter data in order to show only thise related to the selected year. Every time a year diffrent than 'All' is selected, the bar charts show a second small bar for each group that is referred to the value without any filter applied.
+Finally, an **year selector** is used to filter data in order to show only those related to the selected year. Every time a year diffrent than 'All' is selected, the bar charts show a second small bar for each group that is referred to the value without any filter applied.
 
 
 ## How to run
-
+Make sure you have python3 installed, then run:
+``` python run.py [port] ```
 
 ---
 ## Authors
