@@ -77,7 +77,7 @@ function makeLineChart(){
 
     
     // compute and set domain_max_y for y Axis
-    const yData = controller.dataAll;
+    const yData = controller.dataLineChart;
     const scale = [0, 0, 0];
     const yValueLineChart = d => d.value.suicides_pop;
     let domain_max_y = 0;
