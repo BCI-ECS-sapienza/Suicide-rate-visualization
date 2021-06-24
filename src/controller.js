@@ -23,6 +23,7 @@ Controller = function () {
     // global static values
     this.colorKeys = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90]
     this.colorScale = ['#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026'];  //all color scales from https://colorbrewer2.org/
+    this.pcaColorScale = ['#7b3294','#c2a5cf','#f7f7f7','#a6dba0','#008837'];
     this.transitionTime = 1000;
 }
 
@@ -56,6 +57,7 @@ Controller.prototype.loadData = function () {
         // draw graphs
         makeMap();
         makeLegend();
+        makePca();
         makeScatterPlot();  
         makeSexChart();
         makeAgeChart();
@@ -112,20 +114,18 @@ Controller.prototype.notifyAgeFiltered = function () {
     this.isScatterFilteredByBars = true; 
 }
 
-Controller.prototype.notifySexFilteredWithSelectedMap = function () {   //!!!!!!!!!!!!
+Controller.prototype.notifySexFilteredWithSelectedMap = function () {   
     //console.log('sex filtered!')
-    
     updateAgeChart()
-    makeLineChart() // !!!!!!!!!!!!!!!!!!!!!!!!!!
+    makeLineChart() 
     drawRadar()
     this.isScatterFilteredByBars = true; 
 }
 
-Controller.prototype.notifyAgeFilteredWithSelectedMap = function () {   //!!!!!!!!!!!!!!
+Controller.prototype.notifyAgeFilteredWithSelectedMap = function () { 
     //console.log('age filtered!')
-    
     updateSexChart()
-    makeLineChart()   // !!!!!!!!!!!!!!!!!!!!!!!!!!
+    makeLineChart()   
     drawRadar()
     this.isScatterFilteredByBars = true; 
 }
@@ -145,6 +145,12 @@ Controller.prototype.triggerYearFilterEvent = function (selectedYear) {
     // radar and lineChart are replaced by scatter and pca
     this.selectedCountries = [];
     switchVisualizationSet();
+
+    // set all filters to initial status
+    this.selectedCountries = [];            
+    this.scatterFilter = null;
+    this.sexFilter = 'All';
+    this.ageFilter = new Set();
     
     this.yearFilter(selectedYear);
     this.notifyYearFiltered();
@@ -208,6 +214,7 @@ Controller.prototype.triggerAgeFilterEventWithSelectedMap = function (selectedAg
 
 
 
+
 ////////////////////////// COMPUTE FILTERS //////////////////////////
 
 // global filter (back to all, or get only selected year data)
@@ -229,12 +236,8 @@ Controller.prototype.yearFilter = function (selectedYear) {
         this.isYearFiltered = true; 
     }
     
-    // set all filters to initial status
-    this.selectedCountries = [];            
-    this.scatterFilter = null;
-    this.sexFilter = 'All';
-    this.ageFilter = new Set();
 }
+
 
 
 // global filter 
@@ -306,6 +309,7 @@ Controller.prototype.globalFilter = function () {
     this.dataSex = dataSex;
     this.dataAge = dataAge;
 }
+
 
 
 // line chart filter (data on more years)
