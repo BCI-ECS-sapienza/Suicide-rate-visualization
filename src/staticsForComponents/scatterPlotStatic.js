@@ -1,5 +1,5 @@
 // chart static params
-const initial_width_scatterPlot = document.getElementById('scatterPlot').offsetWidth;
+const initial_width_scatterPlot = document.getElementById('scatterPlot').offsetWidth-10;
 const initial_height_scatterPlot = document.getElementById('scatterPlot').offsetHeight;
 const scatter_xLabel = 'GDP for year';;
 const scatter_yLabel = 'GDP per capita';
@@ -91,12 +91,14 @@ const scatterClip = svgScatterPlot.append("defs").append("svg:clipPath")
     .attr("y", 0);
 
 
-    // Create the scatter variable: where both the circles and the brush take place
+// Create the scatter variable: where both the circles and the brush take place
 const scatterArea = svgScatterPlot.append('g')
     .attr("clip-path", "url(#clip)")
 
 
 const tooltipScatter = d3.select("#scatterPlot")
     .append("div")
+    .style("left", widthMap + initial_width_legend)
+    .style("top", heightMap)
     .style("opacity", 0)
     .attr("class", "tooltip")

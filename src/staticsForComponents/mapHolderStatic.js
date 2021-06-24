@@ -6,10 +6,10 @@ const strokeColorMap = '#377eb8';//'#92c5de';
 const fillColorMap = '#a6cee3';
 const maxOpacity = 1;
 const minOpacity = .6;
-const selectedColorsMap = ['#d01c8b',
-    '#f1b6da',
-    '#b8e186',
-    '#4dac26'];
+const selectedColorsMap = ['#762a83','#af8dc3','#e7d4e8','#d9f0d3','#7fbf7b','#1b7837'];
+const maxSelectCountries = 3;
+
+
 
 let firstAdded = null; // used to save the oldest between selected states
 

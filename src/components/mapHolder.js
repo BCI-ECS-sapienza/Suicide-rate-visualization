@@ -168,7 +168,7 @@ const makeMap = () => {
       }
     }
     else{
-      if(selectedCountries.length < 3){
+      if(selectedCountries.length < maxSelectCountries){
         if(selectedCountries.length == 0){
           firstAdded = this;
           map
