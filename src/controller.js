@@ -151,6 +151,8 @@ Controller.prototype.triggerYearFilterEvent = function (selectedYear) {
     this.scatterFilter = null;
     this.sexFilter = 'All';
     this.ageFilter = new Set();
+    selectedBarsAge = new Set();
+    selectedValuesAge = new Set();
     
     this.yearFilter(selectedYear);
     this.notifyYearFiltered();
@@ -167,6 +169,8 @@ Controller.prototype.triggerMapFilterEvent = function (selectedPoints) {
     // put bar filters to initial status
     this.sexFilter = 'All';
     this.ageFilter = new Set();
+    selectedBarsAge = new Set();
+    selectedValuesAge = new Set();
 
     this.scatterFilter = selectedPoints;
     this.globalFilter();
