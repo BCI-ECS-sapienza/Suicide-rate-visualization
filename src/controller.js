@@ -48,7 +48,7 @@ Controller.prototype.loadData = function () {
         _obj.dataLineChart = data;
         _obj.countryNames = countries;
 
-        console.log(data)
+        //console.log(data)
 
         // set suicide colorScale
         // const colorValueScale = d => d.suicides_pop;
@@ -77,6 +77,7 @@ Controller.prototype.notifyYearFiltered = function () {
     updateSexChart()
     updateAgeChart() 
     updateScatter()
+    //makePca();
 }
 
 Controller.prototype.notifyMapFiltered = function () {
