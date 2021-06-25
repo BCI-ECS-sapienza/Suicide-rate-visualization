@@ -1,11 +1,11 @@
 // define parameters
 const sides = 5;
 const levels = 4;
-const horizontal_margin = 60;
+const horizontal_margin = 70;
 const vertical_margin = 10;
 
-let width = document.getElementById('scatterPlot').offsetWidth + horizontal_margin;
-let height = document.getElementById('scatterPlot').offsetHeight + vertical_margin;
+let width = document.getElementById('scatterPlot').offsetWidth; //- horizontal_margin;
+let height = document.getElementById('scatterPlot').offsetHeight - vertical_margin;
 
 let size = Math.min(width, height);
 
@@ -40,9 +40,9 @@ const ticks = generateTicks(levels);
 const svgRadar = d3.select('#radar')
     .append('svg')
     //.attr('opacity', 0)
-    .attr('width', width + 60)
+    .attr('width', width + horizontal_margin)
     .attr('height', height)
-    .attr("transform", "translate(-" + 2*horizontal_margin + "," + vertical_margin + ")");
+    .attr("transform", "translate(-" + horizontal_margin + "," + vertical_margin + ")");
 
 const g = svgRadar.append('g');
 
@@ -425,8 +425,7 @@ function drawData(dataset, n, feature_scale){
       .style('fill', svgRadar.select('#' + controller.selectedCountries[i].id).style('fill'));
     svgLine
       .selectAll('#' + controller.selectedCountries[i].id)
-      .style('stroke', svgRadar.select('#' + controller.selectedCountries[i].id).style('fill'))
-      .attr('stroke-width', 1.5);
+      .style('stroke', svgRadar.select('#' + controller.selectedCountries[i].id).style('fill'));
     svgLine
       .selectAll('#' + controller.selectedCountries[i].id + '-line')
       .style('stroke', svgRadar.select('#' + controller.selectedCountries[i].id).style('fill'));
