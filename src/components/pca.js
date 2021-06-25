@@ -2,7 +2,26 @@ const makePca = () => {
 
     // callback for mouseover circles 
     const onPoint = function (d) {
-    
+        // highlight circle
+        d3.select(this)
+            .style("cursor", "pointer")
+            .attr("r", scatter_selected_circle_size )
+            .classed('over-object', true)
+        
+        // highlight state on map
+        d3.select('#map-holder')
+            .select('#'+d.country)
+            .classed('over-object', true)
+            .style("fill", "lightblue");
+
+        // highlight circles on scatterPlot
+        d3.select('#scatterPlot')
+            .select('#'+d.country)
+            .attr("r", scatter_selected_circle_size )
+            .classed('over-object', true)
+
+        const suicides = d3.format('.2s')(d.suicides_no).replace('G', 'B'); 
+        const population = d3.format('.2s')(d.population).replace('G', 'B'); 
         const gdp_year = d3.format('.2s')(d.gdp_for_year).replace('G', 'B');
         const gdp_capita = d3.format('.2s')(d.gdp_per_capita).replace('G', 'B');  
         
@@ -18,18 +37,20 @@ const makePca = () => {
                 '<br><b>Year:</b> ' + d.year +
                 '<br><b>Sex:</b> ' + d.sex +
                 '<br><b>Age:</b> ' + d.age +
-                '<br><b>Suicides number:</b> ' + d.suicides_no +
-                '<br><b>Population:</b> ' + d.population +
                 '<br><b>suicides/pop:</b> ' + d.suicides_pop +
+                '<br><b>Suicides number:</b> ' + suicides +
+                '<br><b>Population:</b> ' + population +
                 `<br><b>GDP for year: </b> ${gdp_year}` + 
                 `<br><b>Gdp per capita: </b> ${gdp_capita}` + 
                 `<br><b>Suicide ratio:</b> ${d.suicides_pop}`)
-            .style("left", (d3.mouse(this)[0]+30) + widthMap + initial_width_legend + "px")    
+            .style("left", (d3.mouse(this)[0] - 100) + widthMap + initial_width_legend + "px")    
             .style("top", (d3.mouse(this)[1]) + "px") //heightMap + "px")
     }
 
     // callback for mousemove circles 
     const moveOverPoint = function (d) {
+        const suicides = d3.format('.2s')(d.suicides_no).replace('G', 'B'); 
+        const population = d3.format('.2s')(d.population).replace('G', 'B'); 
         const gdp_year = d3.format('.2s')(d.gdp_for_year).replace('G', 'B');
         const gdp_capita = d3.format('.2s')(d.gdp_per_capita).replace('G', 'B');  
         
@@ -41,18 +62,41 @@ const makePca = () => {
                 '<br><b>Year:</b> ' + d.year +
                 '<br><b>Sex:</b> ' + d.sex +
                 '<br><b>Age:</b> ' + d.age +
-                '<br><b>Suicides number:</b> ' + d.suicides_no +
-                '<br><b>Population:</b> ' + d.population +
                 '<br><b>suicides/pop:</b> ' + d.suicides_pop +
+                '<br><b>Suicides number:</b> ' + suicides +
+                '<br><b>Population:</b> ' + population +
                 `<br><b>GDP for year: </b> ${gdp_year}` + 
                 `<br><b>Gdp per capita: </b> ${gdp_capita}` + 
                 `<br><b>Suicide ratio:</b> ${d.suicides_pop}`)
-            .style("left", (d3.mouse(this)[0]+30) + widthMap + initial_width_legend + "px")   
+            .style("left", (d3.mouse(this)[0] - 100) + widthMap + initial_width_legend + "px")   
             .style("top", (d3.mouse(this)[1])  + "px") //heightMap + "px")
     }
     
     // callback for mouseleave circles 
     const leavePoint = function(d){	
+        // remove highlight circle
+        d3.select(this)
+            .attr("r", scatter_circle_size )
+            .classed('over-object', false)
+
+        // remove highlight state on map
+        d3.select('#map-holder')
+            .select('#'+d.country)
+            .style("stroke", "transparent")
+            .style("fill", (d)=>{
+                if(d.total === "Missing data") 
+                    return '#DCDCDC';
+                else{
+                    return colorScale(d.total);
+                }
+            });
+
+        // remove highlight scatter
+        d3.select('#scatterPlot')
+            .select('#'+d.country)
+            .attr("r", scatter_circle_size )
+            .classed('over-object', false)
+
         tooltipPca
             .style("opacity", 0)
     }
@@ -130,6 +174,7 @@ const makePca = () => {
             .on("mousemove", moveOverPoint)
             .on("mouseout", leavePoint)
             .attr('class', 'pca-points') 
+            .attr('id', (d) => d.country)
             .style("fill", (d) => colorScale(colorValuePca(d))) 
             .style("opacity", 1)
             //.transition()
