@@ -17,10 +17,9 @@ const margin_pca = {top: 25, right: 30, bottom: 55, left: 80},
 
     /// TO SET !!!!!!////////////////////////////////////
 // set data iterators
-const countryPca = d => d.key
-const xValuePca = d => d.value.gdp_for_year;
-const yValuePca = d => d.value.gdp_per_capita;
-const colorValuePca = d => d.value.suicides_pop;
+const xValuePca = d => d.PCA_1;
+const yValuePca = d => d.PCA_2;
+const colorValuePca = d => d.suicides_pop;
 /////////////////////////////////////////////////////////
 
 // set scales ranges
