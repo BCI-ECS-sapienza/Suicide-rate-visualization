@@ -2,12 +2,12 @@ const initial_width_LineChart = document.getElementById('pca').offsetWidth;
 const initial_height_LineChart = document.getElementById('pca').offsetHeight;
 
 // set the dimensions and margins of the graph
-const margin_LineChart = {top: 25, right: 30, bottom: 55, left: 80},
+const margin_LineChart = {top: 25, right: 30, bottom: 55, left: 105},
     width_LineChart = initial_width_LineChart - margin_LineChart.left - margin_LineChart.right,
     height_LineChart = initial_height_LineChart - margin_LineChart.top - margin_LineChart.bottom;
 
 const lineChart_xLabel = 'Years';
-let lineChart_yLabel = 'GDP_per_capita';
+let lineChart_yLabel = 'GDP per capita';
 
 let is_gdp_per_capita = true;
 
@@ -34,7 +34,7 @@ const domain_max_x = 2016;
 const domain_min_y = 0;
 
 // add label left
-const lineChart_left_label_x = ((margin_LineChart.left/5) * 3) +3;
+const lineChart_left_label_x = ((margin_LineChart.left/2) + 3) ;
 const lineChart_left_label_y = (height_LineChart/2);
 
 svgLine.append('text')
@@ -81,7 +81,7 @@ function makeLineChart(){
 
     
     if(is_gdp_per_capita){
-        lineChart_yLabel = 'GDP_per_capita';
+        lineChart_yLabel = 'GDP per capita';
         svgLine.append('text')
             .attr('class', 'axis-label')
             .attr('id', 'yLabel')
@@ -90,7 +90,7 @@ function makeLineChart(){
             .text(lineChart_yLabel)
     }
     else{
-        lineChart_yLabel = 'GDP_for_year';
+        lineChart_yLabel = 'GDP for year';
         svgLine.append('text')
             .attr('class', 'axis-label')
             .attr('id', 'yLabel')

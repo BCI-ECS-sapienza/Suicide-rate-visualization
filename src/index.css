@@ -252,9 +252,26 @@ html,body {
     border-width: 0 3px 0 3px;
     border-style: solid;
     border-color: #394a6d;
-    border-radius: 2em;
+    border-radius: 1em;
     background-color: rgb(231, 231, 231);
 }
 .toggle-brush {
     background-color: var(--selectionColor);
+}
+
+
+
+
+/* line chart */
+.button-line {
+    position: absolute;
+    right: 1.5%;
+    top: 51%;
+    font-size: 14px;
+    width: 120px;
+    border-width: 0 3px 0 3px;
+    border-style: solid;
+    border-color: #394a6d;
+    border-radius: 1em;
+    background-color: rgb(231, 231, 231);
 }

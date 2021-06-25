@@ -1,8 +1,8 @@
 // chart static params
 const initial_width_pca = document.getElementById('pca').offsetWidth;
 const initial_height_pca = document.getElementById('pca').offsetHeight;
-const pca_xLabel = 'PCA component 1';;
-const pca_yLabel = 'PCA component 2';
+const pca_xLabel = 'PCA 1';;
+const pca_yLabel = 'PCA 2';
 const pca_circle_size = 6;
 const pca_selected_circle_size = 10;
 const pca_transition_time = 1000;
