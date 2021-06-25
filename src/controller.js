@@ -84,8 +84,7 @@ Controller.prototype.notifyMapFiltered = function () {
     updateAgeChart() 
     updateScatter()
     makeLineChart(); 
-    drawRadar(); 
-    
+    drawRadar();
 }
 
 Controller.prototype.notifyScatterFiltered = function () {
@@ -125,8 +124,8 @@ Controller.prototype.notifySexFilteredWithSelectedMap = function () {
 Controller.prototype.notifyAgeFilteredWithSelectedMap = function () { 
     //console.log('age filtered!')
     updateSexChart()
-    makeLineChart()   
-    drawRadar()
+    makeLineChart() 
+    drawRadar()  
     this.isScatterFilteredByBars = true; 
 }
 

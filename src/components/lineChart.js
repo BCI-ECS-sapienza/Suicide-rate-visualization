@@ -7,7 +7,9 @@ const margin_LineChart = {top: 25, right: 30, bottom: 55, left: 80},
     height_LineChart = initial_height_LineChart - margin_LineChart.top - margin_LineChart.bottom;
 
 const lineChart_xLabel = 'Years';
-const lineChart_yLabel = 'GDP_per_capita';
+let lineChart_yLabel = 'GDP_per_capita';
+
+let is_gdp_per_capita = true;
 
 // append the svg object to the body of the page
 var svgLine = d3.select("#lineChart")
@@ -34,8 +36,10 @@ const domain_min_y = 0;
 // add label left
 const lineChart_left_label_x = ((margin_LineChart.left/5) * 3) +3;
 const lineChart_left_label_y = (height_LineChart/2);
+
 svgLine.append('text')
     .attr('class', 'axis-label')
+    .attr('id', 'yLabel')
     .attr("text-anchor", "middle")
     .attr("transform", `translate(${-lineChart_left_label_x}, ${lineChart_left_label_y}), rotate(-90)`) 
     .text(lineChart_yLabel)
@@ -61,8 +65,6 @@ const lineChartXGridSvg = svgLine.append('g').attr('class', 'grid-lineChart');
 const lineChartYGridSvg = svgLine.append('g').attr('class', 'grid-lineChart');
 
 
-
-
 function makeLineChart(){
     svgLine
         .selectAll('.dot')
@@ -72,15 +74,42 @@ function makeLineChart(){
         .selectAll('.line-path')
         .remove()
         .exit();
-
-    const data = getLineChartData();
+    svgLine
+        .selectAll('#yLabel')
+        .remove()
+        .exit();
 
     
+    if(is_gdp_per_capita){
+        lineChart_yLabel = 'GDP_per_capita';
+        svgLine.append('text')
+            .attr('class', 'axis-label')
+            .attr('id', 'yLabel')
+            .attr("text-anchor", "middle")
+            .attr("transform", `translate(${-lineChart_left_label_x}, ${lineChart_left_label_y}), rotate(-90)`) 
+            .text(lineChart_yLabel)
+    }
+    else{
+        lineChart_yLabel = 'GDP_for_year';
+        svgLine.append('text')
+            .attr('class', 'axis-label')
+            .attr('id', 'yLabel')
+            .attr("text-anchor", "middle")
+            .attr("transform", `translate(${-lineChart_left_label_x}, ${lineChart_left_label_y}), rotate(-90)`) 
+            .text(lineChart_yLabel)
+    }
+    const data = getLineChartData();
+
+    // iterators 
+    const capita_iterator = d => d.value.gdp_per_capita;
+    const year_iterator = d => d.value.gdp_for_year;
+
     // compute and set domain_max_y for y Axis
     const yData = controller.dataLineChart;
     const scale = [0, 0, 0];
-    const yValueLineChart = d => d.value.gdp_per_capita;
+    
     let domain_max_y = 0;
+    let max_val_aggregate_y = 0;
 
     for( let i = 0; i<controller.selectedCountries.length; i++){
         const country = controller.selectedCountries[i].id;
@@ -88,7 +117,10 @@ function makeLineChart(){
         
         if(dataFiltered.length > 0){
             const aggregate = aggregateDataByYearLineChart(dataFiltered);
-            const max_val_aggregate_y = d3.max(aggregate, yValueLineChart)
+            if(is_gdp_per_capita)
+                max_val_aggregate_y = d3.max(aggregate, capita_iterator);
+            else
+                max_val_aggregate_y = d3.max(aggregate, year_iterator);
             scale[i] = max_val_aggregate_y;
         }
     }
@@ -155,8 +187,10 @@ function makeLineChart(){
         for(let year in data[el]){
             
             if(!isNaN(year)){
-
-                country_points.push({x: xScaleLineChart(year), y: yScaleLineChart(data[el][year].gdp_per_capita)})
+                if(is_gdp_per_capita)
+                    country_points.push({x: xScaleLineChart(year), y: yScaleLineChart(data[el][year].gdp_per_capita)})
+                else
+                    country_points.push({x: xScaleLineChart(year), y: yScaleLineChart(data[el][year].gdp_for_year)})
             }
             
         }
@@ -166,9 +200,11 @@ function makeLineChart(){
     for(let el in data){
 
         for(let year in data[el]){
-            
             if(!isNaN(year)){
-                drawPoint(year, data[el][year].gdp_per_capita, data[el].key, data[el][year].suicides_pop);
+                if(is_gdp_per_capita)
+                    drawPoint(year, data[el][year].gdp_per_capita, data[el].key, data[el][year].suicides_pop);
+                else
+                    drawPoint(year, data[el][year].gdp_for_year, data[el].key, data[el][year].suicides_pop);
             }
             
         }
@@ -217,21 +253,21 @@ function drawPoint(year, value, country, suicides){
     let colorScale = controller.colorScale;
     
     svgLine
-        .append("g")
+        //.append("g")
         .append("circle")
             .attr('id', country)
             .attr('class', 'dot')
             .attr("cx", xScaleLineChart(year))
             .attr("cy", yScaleLineChart(value))
             .attr("r", 5)
-            .style("fill", colorScale(suicides));
+            .style("fill", colorScale(suicides))
+            //.style('stroke', svgRadar.select(`#${country}`).style('fill'))
+            .attr('stroke-width', 1.5);
             //.attr("fill", "#69b3a2");
       
 }
 
 function drawLine(points, country){
-    
-    
     svgLine.append("path")
         .attr('id', country+'-line')
         .attr('class', 'line-path')
@@ -243,6 +279,13 @@ function drawLine(points, country){
           .y(function(d) { return d.y })
           )
         .style("fill", "none");
+        //.style('stroke', svgRadar.select(`#${country}`).style('fill'));;
         
 
+}
+
+const changeGDP = () => {
+    is_gdp_per_capita = !is_gdp_per_capita;
+    makeLineChart();
+    drawRadar();
 }
