@@ -6,6 +6,8 @@ const parseRow = (d) => {
   d.suicides_pop = +d.suicides_pop;
   d.gdp_for_year = +d.gdp_for_year;
   d.gdp_per_capita = +d.gdp_per_capita;
+  d.PCA_1 = +d.PCA_1;
+  d.PCA_2 = +d.PCA_2;
   return d;
 };
 

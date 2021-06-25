@@ -48,6 +48,8 @@ Controller.prototype.loadData = function () {
         _obj.dataLineChart = data;
         _obj.countryNames = countries;
 
+        console.log(data)
+
         // set suicide colorScale
         // const colorValueScale = d => d.suicides_pop;
         _obj.colorScale = d3.scaleQuantile()
