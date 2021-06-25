@@ -14,7 +14,13 @@ const makeScatterPlot = () => {
         d3.select('#map-holder').select('#'+countryScatter(d))
             .classed('over-object', true)
             .style("fill", "lightblue");
-    
+
+        // highlight circles on PCA
+        d3.select('#pca')
+            .selectAll('#'+countryScatter(d))
+            .attr("r", scatter_selected_circle_size )
+            .classed('over-object', true)
+        
         const gdp_year = d3.format('.2s')(xValueScatter(d)).replace('G', 'B');
         const gdp_capita = d3.format('.2s')(yValueScatter(d)).replace('G', 'B');  
         
@@ -68,6 +74,12 @@ const makeScatterPlot = () => {
                     return colorScale(d.total);
                 }
             });
+
+        // remove highlight circles on PCA
+        d3.select('#pca')
+            .selectAll('#'+countryScatter(d))
+            .attr("r", scatter_circle_size )
+            .classed('over-object', false)
     
         tooltipScatter
             .style("opacity", 0)
@@ -203,6 +215,7 @@ const makeScatterPlot = () => {
     ////////////////////////// SETUP //////////////////////////
    
     // get data
+    const dataAll = aggregateDataByCountry(controller.dataYear);
     const dataFiltered = aggregateDataByCountry(controller.dataMapScatter);
     const colorScale = controller.colorScale;
 
@@ -239,11 +252,11 @@ const makeScatterPlot = () => {
     const yAxis = d3.axisLeft(yScaleScatter).tickFormat(AxisTickFormat);
 
     // compute avg line for y
-    const avg_value_y = Math.round((d3.sum(dataFiltered, (d) => yValueScatter(d))) / dataFiltered.length *10) /10;
+    const avg_value_y = Math.round((d3.sum(dataAll, (d) => yValueScatter(d))) / dataAll.length *10) /10;
     const avg_value_scaled_y = yScaleScatter(avg_value_y)
 
     // compute avg line for x
-    const avg_value_x = Math.round((d3.sum(dataFiltered, (d) => xValueScatter(d))) / dataFiltered.length *10) /10;
+    const avg_value_x = Math.round((d3.sum(dataAll, (d) => xValueScatter(d))) / dataAll.length *10) /10;
     const avg_value_scaled_x = xScaleScatter(avg_value_x)
         
     // initialize brushing

@@ -43,6 +43,12 @@ const makeMap = () => {
       .select(id)
       .attr("r", scatter_selected_circle_size )
       .classed('over-object', true)
+
+    // highlight circles on PCA
+    d3.select('#pca')
+      .selectAll(id)
+      .attr("r", scatter_selected_circle_size )
+      .classed('over-object', true)
   }
 
   // callback for mouseMove country
@@ -123,6 +129,12 @@ const makeMap = () => {
     const id = `#${nameMap(d)}`;
     d3.select('#scatterPlot')
       .select(id)
+      .attr("r", scatter_circle_size )
+      .classed('over-object', false)
+
+    // remove highlight circles on PCA
+    d3.select('#pca')
+      .selectAll(id)
       .attr("r", scatter_circle_size )
       .classed('over-object', false)
   }
