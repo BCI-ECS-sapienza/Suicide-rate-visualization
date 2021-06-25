@@ -425,7 +425,8 @@ function drawData(dataset, n, feature_scale){
       .style('fill', svgRadar.select('#' + controller.selectedCountries[i].id).style('fill'));
     svgLine
       .selectAll('#' + controller.selectedCountries[i].id)
-      .style('fill', svgRadar.select('#' + controller.selectedCountries[i].id).style('fill'));
+      .style('stroke', svgRadar.select('#' + controller.selectedCountries[i].id).style('fill'))
+      .attr('stroke-width', 1.5);
     svgLine
       .selectAll('#' + controller.selectedCountries[i].id + '-line')
       .style('stroke', svgRadar.select('#' + controller.selectedCountries[i].id).style('fill'));

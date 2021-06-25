@@ -7,7 +7,7 @@ const margin_LineChart = {top: 25, right: 30, bottom: 55, left: 80},
     height_LineChart = initial_height_LineChart - margin_LineChart.top - margin_LineChart.bottom;
 
 const lineChart_xLabel = 'Years';
-const lineChart_yLabel = 'Suicides/100k pop';
+const lineChart_yLabel = 'GDP_per_capita';
 
 // append the svg object to the body of the page
 var svgLine = d3.select("#lineChart")
@@ -79,7 +79,7 @@ function makeLineChart(){
     // compute and set domain_max_y for y Axis
     const yData = controller.dataLineChart;
     const scale = [0, 0, 0];
-    const yValueLineChart = d => d.value.suicides_pop;
+    const yValueLineChart = d => d.value.gdp_per_capita;
     let domain_max_y = 0;
 
     for( let i = 0; i<controller.selectedCountries.length; i++){
@@ -111,7 +111,7 @@ function makeLineChart(){
         return "'" + number.toString().substr(-2);
     } 
     const xAxis = d3.axisBottom(xScaleLineChart).tickFormat(customTickFormat);
-    const yAxis = d3.axisLeft(yScaleLineChart);
+    const yAxis = d3.axisLeft(yScaleLineChart).tickFormat(AxisTickFormat);
 
 
     // call x Axis
@@ -149,77 +149,46 @@ function makeLineChart(){
             .tickFormat(''))
 
     
-    for( let i=0; i<data.length; i++){
-        
-        const year = '1985' 
-        const country_points = []
-        for( let j=1985; j<2017; j++){
-            drawPoint(j, data[i][j], data[i].key);
-            if(data[i][j] != 0)
-                country_points.push({x: xScaleLineChart(j), y: yScaleLineChart(data[i][j])})
+    for(let el in data){
+        let country_points = [];
+
+        for(let year in data[el]){
+            
+            if(!isNaN(year)){
+
+                country_points.push({x: xScaleLineChart(year), y: yScaleLineChart(data[el][year].gdp_per_capita)})
+            }
+            
         }
         if(country_points.length != 0)
-            drawLine(country_points, data[i].key);
+            drawLine(country_points, data[el].key);
     }
-    
-    // Add the line
-    /*
-    svgLine.append("path")
-      .datum(data)
-      .attr("fill", "none")
-      .attr("stroke", "#69b3a2")
-      .attr("stroke-width", 1.5)
-      .attr("d", d3.line()
-        .x(function(d) { return x(d.date) })
-        .y(function(d) { return y(d.value) })
-        )*/
+    for(let el in data){
+
+        for(let year in data[el]){
+            
+            if(!isNaN(year)){
+                drawPoint(year, data[el][year].gdp_per_capita, data[el].key, data[el][year].suicides_pop);
+            }
+            
+        }
+    }
 }
 
-function createDictionary(country, aggregate){
-    let res = '{"key": "' + country + '",';
-    let year = 1985;
-    let lastYear = 0;
-    
-    for( let el in aggregate){
-        lastYear = aggregate[el].key;
-        while((aggregate[el].key != year) || (year == 2017)){
-            if(year == 2016){
-                res = res + '"' + year +'": ' + 0;
-            }
-            else{
-                res = res + '"' + year +'": ' + 0 + ', ';
-            }
-            year++;
-        }
-        if(aggregate[el].key == year){
-            if(year == 2016)
-                res = res + '"' + year + '": ' + aggregate[el].value.suicides_pop;
-            else
-                res = res + '"' + year + '": ' + aggregate[el].value.suicides_pop + ', ';
-        }
-        else{
-            if(year == 2016)
-                res = res + '"' + year +'": ' + 0;
-            else
-                res = res + '"' + year +'": ' + 0 + ', ';
-        }
-        year++;
-        
+function manageData(country, aggregate){
+    let dict = {};
+    dict['key'] = country;
+
+    for(let el in aggregate){
+        let year = aggregate[el].key;
+        let inner_dict = {};
+        inner_dict['suicides_pop'] = aggregate[el].value.suicides_pop;
+        inner_dict['gdp_per_capita'] = aggregate[el].value.gdp_per_capita;
+        inner_dict['gdp_for_year'] = aggregate[el].value.gdp_for_year;
+        dict[year] = inner_dict;
     }
-    if(lastYear < 2016){
-        while(lastYear < 2017){
-            
-            if(lastYear == 2016)
-                res = res + '"' + lastYear +'": ' + 0;
-            else
-                res = res + '"' + lastYear +'": ' + 0 + ', ';
-            lastYear++;
-            
-        }
-    }
-    res = res + '}';
-    
-    return res;
+    //console.log(dict);
+    return dict;
 }
 
 function getLineChartData(){
@@ -230,67 +199,34 @@ function getLineChartData(){
     for( let i = 0; i<controller.selectedCountries.length; i++){
         const country = controller.selectedCountries[i].id;
         const dataFiltered = data.filter(d => d.country == country);
+        
         if(dataFiltered.length > 0){
             
             const aggregate = aggregateDataByYearLineChart(dataFiltered);
             
-            let json_parse = JSON.parse(createDictionary(country, aggregate));
-
-            dataLine.push(json_parse);
+            let managed_data = manageData(country, aggregate);
+            
+            dataLine.push(managed_data);
         }        
-        else{
-            dataLine.push({
-                'key': controller.selectedCountries[i].id,
-                '1985': 0,
-                '1986': 0,
-                '1987': 0,
-                '1988': 0,
-                '1989': 0,
-                '1990': 0,
-                '1991': 0,
-                '1992': 0,
-                '1993': 0,
-                '1994': 0,
-                '1995': 0,
-                '1996': 0,
-                '1997': 0,
-                '1998': 0,
-                '1999': 0,
-                '2000': 0,
-                '2001': 0,
-                '2002': 0,
-                '2003': 0,
-                '2004': 0,
-                '2005': 0,
-                '2006': 0,
-                '2007': 0,
-                '2008': 0,
-                '2009': 0,
-                '2010': 0,
-                '2011': 0,
-                '2012': 0,
-                '2013': 0,
-                '2014': 0,
-                '2015': 0,
-                '2016': 0
-            });
-        }
+        
     }
     return dataLine;
 }
 
-function drawPoint(year, value, country, points){
-    if(value != 0){
-        svgLine
-            .append("g")
-            .append("circle")
-                .attr('id', country)
-                .attr('class', 'dot')
-                .attr("cx", xScaleLineChart(year))
-                .attr("cy", yScaleLineChart(value))
-                .attr("r", 5);
-                //.attr("fill", "#69b3a2");
-    }    
+function drawPoint(year, value, country, suicides){
+    let colorScale = controller.colorScale;
+    
+    svgLine
+        .append("g")
+        .append("circle")
+            .attr('id', country)
+            .attr('class', 'dot')
+            .attr("cx", xScaleLineChart(year))
+            .attr("cy", yScaleLineChart(value))
+            .attr("r", 5)
+            .style("fill", colorScale(suicides));
+            //.attr("fill", "#69b3a2");
+      
 }
 
 function drawLine(points, country){
@@ -301,7 +237,7 @@ function drawLine(points, country){
         .attr('class', 'line-path')
         .datum(points)
         .attr("stroke", "#69b3a2")
-        .attr("stroke-width", 1.5)
+        .attr("stroke-width", 2)
         .attr("d", d3.line()
           .x(function(d) { return d.x })
           .y(function(d) { return d.y })
