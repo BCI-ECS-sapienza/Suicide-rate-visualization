@@ -1,5 +1,5 @@
-const initial_width_LineChart = document.getElementById('scatterPlot').offsetWidth;
-const initial_height_LineChart = document.getElementById('scatterPlot').offsetHeight;
+const initial_width_LineChart = document.getElementById('pca').offsetWidth;
+const initial_height_LineChart = document.getElementById('pca').offsetHeight;
 
 // set the dimensions and margins of the graph
 const margin_LineChart = {top: 25, right: 30, bottom: 55, left: 80},

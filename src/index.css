@@ -73,7 +73,7 @@ html,body {
     grid-row-start: 4;
     grid-row-end: -1;
 }
-.radar{
+.lineChart{
     margin-right: 8px;
     grid-column-start: 4;
     grid-column-end: 5;
@@ -96,7 +96,7 @@ html,body {
     top: 0;
     left: 0;
 }
-.lineChart{
+.radar{
     margin-right: 8px;
     grid-column-start: 4;
     grid-column-end: 5;

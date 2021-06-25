@@ -1,11 +1,11 @@
 // define parameters
 const sides = 5;
 const levels = 4;
-const horizontal_margin = 40;
+const horizontal_margin = 60;
 const vertical_margin = 10;
 
-let width = document.getElementById('pca').offsetWidth //+ horizontal_margin; GET error
-let height = document.getElementById('pca').offsetHeight //+ vertical_margin;
+let width = document.getElementById('scatterPlot').offsetWidth + horizontal_margin;
+let height = document.getElementById('scatterPlot').offsetHeight + vertical_margin;
 
 let size = Math.min(width, height);
 
