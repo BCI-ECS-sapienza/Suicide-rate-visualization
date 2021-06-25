@@ -24,9 +24,13 @@ The service is composed by the following visualizations:
     * On country selected, **Scatterplot** will be replaced by the **Line chart** that shows the Suicide radio over the years
     * On country selected, the other countries inside **Map** will reduce their opacity. We can select at
 most three countries
-    * On mouse over one country, the service shows a tooltip contains all the related information and the correspondent point on the **Scatterplot** is highlighted
+    * On mouse over one country, the service shows a tooltip contains all the related information
+    * On mouse over one country, the relative circle on **PCA chart** increases its size and gets a blue stroke
+    * On mouse over one country, the relative circle on **Scatterplot** increases its size and gets a blue stroke
 
-* **PCA** 
+* **PCA chart** 
+    * On mouse over one point, the relative country on **Map** becomes blue
+    * On mouse over one point, the relative circle on **Scatterplot** increases its size and gets a blue stroke
 
 *  **Sex bar chart** [ #suicides/100k population - sex ] (can select male or female)
     * On sex bar selection, **Age chart** will show only the related deaths
@@ -43,13 +47,17 @@ most three countries
     * On age group selection, the average bar for only-selected-groups is updated
     * On mouse over one bar, the other bars show the divergence to the current suicide ratio value
     * When the year selector has a value that is different than “All”, a slim bar is shown to compare the current data with the global data
+    * Every time a filter is applied by other visualizations, the mean bar is updated
 
 * **ScatterPlot** [ relationship GDP_year/GDP_capite - #suicides/100k population colorscale ] (brush on points)
     * On brush, **Scatterplot** will zoom over the selected points and the avg bars for the axis values are updated
     * On brush, **Age chart** will show only the related deaths
     * On brush, **Sex chart** will show only the related deaths
     * On brush, **Map** will show colors referring to related deaths
-    * On mouse over one point, the service shows a tooltip contains all the related information and the correspondent country on the **Map** is highlighted
+    * On mouse over one point, the service shows a tooltip contains all the related information
+    * On mouse over one point, the relative country on **Map** becomes blue
+    * On mouse over one point, the relative circle on **PCA chart** increases its size and gets a blue stroke
+    * Every time a filter is applied by other visualizations, the mean bar is updated
 
 * **Line chart**
 
