@@ -23,7 +23,6 @@ Controller = function () {
     // global static values
     this.colorKeys = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90]
     this.colorScale = ['#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026'];  //all color scales from https://colorbrewer2.org/
-    this.pcaColorScale = ['#7b3294','#c2a5cf','#f7f7f7','#a6dba0','#008837'];
     this.transitionTime = 1000;
 }
 
@@ -77,7 +76,7 @@ Controller.prototype.notifyYearFiltered = function () {
     updateSexChart()
     updateAgeChart() 
     updateScatter()
-    //makePca();
+    updatePca();
 }
 
 Controller.prototype.notifyMapFiltered = function () {
@@ -85,9 +84,14 @@ Controller.prototype.notifyMapFiltered = function () {
     updateLegend()
     updateSexChart()
     updateAgeChart() 
-    updateScatter()
     makeLineChart(); 
     drawRadar();
+
+    // to reduce the computation time when i select countries
+    if (this.isCountryMapSelected == false){
+        updateScatter();
+        updatePca();
+    }    
 }
 
 Controller.prototype.notifyScatterFiltered = function () {
@@ -96,26 +100,33 @@ Controller.prototype.notifyScatterFiltered = function () {
     updateMap()
     updateSexChart()
     updateAgeChart() 
+    updatePca();
 }
 
+
+// used only when no selected countries
 Controller.prototype.notifySexFiltered = function () {
     //console.log('sex filtered!')
     updateLegend()
     updateMap() 
     updateAgeChart() 
     updateScatter()
+    updatePca();
     this.isScatterFilteredByBars = true; 
 }
 
+// used only when no selected countries
 Controller.prototype.notifyAgeFiltered = function () {
     //console.log('age filtered!')
     updateLegend()
     updateMap() 
     updateSexChart()
     updateScatter()
+    updatePca();
     this.isScatterFilteredByBars = true; 
 }
 
+// used only when at least one selected countries
 Controller.prototype.notifySexFilteredWithSelectedMap = function () {   
     //console.log('sex filtered!')
     updateAgeChart()
@@ -124,6 +135,7 @@ Controller.prototype.notifySexFilteredWithSelectedMap = function () {
     this.isScatterFilteredByBars = true; 
 }
 
+// used only when at least one selected countries
 Controller.prototype.notifyAgeFilteredWithSelectedMap = function () { 
     //console.log('age filtered!')
     updateSexChart()
