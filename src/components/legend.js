@@ -42,8 +42,17 @@ const makeLegend = () => {
                     else 
                         return opacityNotOver 
                 })
+            
+            // change opacity not over on pca
+            svgPca.selectAll('circle')
+             .style('opacity', (d) => {
+                 if (colorValuePca(d) > start && colorValuePca(d) < end)
+                     return 1
+                 else 
+                     return opacityNotOver 
+             })
 
-            // change opacity not over on scatter
+            // change opacity not over on map
             map.selectAll('path')
                 .style('opacity', (d) => {
                     if (d.total> start && d.total < end)
@@ -61,6 +70,9 @@ const makeLegend = () => {
 
         if (controller.selectedCountries.length == 0) {
             svgScatterPlot.selectAll('circle')
+                .style('opacity',  1)
+
+            svgPca.selectAll('circle')
                 .style('opacity',  1)
             
             map.selectAll('path')

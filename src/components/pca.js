@@ -106,7 +106,7 @@ const makePca = () => {
     ////////////////////////// SETUP //////////////////////////
    
     // get data
-    const dataFiltered = controller.dataYear; //!!!!!!!!!!!!!!!!!!!!!
+    const dataFiltered = controller.dataMapScatter; //!!!!!!!!!!!!!!!!!!!!!
     const colorScale = controller.colorScale;                          
 
     // set axis domain
@@ -169,7 +169,7 @@ const makePca = () => {
     pcaCircles
         .enter()
         .append("circle")
-        //.merge(PcaCircles)
+        //.merge(pcaCircles)
             .on("mouseover", onPoint)
             .on("mousemove", moveOverPoint)
             .on("mouseout", leavePoint)
@@ -177,12 +177,12 @@ const makePca = () => {
             .attr('id', (d) => d.country)
             .style("fill", (d) => colorScale(colorValuePca(d))) 
             .style("opacity", 1)
-            //.transition()
-            //.duration(0)    // needed for delay
+            .transition()
+            .duration(0)    // needed for delay
             .attr("cx", (d) => xScalePca(xValuePca(d)))
             .attr("cy", (d) => yScalePca(yValuePca(d)))
             .attr("r", pca_circle_size)
-            //.delay( (d,i) => (i*scatter_points_delay)/100)
+            .delay( (d,i) => (i*scatter_points_delay)/100)
 
 }
 
@@ -193,7 +193,7 @@ const makePca = () => {
 
 // update data on year changed
 const updatePca = () => {
-    svgPca.selectAll('.pca-points').remove().exit()
+    svgPca.selectAll('.pca-points').remove()
     makePca();
 };
 
