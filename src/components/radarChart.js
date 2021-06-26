@@ -19,11 +19,11 @@ const r = 0.8 * size;
 const r_0 = r/2;
 
 const features = [
-    'suicides_pop',
-    'suicides_no',
-    'population',
-    'gdp_for_year',
-    'gdp_per_capita'
+    'Suicides100k pop',
+    'Suicides number',
+    'Population',
+    'GDP for year',
+    'GDP per capita'
 ]
 
 let center = {
@@ -469,12 +469,24 @@ function drawLegendCountries(name, color, index){
 function drawLegendFeatures(features_scale){
 
   for( let el in features){
-    
+    let feature = '';
+    if(features[el] == 'Suicides100k pop')
+      feature = 'suicides_pop';
+    else if(features[el] == 'Suicides number')
+      feature = 'suicides_no';
+    else if(features[el] == 'Population')
+      feature = 'population';
+    else if(features[el] == 'GDP for year')
+      feature = 'gdp_for_year'
+    else
+      feature = 'gdp_per_capita';
+
+  
     featuresGroup
       .append('text')
       .attr('class', 'radar-legend')
       .attr("x", offset_legend_width + 180)
-      .text('- ' + features[el] + ': ' + d3.format('.3s')(features_scale[features[el]]).replace('G', 'B'))
+      .text('- ' + features[el] + ': ' + d3.format('.3s')(features_scale[feature]).replace('G', 'B'))
       .attr("y", offset_legend_height + 17*el)
       .style("font-size", "15px")
       .attr("alignment-baseline","middle")
