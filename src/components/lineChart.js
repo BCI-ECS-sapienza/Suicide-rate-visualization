@@ -273,7 +273,7 @@ function drawPoint(year, value, country, suicides){
                 
                 tooltipLine
                     .transition()
-                    .duration(controller.transitionTime/2)
+                    .duration(controller.transitionTime/2);
                     
                 // show tooltip
                 tooltipLine
