@@ -27,8 +27,8 @@ const features = [
 ]
 
 let center = {
-  x: width/2,
-  y: height/2
+  x: width/2 - 40,
+  y: height/2 + 15
 }
 const selectedColors = ['#af8dc3',
   '#f7f7f7',
@@ -51,8 +51,8 @@ const countriesGroup = svgRadar.append('g');
 countriesGroup
   .append('text')
   .attr('class', 'radar-heading-legend')
-  .attr("x", (width/2 + 180))
-  .attr("y", 20)
+  .attr("x", (width/2 + 210))
+  .attr("y", 40)
   .text("Countries:")
   .style("font-size", "18px")
   .attr("alignment-baseline","middle")
@@ -62,8 +62,8 @@ const featuresGroup = svgRadar.append('g');
   featuresGroup
   .append('text')
   .attr('class', 'radar-heading-legend')
-  .attr("x", offset_legend_width + 180)
-  .attr("y", offset_legend_height - 20)
+  .attr("x", offset_legend_width + 210)
+  .attr("y", offset_legend_height + 20)
   .text("Features max:")
   .style("font-size", "18px")
   .attr("alignment-baseline","middle")
@@ -449,16 +449,16 @@ function drawLegendCountries(name, color, index){
   countriesGroup
     .append("circle")
     .attr('class', 'radar-legend')
-    .attr("cx", offset_legend_width + 190)
-    .attr("cy", 25 + 17*index)
+    .attr("cx", offset_legend_width + 220)
+    .attr("cy", 43 + 17*index)
     .attr("r", 4)
     .style("fill", color);
 
   countriesGroup
     .append('text')
     .attr('class', 'radar-legend')
-    .attr("x", offset_legend_width + 200)
-    .attr("y", 30 + 17*index)
+    .attr("x", offset_legend_width + 230)
+    .attr("y", 45 + 17*index)
     .text(name)
     .style("font-size", "15px")
     .attr("alignment-baseline","middle")
@@ -485,9 +485,9 @@ function drawLegendFeatures(features_scale){
     featuresGroup
       .append('text')
       .attr('class', 'radar-legend')
-      .attr("x", offset_legend_width + 180)
+      .attr("x", offset_legend_width + 210)
       .text('- ' + features[el] + ': ' + d3.format('.3s')(features_scale[feature]).replace('G', 'B'))
-      .attr("y", offset_legend_height + 17*el)
+      .attr("y", offset_legend_height + 40 + 17*el)
       .style("font-size", "15px")
       .attr("alignment-baseline","middle")
       .style('fill', 'white');
