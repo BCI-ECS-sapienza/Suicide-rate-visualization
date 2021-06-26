@@ -78,6 +78,14 @@ for (let vertex = 0; vertex<sides; vertex++){
 }
 points = points.concat(points[0]);
 
+// set tooltips
+const tooltipRadar = d3.select("#radar")
+    .append("div")
+    .style("left", widthMap + initial_width_legend + "px")   
+    .style("top",  heightMap + "px") //heightMap + "px")
+    .style("opacity", 0)
+    .attr("class", "tooltip")
+
 // draw the graph with data
 function drawRadar(){
   // remove old elements from the radar before adding new ones
@@ -328,6 +336,7 @@ function drawAxis( ticks, levelsCount ){
 
 // the following two functions draw data on the radar
 function drawCircles(points, color){
+  
     g.append( "g" )
         .attr( "class", "indic" )
         .selectAll( "circle" )
@@ -336,8 +345,36 @@ function drawCircles(points, color){
         .append( "circle" )
         .attr( "cx", center.x)
         .attr("cy", center.y)
-        .attr( "r", 3 )
+        .attr( "r", 4 )
         .style('fill', color)
+        .on('mouseover', function(d){
+          
+          const value = d3.format('.2s')(d.value).replace('G', 'B');
+          tooltipRadar
+              .transition()
+              .duration(controller.transitionTime/2);
+          
+                    
+          // show tooltip
+          tooltipRadar
+              .style("opacity", 1)
+              .html(`${value}`)
+              .style("left", (d3.mouse(this)[0] - 50) + widthMap + initial_width_legend + "px")    
+              .style("top", (d3.mouse(this)[1] + 10) + heightMap + "px");
+        })
+        .on('mousemove', function(d){
+          const value = d3.format('.2s')(d.value).replace('G', 'B');
+
+          tooltipRadar
+            .style("opacity", 1)
+            .html(`${value}`)
+            .style("left", (d3.mouse(this)[0] - 50) + widthMap + initial_width_legend + "px")    
+            .style("top", (d3.mouse(this)[1] + 10) + heightMap + "px");
+        })
+        .on('mouseout', function(d){
+          tooltipRadar
+            .style("opacity", 0)
+        })
         .transition()
         .duration(700)
         .ease(d3.easeLinear)
@@ -410,6 +447,9 @@ function drawData(dataset, n, feature_scale){
       .attr('class', 'country')
       .attr('d',zero_pathArea)
       .style('fill', selectedColors[el])
+      //.style('stroke', selectedColors[el])
+      //.attr('stroke-width', 2)
+      //.style('fill', 'none')
       .style('opacity', .5)
       .on('mouseover', mouseOver)
       .on('mouseout', mouseOut)
