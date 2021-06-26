@@ -23,11 +23,6 @@ const xValueScatter = d => d.value.gdp_for_year;
 const yValueScatter = d => d.value.gdp_per_capita;
 const colorValueScatter = d => d.value.suicides_pop;
 
-// if no filter applied then show avg in tooltip
-let avg_show_scatter = " (avg.)"
-if (controller.isYearFiltered == true) 
-    avg_show_scatter = ""
-
 // set scales ranges
 const xScaleScatter = d3.scaleLinear() 
     .range([ 0, width_scatterPlot ])

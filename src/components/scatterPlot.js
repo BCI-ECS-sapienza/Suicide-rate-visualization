@@ -33,8 +33,8 @@ const makeScatterPlot = () => {
             .style("opacity", 1)
             .html(
                 '<b>Country:</b> ' + countryScatter(d) + 
-                `<br><b>GDP for year: ${avg_show_scatter} </b> ${gdp_year}` + 
-                `<br><b>Gdp per capita: ${avg_show_scatter} </b> ${gdp_capita}` + 
+                `<br><b>GDP for year ${avg_show_scatter}: </b> ${gdp_year}` + 
+                `<br><b>Gdp per capita ${avg_show_scatter}: </b> ${gdp_capita}` + 
                 `<br><b>Suicide ratio:</b> ${d.value.suicides_pop}`)
             .style("left", (d3.mouse(this)[0]+30) + widthMap + initial_width_legend + "px")    
             .style("top", (d3.mouse(this)[1]) + heightMap + "px") //heightMap + "px")
@@ -50,8 +50,8 @@ const makeScatterPlot = () => {
             .style("opacity", 1)
             .html(
                 '<b>Country:</b> ' + countryScatter(d) + 
-                `<br><b>GDP for year: ${avg_show_scatter} </b> ${gdp_year}` + 
-                `<br><b>Gdp per capita: ${avg_show_scatter} </b> ${gdp_capita}` + 
+                `<br><b>GDP for year ${avg_show_scatter}: </b> ${gdp_year}` + 
+                `<br><b>Gdp per capita ${avg_show_scatter}: </b> ${gdp_capita}` + 
                 `<br><b>Suicide ratio:</b> ${d.value.suicides_pop}`)
             .style("left", (d3.mouse(this)[0]+30) + widthMap + initial_width_legend + "px")   
             .style("top", (d3.mouse(this)[1]) +  heightMap + "px") //heightMap + "px")
@@ -261,6 +261,11 @@ const makeScatterPlot = () => {
         
     // initialize brushing
     scatterBrush.on("end", updateOnBrush) 
+
+    // if no filter applied then show avg in tooltip
+    let avg_show_scatter = " (avg.)"
+    if (controller.isYearFiltered == true) 
+        avg_show_scatter = ""
 
 
 
