@@ -258,6 +258,11 @@ function getLineChartData(){
 
 function drawPoint(year, value, country, suicides){
     let colorScale = controller.colorScale;
+
+    // if no filter applied then show avg in tooltip
+    let avg_show_line = " (avg.)"
+    if (controller.isYearFiltered == true) 
+        avg_show_line = ""
     
     svgLine
         //.append("g")
@@ -280,7 +285,7 @@ function drawPoint(year, value, country, suicides){
                     .style("opacity", 1)
                     .html(
                         '<b>Country:</b> ' + country + 
-                        `<br><b>GDP: ${avg_show_scatter} </b> ${gdp}` + 
+                        `<br><b>GDP: ${avg_show_line} </b> ${gdp}` + 
                         `<br><b>Suicide ratio:</b> ${suicides}`)
                     .style("left", (d3.mouse(this)[0]+30) + widthMap + initial_width_legend + "px")    
                     .style("top", (d3.mouse(this)[1]) + vertical_margin + "px");
@@ -295,7 +300,7 @@ function drawPoint(year, value, country, suicides){
                     .style("opacity", 1)
                     .html(
                         '<b>Country:</b> ' + country + 
-                        `<br><b>GDP: ${avg_show_scatter} </b> ${gdp}` + 
+                        `<br><b>GDP: ${avg_show_line} </b> ${gdp}` + 
                         `<br><b>Suicide ratio:</b> ${suicides}`)
                     .style("left", (d3.mouse(this)[0]+30) + widthMap + initial_width_legend + "px")    
                     .style("top", (d3.mouse(this)[1]) + vertical_margin + "px");

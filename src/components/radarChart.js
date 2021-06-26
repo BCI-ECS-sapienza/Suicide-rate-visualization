@@ -15,7 +15,7 @@ const polyangle = (Math.PI*2)/sides;
 const offset_legend_width = width/2;
 const offset_legend_height = height/2;
 
-const r = 0.8 * size;
+const r = 0.9 * size;
 const r_0 = r/2;
 
 const features = [
@@ -302,7 +302,7 @@ function drawText( text, point, isAxis, group ){
           .html( text )
           .style( "text-anchor", "middle" )
           .attr( "fill", "white" )
-          .style( "font-size", "14px" )
+          .style( "font-size", "16px" )
           .style( "font-family", "sans-serif" )
           .style('opacity', 1);
   }
@@ -345,7 +345,7 @@ function drawCircles(points, color){
         .append( "circle" )
         .attr( "cx", center.x)
         .attr("cy", center.y)
-        .attr( "r", 4 )
+        .attr( "r", 5 )
         .style('fill', color)
         .on('mouseover', function(d){
           

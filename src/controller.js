@@ -188,6 +188,7 @@ Controller.prototype.triggerMapFilterEvent = function (selectedPoints) {
 
     this.scatterFilter = selectedPoints;
     this.globalFilter();
+    this.lineChartFilter();
     this.notifyMapFiltered();
 }
 
