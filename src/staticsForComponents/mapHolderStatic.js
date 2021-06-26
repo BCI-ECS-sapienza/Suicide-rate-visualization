@@ -40,7 +40,7 @@ const map = d3.select( '#map-holder' )
 // create path and projection
 const path = d3.geoPath();
 const projection = d3.geoMercator()
-  .scale(100 , 70)
+  .scale(120 , 70)
   .center([0, 25])
   .translate([widthMap/2, heightMap/2]);
 
