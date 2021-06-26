@@ -64,6 +64,13 @@ const lineChartYAxisSvg = svgLine.append("g");
 const lineChartXGridSvg = svgLine.append('g').attr('class', 'grid-lineChart');
 const lineChartYGridSvg = svgLine.append('g').attr('class', 'grid-lineChart');
 
+// set tooltips
+const tooltipLine = d3.select("#lineChart")
+    .append("div")
+    .style("left", widthMap + initial_width_legend + "px")   
+    .style("top",  heightMap + "px") //heightMap + "px")
+    .style("opacity", 0)
+    .attr("class", "tooltip")
 
 function makeLineChart(){
     svgLine
@@ -261,6 +268,38 @@ function drawPoint(year, value, country, suicides){
             .attr("cy", yScaleLineChart(value))
             .attr("r", 5)
             .style("fill", colorScale(suicides))
+            .on('mouseover', function(d){
+                const gdp = d3.format('.2s')(value).replace('G', 'B');
+                
+                tooltipLine
+                    .transition()
+                    .duration(controller.transitionTime/2)
+                    
+                // show tooltip
+                tooltipLine
+                    .style("opacity", 1)
+                    .html(
+                        '<b>Country:</b> ' + country + 
+                        `<br><b>GDP: ${avg_show_scatter} </b> ${gdp}` + 
+                        `<br><b>Suicide ratio:</b> ${suicides}`)
+                    .style("left", (d3.mouse(this)[0]+30) + widthMap + initial_width_legend + "px")    
+                    .style("top", (d3.mouse(this)[1]) + vertical_margin + "px");
+            })
+            .on('mouseout', function(d){
+                tooltipLine
+                    .style("opacity", 0)
+            })
+            .on('mousemove', function(d){
+                // show tooltip
+                tooltipLine
+                    .style("opacity", 1)
+                    .html(
+                        '<b>Country:</b> ' + country + 
+                        `<br><b>GDP: ${avg_show_scatter} </b> ${gdp}` + 
+                        `<br><b>Suicide ratio:</b> ${suicides}`)
+                    .style("left", (d3.mouse(this)[0]+30) + widthMap + initial_width_legend + "px")    
+                    .style("top", (d3.mouse(this)[1]) + vertical_margin + "px");
+            })
             //.style('stroke', svgRadar.select(`#${country}`).style('fill'))
             .attr('stroke-width', 1.5);
             //.attr("fill", "#69b3a2");
