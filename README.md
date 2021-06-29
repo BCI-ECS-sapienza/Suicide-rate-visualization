@@ -13,7 +13,7 @@ For the complete documents:
 
 
 ## Data & methodology
-We are using the **Suicide Rates Overview 1985 to 2016** dataset from Kaggle [1], that was in turn taken from the **World Health Organization** dataset [2]. It contains *27.8k* valid entries with the following attributes: *country, year, sex, age, \# suicide_no, \# population, \# suicides/100k pop, country-year, HDI for year, gdp_for_year, gdp_per_capita, generation*.
+We are using the **Suicide Rates Overview 1985 to 2016** dataset from Kaggle [1], that was in turn taken from the **World Health Organization** databank [2]. It contains *27.8k* valid entries with the following attributes: *country, year, sex, age, \# suicide_no, \# population, \# suicides/100k pop, country-year, HDI for year, gdp_for_year, gdp_per_capita, generation*.
 
 The service is composed by the following visualizations:
 * **Map** [ #suicides/100k population colorscale ] (select one or more countries)
