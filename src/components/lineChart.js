@@ -295,6 +295,7 @@ function drawPoint(year, value, country, suicides){
                     .style("opacity", 0)
             })
             .on('mousemove', function(d){
+                const gdp = d3.format('.2s')(value).replace('G', 'B');
                 // show tooltip
                 tooltipLine
                     .style("opacity", 1)
