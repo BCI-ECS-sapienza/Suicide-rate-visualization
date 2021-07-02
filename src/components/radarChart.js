@@ -180,6 +180,7 @@ function getData(dataFiltered){
         }
       }
   } 
+  //console.log(data);
   return data;  
 }
 
@@ -391,7 +392,7 @@ const mouseOut = function(d){
     .style('opacity', .5);
 }
 function drawData(dataset, n, feature_scale){
-
+  
   // loop on elements of array
   for(let el in dataset){
     
