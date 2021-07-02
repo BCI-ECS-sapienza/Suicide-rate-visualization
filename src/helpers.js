@@ -62,22 +62,75 @@ const aggregateDataByYearLineChart = (dataIn) => {
       gdp_for_year: Math.round(d3.mean(d, (g) => g.gdp_for_year)), 
       gdp_per_capita: Math.round(d3.mean(d, (g) => g.gdp_per_capita))
   }))
-  .entries(dataIn)
+  .entries(dataIn);
   return data;
 };
 
 const aggregateDataByCountryRadar = (dataIn) => {
-  const data = d3.nest()
+  //console.log(dataIn);
+  if(controller.isYearFiltered){
+    const data = d3.nest()
     .key( (d) => d.country)
     .rollup( (d) =>  ({
       suicides_pop: Math.round(d3.mean(d, (g) => g.suicides_pop)),
       gdp_for_year: Math.round(d3.mean(d, (g) => g.gdp_for_year)),    
       gdp_per_capita: Math.round(d3.mean(d, (g) => g.gdp_per_capita)),
-      suicides_no: Math.round(d3.mean(d,(g) => g.suicides_no)),
-      population: Math.round(d3.mean(d, (g) => g.population))
+      suicides_no: Math.round(d3.sum(d,(g) => g.suicides_no)),
+      population: Math.round(d3.sum(d, (g) => g.population))
     }))
-  .entries(dataIn)
-  return data;
+    .entries(dataIn);
+    console.log(data);
+    return data;
+  }
+  else{
+    const data = d3.nest()
+    .key( (d) => d.country)
+    .key( (d) => d.year)
+    .rollup( (d) =>  ({
+      suicides_pop: Math.round(d3.mean(d, (g) => g.suicides_pop)),
+      gdp_for_year: Math.round(d3.mean(d, (g) => g.gdp_for_year)),    
+      gdp_per_capita: Math.round(d3.mean(d, (g) => g.gdp_per_capita)),
+      suicides_no: Math.round(d3.sum(d,(g) => g.suicides_no)),
+      population: Math.round(d3.sum(d, (g) => g.population))
+    }))
+    .entries(dataIn);
+    
+    let res = [];
+
+    for(let el in data){
+      //console.log(data[el]);
+      let suicides_pop = 0;
+      let suicides_no = 0;
+      let gdp_for_year = 0;
+      let gdp_per_capita = 0;
+      let population = 0;
+      let i = 0;
+      //console.log(data[el].values);
+      for(let item in data[el].values){
+        suicides_pop = suicides_pop + data[el].values[item].value.suicides_pop;
+        suicides_no = suicides_no + data[el].values[item].value.suicides_no;
+        gdp_for_year = gdp_for_year + data[el].values[item].value.gdp_for_year;
+        gdp_per_capita = gdp_per_capita + data[el].values[item].value.gdp_per_capita;
+        population = population + data[el].values[item].value.population;
+        i++;
+      }
+      let value = {
+        'suicides_pop': Math.round(suicides_pop/i),
+        'suicides_no': Math.round(suicides_no),
+        'gdp_for_year': Math.round(gdp_for_year/i),
+        'gdp_per_capita': Math.round(gdp_per_capita/i),
+        'population': Math.round(population/i)
+      }
+      res.push({
+        'key': data[el].key,
+        'value': value
+      })
+      
+    }
+    //console.log(res);
+    return res;
+  }
+  
 };
 
 const aggregateDataByCountry = (dataIn) => {
